@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Neutara Deployment Management System
 
 Enterprise-grade deployment management platform for managing the complete DevOps deployment workflow between Dev, QA, Infra teams.
@@ -313,3 +314,6 @@ FRONTEND_URL=http://localhost:3000
 | Top N rows | `LIMIT n` | `SELECT TOP (n)` |
 | JSON column | `JSONB` | `NVARCHAR(MAX)` |
 | Free-text column | `TEXT` | `NVARCHAR(MAX)` |
+=======
+# NeutaraDeployment
+>>>>>>> 6df90a0ca125df6e883f7c3b5fd67de18a48ffcb
