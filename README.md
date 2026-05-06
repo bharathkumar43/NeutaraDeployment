@@ -11,8 +11,8 @@ Enterprise-grade deployment management platform for managing the complete DevOps
 |------------|-----------------------------------------|
 | Frontend   | React 18, TypeScript, Tailwind CSS, Vite |
 | Backend    | Node.js, Express, TypeScript            |
-| Database   | **Microsoft SQL Server** (T-SQL)        |
-| DB Driver  | `mssql` (node-mssql / tedious)          |
+| Database   | **MySQL**                               |
+| DB Driver  | `mysql2`                                |
 | Auth       | JWT (Role-Based Access Control)        |
 | State Mgmt | Zustand                                 |
 | Forms      | React Hook Form                         |
@@ -25,8 +25,9 @@ Enterprise-grade deployment management platform for managing the complete DevOps
 ## Prerequisites
 
 - Node.js 18+
-- **Microsoft SQL Server 2017 or later** (Express / Developer / Standard / Enterprise)
+- **MySQL 8.0 or later**
 - npm or yarn
+- Docker & Docker Compose (for containerized deployment)
 
 ---
 
@@ -49,37 +50,29 @@ npm install
 ```bash
 cd backend
 cp .env.example .env
-# Edit .env with your SQL Server credentials
+# Edit .env with your MySQL credentials
 ```
 
 Key variables to set:
 
 | Variable | Description | Example |
 |---|---|---|
-| `DB_HOST` | SQL Server hostname or IP | `localhost` or `.\SQLEXPRESS` |
-| `DB_PORT` | SQL Server port (default 1433) | `1433` |
-| `DB_NAME` | Database name to create | `neutara_deployment` |
-| `DB_USER` | SQL login username | `sa` |
-| `DB_PASSWORD` | SA or dedicated user password | `YourPass!` |
-| `DB_TRUST_CERT` | Trust self-signed cert (local dev) | `true` |
-| `DB_ENCRYPT` | Use TLS encryption | `false` for local, `true` for Azure |
+| `DB_HOST` | MySQL hostname or IP | `localhost` |
+| `DB_PORT` | MySQL port (default 3306) | `3306` |
+| `DB_NAME` | Database name | `neutara_deployment` |
+| `DB_USER` | MySQL username | `root` |
+| `DB_PASSWORD` | MySQL password | `your_password` |
 
-### 3. Setup SQL Server Database
+### 3. Setup MySQL Database
 
-**Option A — SQL Server Management Studio (SSMS):**
+**Option A — MySQL Workbench or CLI:**
 ```sql
 CREATE DATABASE neutara_deployment;
 ```
 
-**Option B — sqlcmd CLI:**
+**Option B — Docker (recommended for development):**
 ```bash
-sqlcmd -S localhost -U sa -P YourPassword! -Q "CREATE DATABASE neutara_deployment"
-```
-
-**Option C — SQL Server Express (named instance):**
-```bash
-sqlcmd -S .\SQLEXPRESS -E -Q "CREATE DATABASE neutara_deployment"
-# Then in .env: DB_HOST=.\SQLEXPRESS and DB_USER/DB_PASSWORD as appropriate
+docker run --name mysql-neutara -e MYSQL_ROOT_PASSWORD=your_password -e MYSQL_DATABASE=neutara_deployment -p 3306:3306 -d mysql:8.0
 ```
 
 ### 4. Run Migrations (creates all tables + seed data)
@@ -278,14 +271,12 @@ Dev: Acknowledge / Raise Issue
 PORT=5000
 NODE_ENV=development
 
-# SQL Server
+# MySQL
 DB_HOST=localhost
-DB_PORT=1433
+DB_PORT=3306
 DB_NAME=neutara_deployment
-DB_USER=sa
-DB_PASSWORD=YourPassword123!
-DB_ENCRYPT=false
-DB_TRUST_CERT=true
+DB_USER=root
+DB_PASSWORD=your_password
 
 # JWT
 JWT_SECRET=your_secret_key
@@ -297,6 +288,93 @@ MAX_FILE_SIZE=10485760
 
 # CORS
 FRONTEND_URL=http://localhost:3000
+```
+
+---
+
+## Docker Deployment
+
+This project includes Docker support for easy deployment.
+
+### Prerequisites
+
+- Docker
+- Docker Compose
+
+### Quick Start with Docker
+
+1. **Clone the repository and navigate to the project directory**
+
+2. **Build and run the services**
+
+   ```bash
+   docker-compose up --build
+   ```
+
+   This will:
+   - Build the backend and frontend images
+   - Start a MySQL database
+   - Run the backend on port 5000
+   - Run the frontend on port 3000
+   - Initialize the database with the schema
+
+3. **Access the application**
+
+   - Frontend: http://localhost:3000
+   - Backend API: http://localhost:5000
+
+### Environment Configuration
+
+The `docker-compose.yml` includes default environment variables. For production, create a `.env` file in the root directory with your custom settings:
+
+```env
+# Database
+MYSQL_ROOT_PASSWORD=your_secure_root_password
+MYSQL_USER=your_app_user
+MYSQL_PASSWORD=your_app_password
+MYSQL_DATABASE=neutara_deployment
+
+# Backend
+JWT_SECRET=your_jwt_secret
+NODE_ENV=production
+
+# Frontend (if needed)
+# Add any frontend-specific env vars
+```
+
+### Production Deployment
+
+1. **Update environment variables** in `docker-compose.yml` or use a `.env` file
+
+2. **For server deployment**, you can connect your GitHub repository and use CI/CD pipelines to build and deploy the containers
+
+3. **Database persistence**: The MySQL data is stored in a Docker volume `db_data`
+
+4. **File uploads**: Backend uploads are mounted to `./backend/uploads` for persistence
+
+### Docker Services
+
+- **backend**: Node.js/Express API server
+- **frontend**: Nginx serving React SPA
+- **db**: MySQL 8.0 database
+
+### Useful Commands
+
+```bash
+# Start services
+docker-compose up -d
+
+# Stop services
+docker-compose down
+
+# View logs
+docker-compose logs -f
+
+# Rebuild after code changes
+docker-compose up --build
+
+# Clean up
+docker-compose down -v  # Removes volumes too
 ```
 
 ---

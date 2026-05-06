@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_NAME=neutara_deployment
+      - DB_USER=root
+      - DB_PASSWORD=rootpassword
+      - FRONTEND_URL=http://localhost:3000
+      - PORT=5000
+    depends_on:
+      - db
+    volumes:
+      - ./backend/uploads:/app/uploads
+    networks:
+      - app-network
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: neutara_deployment
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: apppassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./backend/src/database/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    networks:
+      - app-network
+    command: --default-authentication-plugin=mysql_native_password
+
+volumes:
+  db_data:
+
+networks:
+  app-network:
+    driver: bridge
