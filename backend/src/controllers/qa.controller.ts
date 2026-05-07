@@ -15,17 +15,18 @@ export const getPendingQARequests = async (req: Request, res: Response): Promise
     const conditions: string[] = [`dr.status = 'pending_qa_approval'`];
     const params: unknown[]    = [];
 
-    if (environment) { conditions.push(`FIND_IN_SET(?, REPLACE(dr.environment, ', ', ','))`); params.push(environment); }
-    if (priority)    { conditions.push(`dr.priority = ?`);    params.push(priority); }
+    if (environment) { params.push(environment); conditions.push(`dr.environment = $${params.length}`); }
+    if (priority)    { params.push(priority);    conditions.push(`dr.priority = $${params.length}`); }
     if (search) {
-      conditions.push(`(dr.deployment_title LIKE ? OR dr.project_name LIKE ?)`);
       params.push(`%${search}%`, `%${search}%`);
+      conditions.push(`(dr.deployment_title LIKE $${params.length - 1} OR dr.project_name LIKE $${params.length})`);
     }
 
     const where = `WHERE ${conditions.join(' AND ')}`;
 
     const countResult = await query(`SELECT COUNT(*) AS total FROM deployment_requests dr ${where}`, params);
 
+    params.push(limitNum, offset);
     const result = await query(
       `SELECT dr.*, u.name AS raised_by_name, u.team AS raised_by_team
        FROM deployment_requests dr
@@ -34,8 +35,8 @@ export const getPendingQARequests = async (req: Request, res: Response): Promise
        ORDER BY
          CASE dr.priority WHEN 'critical' THEN 1 WHEN 'high' THEN 2 WHEN 'medium' THEN 3 ELSE 4 END,
          dr.submitted_at ASC
-       LIMIT ? OFFSET ?`,
-      [...params, limitNum, offset]
+       LIMIT $${params.length - 1} OFFSET $${params.length}`,
+      params
     );
 
     res.json({
@@ -59,7 +60,7 @@ export const processQAApproval = async (req: Request, res: Response): Promise<vo
   }
 
   try {
-    const depResult = await query(`SELECT * FROM deployment_requests WHERE id = ?`, [id]);
+    const depResult = await query(`SELECT * FROM deployment_requests WHERE id = $1`, [id]);
     if (!depResult.rows[0]) { res.status(404).json({ success: false, message: 'Deployment not found' }); return; }
 
     const dep = depResult.rows[0];
@@ -77,11 +78,11 @@ export const processQAApproval = async (req: Request, res: Response): Promise<vo
 
     await query(
       `INSERT INTO deployment_qa_approvals (id, deployment_id, qa_user_id, qa_ticket_link, qa_description, qa_comments, approval_status)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+       VALUES ($1, $2, $3, $4, $5, $6, $7)`,
       [uuidv4(), id, qaUserId, qa_ticket_link || null, qa_description || null, qa_comments, approval_status]
     );
 
-    await query(`UPDATE deployment_requests SET status = ? WHERE id = ?`, [newStatus, id]);
+    await query(`UPDATE deployment_requests SET status = $1 WHERE id = $2`, [newStatus, id]);
 
     await createAuditLog({
       deploymentId: id, action: `QA_${approval_status.toUpperCase()}`,

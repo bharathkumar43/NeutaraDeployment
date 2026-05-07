@@ -16,11 +16,12 @@ export const getInfraQueue = async (req: Request, res: Response): Promise<void> 
     const conditions: string[] = [`dr.status IN ('pending_infra_deployment','deployment_in_progress')`];
     const params: unknown[]    = [];
 
-    if (environment) { conditions.push(`FIND_IN_SET(?, REPLACE(dr.environment, ', ', ','))`); params.push(environment); }
+    if (environment) { params.push(environment); conditions.push(`dr.environment = $${params.length}`); }
 
     const where = `WHERE ${conditions.join(' AND ')}`;
     const countResult = await query(`SELECT COUNT(*) AS total FROM deployment_requests dr ${where}`, params);
 
+    params.push(limitNum, offset);
     const result = await query(
       `SELECT dr.*, u.name AS raised_by_name, u.team AS raised_by_team,
               il.id AS log_id, il.deployment_status AS infra_status, il.infra_user_id
@@ -32,8 +33,8 @@ export const getInfraQueue = async (req: Request, res: Response): Promise<void> 
        ORDER BY
          CASE dr.priority WHEN 'critical' THEN 1 WHEN 'high' THEN 2 WHEN 'medium' THEN 3 ELSE 4 END,
          dr.updated_at ASC
-       LIMIT ? OFFSET ?`,
-      [...params, limitNum, offset]
+       LIMIT $${params.length - 1} OFFSET $${params.length}`,
+      params
     );
 
     res.json({
@@ -53,7 +54,7 @@ export const startDeployment = async (req: Request, res: Response): Promise<void
   const infraUserId          = req.user!.userId;
 
   try {
-    const depResult = await query(`SELECT * FROM deployment_requests WHERE id = ?`, [id]);
+    const depResult = await query(`SELECT * FROM deployment_requests WHERE id = $1`, [id]);
     const dep = depResult.rows[0];
     if (!dep) { res.status(404).json({ success: false, message: 'Deployment not found' }); return; }
     if (dep.status !== 'pending_infra_deployment') {
@@ -63,11 +64,11 @@ export const startDeployment = async (req: Request, res: Response): Promise<void
     const logId = uuidv4();
     await query(
       `INSERT INTO deployment_infra_logs (id, deployment_id, infra_user_id, deployment_notes, deployment_status)
-       VALUES (?, ?, ?, ?, 'in_progress')`,
+       VALUES ($1, $2, $3, $4, 'in_progress')`,
       [logId, id, infraUserId, deployment_notes || 'Deployment started']
     );
 
-    await query(`UPDATE deployment_requests SET status = 'deployment_in_progress' WHERE id = ?`, [id]);
+    await query(`UPDATE deployment_requests SET status = 'deployment_in_progress' WHERE id = $1`, [id]);
 
     await createAuditLog({
       deploymentId: id, action: 'DEPLOYMENT_STARTED', performedBy: infraUserId,
@@ -81,7 +82,7 @@ export const startDeployment = async (req: Request, res: Response): Promise<void
       type: 'info',
     });
 
-    const logResult = await query(`SELECT * FROM deployment_infra_logs WHERE id = ?`, [logId]);
+    const logResult = await query(`SELECT * FROM deployment_infra_logs WHERE id = $1`, [logId]);
     res.json({ success: true, data: logResult.rows[0] });
   } catch (err) {
     logger.error('Start deployment error', err);
@@ -100,7 +101,7 @@ export const completeDeployment = async (req: Request, res: Response): Promise<v
   }
 
   try {
-    const depResult = await query(`SELECT * FROM deployment_requests WHERE id = ?`, [id]);
+    const depResult = await query(`SELECT * FROM deployment_requests WHERE id = $1`, [id]);
     const dep = depResult.rows[0];
     if (!dep) { res.status(404).json({ success: false, message: 'Deployment not found' }); return; }
     if (!['deployment_in_progress', 'pending_infra_deployment'].includes(dep.status as string)) {
@@ -112,7 +113,7 @@ export const completeDeployment = async (req: Request, res: Response): Promise<v
 
     const existingLog = await query(
       `SELECT id FROM deployment_infra_logs
-       WHERE deployment_id = ? AND infra_user_id = ? AND deployment_status = 'in_progress'
+       WHERE deployment_id = $1 AND infra_user_id = $2 AND deployment_status = 'in_progress'
        LIMIT 1`,
       [id, infraUserId]
     );
@@ -120,10 +121,10 @@ export const completeDeployment = async (req: Request, res: Response): Promise<v
     if (existingLog.rows[0]) {
       await query(
         `UPDATE deployment_infra_logs
-         SET deployment_status = ?, screenshot_path = ?, screenshot_original_name = ?,
-             completion_comments = ?, deployment_notes = COALESCE(?, deployment_notes),
+         SET deployment_status = $1, screenshot_path = $2, screenshot_original_name = $3,
+             completion_comments = $4, deployment_notes = COALESCE($5, deployment_notes),
              completed_at = NOW()
-         WHERE id = ?`,
+         WHERE id = $6`,
         [deployment_status, screenshotPath, screenshotName,
          completion_comments || null, deployment_notes || null, existingLog.rows[0].id]
       );
@@ -132,14 +133,14 @@ export const completeDeployment = async (req: Request, res: Response): Promise<v
         `INSERT INTO deployment_infra_logs
            (id, deployment_id, infra_user_id, deployment_notes, screenshot_path,
             screenshot_original_name, deployment_status, completion_comments, completed_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())`,
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW())`,
         [uuidv4(), id, infraUserId, deployment_notes || 'Deployment completed',
          screenshotPath, screenshotName, deployment_status, completion_comments || null]
       );
     }
 
     const newStatus = deployment_status === 'success' ? 'pending_dev_acknowledgment' : 'deployment_failed';
-    await query(`UPDATE deployment_requests SET status = ? WHERE id = ?`, [newStatus, id]);
+    await query(`UPDATE deployment_requests SET status = $1 WHERE id = $2`, [newStatus, id]);
 
     await createAuditLog({
       deploymentId: id,

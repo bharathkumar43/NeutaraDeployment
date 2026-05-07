@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { query } from '../database/connection';
 import { createAuditLog } from '../services/audit.service';
 import { notifyRoleUsers, createNotification } from '../services/notification.service';
+import { sendScopeEmail } from '../services/email.service';
 import logger from '../utils/logger';
 
 const DEPLOYMENT_SELECT = `
@@ -36,19 +37,24 @@ export const createDeployment = async (req: Request, res: Response): Promise<voi
 
   try {
     const submittedAt = finalStatus === 'pending_qa_approval' ? new Date() : null;
+    const numResult   = await query(
+      `SELECT 'DPR' || LPAD((COUNT(*) + 1)::text, 4, '0') AS num FROM deployment_requests`
+    );
+    const requestNumber = numResult.rows[0].num as string;
+
     await query(
       `INSERT INTO deployment_requests
-         (id, deployment_title, project_name, job_id, branch_name, environment,
+         (id, request_number, deployment_title, project_name, job_id, branch_name, environment,
           ticket_link, description, priority, raised_by, status, submitted_at,
           risk_level, downtime_required, db_migration, requested_deploy_date, extra_meta)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [newId, deployment_title, project_name, job_id || null, branch_name, environment,
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)`,
+      [newId, requestNumber, deployment_title, project_name, job_id || null, branch_name, environment,
        ticket_link || null, description, priority, raised_by, finalStatus, submittedAt,
-       risk_level || null, downtime_required ? 1 : 0, db_migration ? 1 : 0,
+       risk_level || null, downtime_required ? true : false, db_migration ? true : false,
        requested_deploy_date || null, extraMeta]
     );
 
-    const result     = await query(`${DEPLOYMENT_SELECT} WHERE dr.id = ?`, [newId]);
+    const result     = await query(`${DEPLOYMENT_SELECT} WHERE dr.id = $1`, [newId]);
     const deployment = result.rows[0];
 
     await createAuditLog({
@@ -94,7 +100,7 @@ export const updateDraft = async (req: Request, res: Response): Promise<void> =>
   });
 
   try {
-    const existing = await query(`SELECT * FROM deployment_requests WHERE id = ?`, [id]);
+    const existing = await query(`SELECT * FROM deployment_requests WHERE id = $1`, [id]);
     if (!existing.rows[0]) { res.status(404).json({ success: false, message: 'Deployment not found' }); return; }
 
     const dep = existing.rows[0];
@@ -108,20 +114,20 @@ export const updateDraft = async (req: Request, res: Response): Promise<void> =>
     const finalStatus = status === 'pending_qa_approval' ? 'pending_qa_approval' : 'draft';
     await query(
       `UPDATE deployment_requests
-       SET deployment_title = ?, project_name = ?, job_id = ?, branch_name = ?, environment = ?,
-           ticket_link = ?, description = ?, priority = ?, status = ?,
-           risk_level = ?, downtime_required = ?, db_migration = ?,
-           requested_deploy_date = ?, extra_meta = ?,
-           submitted_at = CASE WHEN ? = 'pending_qa_approval' THEN NOW() ELSE submitted_at END
-       WHERE id = ?`,
+       SET deployment_title = $1, project_name = $2, job_id = $3, branch_name = $4, environment = $5,
+           ticket_link = $6, description = $7, priority = $8, status = $9,
+           risk_level = $10, downtime_required = $11, db_migration = $12,
+           requested_deploy_date = $13, extra_meta = $14,
+           submitted_at = CASE WHEN $15 = 'pending_qa_approval' THEN NOW() ELSE submitted_at END
+       WHERE id = $16`,
       [deployment_title, project_name, job_id || null, branch_name, environment,
        ticket_link || null, description, priority, finalStatus,
-       risk_level || null, downtime_required ? 1 : 0, db_migration ? 1 : 0,
+       risk_level || null, downtime_required ? true : false, db_migration ? true : false,
        requested_deploy_date || null, extraMeta,
        finalStatus, id]
     );
 
-    const result = await query(`${DEPLOYMENT_SELECT} WHERE dr.id = ?`, [id]);
+    const result = await query(`${DEPLOYMENT_SELECT} WHERE dr.id = $1`, [id]);
 
     await createAuditLog({
       deploymentId: id,
@@ -160,13 +166,13 @@ export const getDeployments = async (req: Request, res: Response): Promise<void>
     const conditions: string[] = [];
     const params: unknown[]    = [];
 
-    if (role === 'dev') { conditions.push(`dr.raised_by = ?`); params.push(userId); }
-    if (status)         { conditions.push(`dr.status = ?`);      params.push(status); }
-    if (environment)    { conditions.push(`FIND_IN_SET(?, REPLACE(dr.environment, ', ', ','))`); params.push(environment); }
-    if (priority)       { conditions.push(`dr.priority = ?`);    params.push(priority); }
+    if (role === 'dev') { params.push(userId);       conditions.push(`dr.raised_by = $${params.length}`); }
+    if (status)         { params.push(status);        conditions.push(`dr.status = $${params.length}`); }
+    if (environment)    { params.push(environment);   conditions.push(`dr.environment = $${params.length}`); }
+    if (priority)       { params.push(priority);      conditions.push(`dr.priority = $${params.length}`); }
     if (search) {
-      conditions.push(`(dr.deployment_title LIKE ? OR dr.project_name LIKE ?)`);
       params.push(`%${search}%`, `%${search}%`);
+      conditions.push(`(dr.deployment_title LIKE $${params.length - 1} OR dr.project_name LIKE $${params.length})`);
     }
 
     const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
@@ -174,9 +180,10 @@ export const getDeployments = async (req: Request, res: Response): Promise<void>
     const countResult = await query(`SELECT COUNT(*) AS total FROM deployment_requests dr ${where}`, params);
     const total       = parseInt(String(countResult.rows[0].total));
 
+    params.push(limitNum, offset);
     const result = await query(
-      `${DEPLOYMENT_SELECT} ${where} ORDER BY dr.created_at DESC LIMIT ? OFFSET ?`,
-      [...params, limitNum, offset]
+      `${DEPLOYMENT_SELECT} ${where} ORDER BY dr.created_at DESC LIMIT $${params.length - 1} OFFSET $${params.length}`,
+      params
     );
 
     res.json({
@@ -193,22 +200,22 @@ export const getDeployments = async (req: Request, res: Response): Promise<void>
 export const getDeploymentById = async (req: Request, res: Response): Promise<void> => {
   const { id } = req.params;
   try {
-    const result = await query(`${DEPLOYMENT_SELECT} WHERE dr.id = ?`, [id]);
+    const result = await query(`${DEPLOYMENT_SELECT} WHERE dr.id = $1`, [id]);
     if (!result.rows[0]) { res.status(404).json({ success: false, message: 'Deployment not found' }); return; }
 
     const [qaResult, infraResult, ackResult, auditResult] = await Promise.all([
       query(`SELECT qa.*, u.name AS qa_user_name, u.email AS qa_user_email
              FROM deployment_qa_approvals qa LEFT JOIN users u ON qa.qa_user_id = u.id
-             WHERE qa.deployment_id = ? ORDER BY qa.created_at DESC`, [id]),
+             WHERE qa.deployment_id = $1 ORDER BY qa.created_at DESC`, [id]),
       query(`SELECT il.*, u.name AS infra_user_name, u.email AS infra_user_email
              FROM deployment_infra_logs il LEFT JOIN users u ON il.infra_user_id = u.id
-             WHERE il.deployment_id = ? ORDER BY il.created_at DESC`, [id]),
+             WHERE il.deployment_id = $1 ORDER BY il.created_at DESC`, [id]),
       query(`SELECT da.*, u.name AS acknowledged_by_name
              FROM deployment_acknowledgments da LEFT JOIN users u ON da.acknowledged_by = u.id
-             WHERE da.deployment_id = ? ORDER BY da.acknowledged_at DESC`, [id]),
+             WHERE da.deployment_id = $1 ORDER BY da.acknowledged_at DESC`, [id]),
       query(`SELECT al.*, u.name AS performed_by_name, u.role AS performed_by_role
              FROM audit_logs al LEFT JOIN users u ON al.performed_by = u.id
-             WHERE al.deployment_id = ? ORDER BY al.created_at ASC`, [id]),
+             WHERE al.deployment_id = $1 ORDER BY al.created_at ASC`, [id]),
     ]);
 
     res.json({
@@ -231,19 +238,19 @@ export const getDashboardStats = async (req: Request, res: Response): Promise<vo
   const userId = req.user!.userId;
   const role   = req.user!.role;
   try {
-    const where  = role === 'dev' ? `WHERE raised_by = ?` : '';
+    const where  = role === 'dev' ? `WHERE raised_by = $1` : '';
     const params = role === 'dev' ? [userId] : [];
 
     const result = await query(
       `SELECT
-         COUNT(*)                                                              AS total,
-         SUM(status = 'pending_qa_approval')                                  AS pending_qa,
-         SUM(status IN ('pending_infra_deployment','deployment_in_progress'))  AS pending_infra,
-         SUM(status = 'deployment_failed')                                     AS failed,
-         SUM(status = 'successfully_completed')                                AS completed,
-         SUM(priority = 'critical')                                            AS critical,
-         SUM(status = 'pending_dev_acknowledgment')                            AS pending_acknowledgment,
-         SUM(status = 'draft')                                                 AS drafts
+         COUNT(*)                                                                                       AS total,
+         COUNT(*) FILTER (WHERE status = 'pending_qa_approval')                                        AS pending_qa,
+         COUNT(*) FILTER (WHERE status IN ('pending_infra_deployment','deployment_in_progress'))        AS pending_infra,
+         COUNT(*) FILTER (WHERE status = 'deployment_failed')                                          AS failed,
+         COUNT(*) FILTER (WHERE status = 'successfully_completed')                                     AS completed,
+         COUNT(*) FILTER (WHERE priority = 'critical')                                                 AS critical,
+         COUNT(*) FILTER (WHERE status = 'pending_dev_acknowledgment')                                 AS pending_acknowledgment,
+         COUNT(*) FILTER (WHERE status = 'draft')                                                      AS drafts
        FROM deployment_requests ${where}`,
       params
     );
@@ -254,9 +261,20 @@ export const getDashboardStats = async (req: Request, res: Response): Promise<vo
   }
 };
 
+export const getNextRequestNumber = async (_req: Request, res: Response): Promise<void> => {
+  try {
+    const result = await query(
+      `SELECT 'DPR' || LPAD((COUNT(*) + 1)::text, 4, '0') AS next_number FROM deployment_requests`
+    );
+    res.json({ success: true, data: { next_number: result.rows[0].next_number } });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
+
 export const getJobsList = async (_req: Request, res: Response): Promise<void> => {
   try {
-    const result = await query(`SELECT id, job_id, job_name, project_name FROM jobs WHERE is_active = 1 ORDER BY job_name ASC`);
+    const result = await query(`SELECT id, job_id, job_name, project_name FROM jobs WHERE is_active = true ORDER BY job_name ASC`);
     res.json({ success: true, data: result.rows });
   } catch (err) {
     res.status(500).json({ success: false, message: 'Server error' });
@@ -265,9 +283,32 @@ export const getJobsList = async (_req: Request, res: Response): Promise<void> =
 
 export const getBranchesList = async (_req: Request, res: Response): Promise<void> => {
   try {
-    const result = await query(`SELECT id, branch_name, project_name FROM branches WHERE is_active = 1 ORDER BY branch_name ASC`);
+    const result = await query(`SELECT id, branch_name, project_name FROM branches WHERE is_active = true ORDER BY branch_name ASC`);
     res.json({ success: true, data: result.rows });
   } catch (err) {
     res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
+
+export const sendDeploymentScopeEmail = async (req: Request, res: Response): Promise<void> => {
+  const { deployment_title, team } = req.body;
+  const user = req.user!;
+
+  if (!deployment_title) {
+    res.status(400).json({ success: false, message: 'deployment_title is required' });
+    return;
+  }
+
+  try {
+    await sendScopeEmail({
+      deploymentTitle: deployment_title,
+      requesterName:   user.name,
+      requesterEmail:  user.email,
+      teamName:        team || 'N/A',
+    });
+    res.json({ success: true, message: 'Scope email sent successfully' });
+  } catch (err) {
+    logger.error('Send scope email error', err);
+    res.status(500).json({ success: false, message: 'Failed to send email. Check SMTP configuration.' });
   }
 };

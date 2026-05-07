@@ -1,7 +1,8 @@
 import { Router } from 'express';
 import {
   createDeployment, updateDraft, getDeployments, getDeploymentById,
-  getDashboardStats, getJobsList, getBranchesList
+  getDashboardStats, getJobsList, getBranchesList, sendDeploymentScopeEmail,
+  getNextRequestNumber
 } from '../controllers/deployment.controller';
 import { authenticate, authorize } from '../middleware/auth';
 
@@ -12,6 +13,8 @@ router.use(authenticate);
 router.get('/stats/dashboard', getDashboardStats);
 router.get('/meta/jobs', getJobsList);
 router.get('/meta/branches', getBranchesList);
+router.get('/meta/next-number', getNextRequestNumber);
+router.post('/send-scope-email', sendDeploymentScopeEmail);
 
 router.get('/', getDeployments);
 router.get('/:id', getDeploymentById);

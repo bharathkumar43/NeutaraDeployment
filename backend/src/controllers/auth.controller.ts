@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
 import { query } from '../database/connection';
 import { generateToken } from '../utils/jwt';
+import { UserRole } from '../types';
 import logger from '../utils/logger';
 
 export const login = async (req: Request, res: Response): Promise<void> => {
@@ -14,7 +15,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
   try {
     const result = await query(
       `SELECT id, name, email, password_hash, role, team, avatar_url, is_active
-       FROM users WHERE email = ?`,
+       FROM users WHERE email = $1`,
       [email.toLowerCase()]
     );
     const user = result.rows[0];
@@ -27,11 +28,11 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       res.status(401).json({ success: false, message: 'Invalid credentials' });
       return;
     }
-    await query(`UPDATE users SET last_login = NOW() WHERE id = ?`, [user.id]);
+    await query(`UPDATE users SET last_login = NOW() WHERE id = $1`, [user.id]);
     const token = generateToken({
       userId: user.id as string,
       email:  user.email as string,
-      role:   user.role as string,
+      role:   user.role as UserRole,
       name:   user.name as string,
     });
     res.json({
@@ -50,7 +51,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 export const getProfile = async (req: Request, res: Response): Promise<void> => {
   try {
     const result = await query(
-      `SELECT id, name, email, role, team, avatar_url, last_login, created_at FROM users WHERE id = ?`,
+      `SELECT id, name, email, role, team, avatar_url, last_login, created_at FROM users WHERE id = $1`,
       [req.user!.userId]
     );
     if (!result.rows[0]) { res.status(404).json({ success: false, message: 'User not found' }); return; }
@@ -64,9 +65,9 @@ export const getProfile = async (req: Request, res: Response): Promise<void> => 
 export const listUsers = async (req: Request, res: Response): Promise<void> => {
   try {
     const { role } = req.query;
-    let sql = `SELECT id, name, email, role, team, is_active FROM users WHERE is_active = 1`;
+    let sql = `SELECT id, name, email, role, team, is_active FROM users WHERE is_active = true`;
     const params: unknown[] = [];
-    if (role) { sql += ` AND role = ?`; params.push(role); }
+    if (role) { sql += ` AND role = $1`; params.push(role); }
     sql += ` ORDER BY name ASC`;
     const result = await query(sql, params);
     res.json({ success: true, data: result.rows });
@@ -83,7 +84,7 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
     return;
   }
   try {
-    const existing = await query(`SELECT id FROM users WHERE email = ?`, [email.toLowerCase()]);
+    const existing = await query(`SELECT id FROM users WHERE email = $1`, [email.toLowerCase()]);
     if (existing.rows.length > 0) {
       res.status(409).json({ success: false, message: 'Email already registered' });
       return;
@@ -91,10 +92,10 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
     const hash   = await bcrypt.hash(password, 10);
     const newId  = uuidv4();
     await query(
-      `INSERT INTO users (id, name, email, password_hash, role, team) VALUES (?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO users (id, name, email, password_hash, role, team) VALUES ($1, $2, $3, $4, $5, $6)`,
       [newId, name, email.toLowerCase(), hash, role, team || null]
     );
-    const created = await query(`SELECT id, name, email, role, team FROM users WHERE id = ?`, [newId]);
+    const created = await query(`SELECT id, name, email, role, team FROM users WHERE id = $1`, [newId]);
     res.status(201).json({ success: true, data: created.rows[0] });
   } catch (err) {
     logger.error('Create user error', err);

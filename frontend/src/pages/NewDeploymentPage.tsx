@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import toast from 'react-hot-toast';
-import { RocketLaunchIcon, PaperAirplaneIcon, DocumentTextIcon, CheckIcon } from '@heroicons/react/24/outline';
+import { RocketLaunchIcon, PaperAirplaneIcon, DocumentTextIcon, CheckIcon, EnvelopeIcon, BuildingOffice2Icon } from '@heroicons/react/24/outline';
 import { deploymentService } from '../services/deployment.service';
-import { Branch, DeploymentRequest } from '../types';
+import { Branch, Job, DeploymentRequest } from '../types';
 import { ButtonSpinner, PageLoader } from '../components/common/LoadingSpinner';
 import { useAuthStore } from '../store/authStore';
 
@@ -21,7 +21,6 @@ interface FormData {
   service_name:           string;
   branch_name:            string;
   base_branch:            string;
-  commit_sha:             string;
   artifact_version:       string;
   pull_request_link:      string;
   pr_approved_by:         string;
@@ -29,17 +28,16 @@ interface FormData {
   risk_level:             string;
   // Section 3 — Deployment Target
   environments:           string[];
-  deployment_type:        string;
-  deployment_sub_type:    string;
+  product_type:           string;
+  job_id:                 string;
   downtime_required:      boolean;
-  db_migration:           boolean;
   feature_flags:          string;
-  config_changes:         string;
   dependencies:           string;
-  project_name:           string;
+  deployment_scope:       'single' | 'multiple';
+  single_project_name:    string;
+  multi_project_names:    string;
 }
 
-const JOB_SUB_TYPES = ['Picking Job', 'Data Moving Job', 'API Job'];
 const ALL_ENVS = ['DEV', 'QA', 'UAT', 'PROD'];
 
 const SectionHeader: React.FC<{ num: string; title: string }> = ({ num, title }) => (
@@ -55,10 +53,13 @@ export const NewDeploymentPage: React.FC = () => {
   const { user }   = useAuthStore();
 
   const [branches, setBranches]         = useState<Branch[]>([]);
-  const [selectedType, setSelectedType] = useState('');
+  const [jobs, setJobs]                 = useState<Job[]>([]);
+  const [requestNumber, setRequestNumber] = useState<string>('');
   const [submitting, setSubmitting]     = useState(false);
   const [savingDraft, setSavingDraft]   = useState(false);
   const [loading, setLoading]           = useState(isEdit);
+  const [emailSent, setEmailSent]       = useState(false);
+  const [sendingEmail, setSendingEmail] = useState(false);
 
   const {
     register, handleSubmit, control, watch,
@@ -66,19 +67,40 @@ export const NewDeploymentPage: React.FC = () => {
   } = useForm<FormData>({
     defaultValues: {
       priority: 'medium', risk_level: 'low', base_branch: 'main',
-      downtime_required: false, db_migration: false, environments: [],
+      downtime_required: false, environments: [],
+      product_type: '', job_id: '',
+      deployment_scope: 'single', single_project_name: '', multi_project_names: '',
       requested_by_name: user?.name || '', team: user?.team || '',
     },
   });
 
-  const watchedEnvs    = watch('environments') || [];
-  const watchedTicket  = watch('ticket_link');
-  const watchedDesc    = watch('description');
-  const isSingleEnv    = watchedEnvs.length === 1;
-  const isMultiEnv     = watchedEnvs.length > 1;
+  const watchedEnvs         = watch('environments') || [];
+  const watchedTicket       = watch('ticket_link');
+  const watchedDesc         = watch('description');
+  const watchedProduct      = watch('product_type');
+  const watchedScope        = watch('deployment_scope');
+  const watchedProjectNames = watch('multi_project_names');
+  const isSingleEnv         = watchedEnvs.length === 1;
+  const isMultiEnv          = watchedEnvs.length > 1;
+
+  const productTypes  = [...new Set(jobs.map(j => j.project_name).filter(Boolean))] as string[];
+  const filteredJobs  = watchedProduct ? jobs.filter(j => j.project_name === watchedProduct) : [];
+  const watchedSingleName = watch('single_project_name');
+  const submitBlocked =
+    (watchedScope === 'single'   && !watchedSingleName?.trim()) ||
+    (watchedScope === 'multiple' && (!emailSent || !watchedProjectNames?.trim()));
 
   useEffect(() => {
-    deploymentService.getBranches().then(setBranches);
+    Promise.all([
+      deploymentService.getBranches(),
+      deploymentService.getJobs(),
+      ...(!isEdit ? [deploymentService.getNextNumber()] : []),
+    ]).then(([b, j, num]) => {
+      setBranches(b as Branch[]);
+      setJobs(j as Job[]);
+      if (num) setRequestNumber(num as string);
+    });
+
     if (isEdit && id) {
       deploymentService.getById(id).then((dep) => {
         const meta = (dep as any).extra_meta
@@ -87,21 +109,17 @@ export const NewDeploymentPage: React.FC = () => {
               : (dep as any).extra_meta)
           : {};
         const envs = dep.environment ? dep.environment.split(',').map((e: string) => e.trim()) : [];
-        const type = (dep as any).deployment_type || '';
-        setSelectedType(type);
         reset({
           deployment_title:      dep.deployment_title,
-          project_name:          dep.project_name,
           branch_name:           dep.branch_name,
           ticket_link:           dep.ticket_link || '',
           description:           dep.description,
           priority:              dep.priority,
           environments:          envs,
-          deployment_type:       type,
-          deployment_sub_type:   (dep as any).deployment_sub_type || '',
+          product_type:          (dep as any).project_name || '',
+          job_id:                dep.job_id || '',
           risk_level:            (dep as any).risk_level || 'low',
           downtime_required:     !!(dep as any).downtime_required,
-          db_migration:          !!(dep as any).db_migration,
           requested_deploy_date: (dep as any).requested_deploy_date?.slice(0, 16) || '',
           ...meta,
         });
@@ -132,15 +150,27 @@ export const NewDeploymentPage: React.FC = () => {
       setError('description', { message: 'Provide at least one: Ticket Link or Description' });
       return null;
     }
-    const jobId = data.deployment_type === 'Job Deployment'
-      ? `${data.deployment_type} — ${data.deployment_sub_type}`
-      : data.deployment_type;
     return {
       ...data,
-      job_id:      jobId,
-      environment: data.environments.join(', '),
+      project_name: data.product_type,
+      environment:  data.environments.join(', '),
       status,
     } as any;
+  };
+
+  const onSendScopeEmail = async () => {
+    const title = watch('deployment_title');
+    const team  = watch('team');
+    setSendingEmail(true);
+    try {
+      await deploymentService.sendScopeEmail(title?.trim() || 'Untitled Deployment', team || '');
+      setEmailSent(true);
+      toast.success('Email sent! Enter the project names below to proceed.');
+    } catch {
+      toast.error('Failed to send email. Check SMTP configuration in backend .env');
+    } finally {
+      setSendingEmail(false);
+    }
   };
 
   const onSaveDraft = handleSubmit(async (data) => {
@@ -190,6 +220,15 @@ export const NewDeploymentPage: React.FC = () => {
           <SectionHeader num="1" title="REQUEST DETAILS" />
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
 
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Request Number</label>
+              <input
+                readOnly
+                value={isEdit ? '' : (requestNumber || '…')}
+                className="w-full px-3 py-2 border border-gray-200 rounded-md text-sm bg-gray-50 text-blue-700 font-bold tracking-widest cursor-default"
+              />
+            </div>
+
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-1">Deployment Title <span className="text-red-500">*</span></label>
               <input {...register('deployment_title', { required: 'Required' })} className={inputCls(errors.deployment_title)} placeholder="e.g. DEP-001 Auth Service v2.1" />
@@ -238,12 +277,6 @@ export const NewDeploymentPage: React.FC = () => {
               {errMsg(errors.ticket_link?.message)}
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Project Name <span className="text-red-500">*</span></label>
-              <input {...register('project_name', { required: 'Required' })} className={inputCls(errors.project_name)} placeholder="e.g. Neutara Platform" />
-              {errMsg(errors.project_name?.message)}
-            </div>
-
           </div>
         </div>
 
@@ -278,12 +311,6 @@ export const NewDeploymentPage: React.FC = () => {
               <label className="block text-sm font-medium text-gray-700 mb-1">Base / Target Branch <span className="text-red-500">*</span></label>
               <input {...register('base_branch', { required: 'Required' })} className={inputCls(errors.base_branch)} placeholder="main" />
               {errMsg(errors.base_branch?.message)}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Main Commit SHA <span className="text-red-500">*</span></label>
-              <input {...register('commit_sha', { required: 'Required' })} className={inputCls(errors.commit_sha)} placeholder="e.g. a1b2c3d4e5f6g7h8i9j0" />
-              {errMsg(errors.commit_sha?.message)}
             </div>
 
             <div>
@@ -365,49 +392,40 @@ export const NewDeploymentPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Type of Deployment <span className="text-red-500">*</span></label>
-              <select {...register('deployment_type', { required: 'Required' })} className={selectCls(errors.deployment_type)}
-                onChange={(e) => setSelectedType(e.target.value)}>
-                <option value="">Select type...</option>
-                <option value="Job Deployment">Job Deployment</option>
-                <option value="All Jobs">All Jobs</option>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Product Type <span className="text-red-500">*</span></label>
+              <select
+                {...register('product_type', { required: 'Required' })}
+                className={selectCls(errors.product_type)}
+                onChange={(e) => { setValue('product_type', e.target.value); setValue('job_id', ''); }}
+              >
+                <option value="">Select product...</option>
+                {productTypes.map(p => <option key={p} value={p}>{p}</option>)}
               </select>
-              {errMsg(errors.deployment_type?.message)}
+              {errMsg(errors.product_type?.message)}
             </div>
 
-            {selectedType === 'Job Deployment' ? (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Job Type <span className="text-red-500">*</span></label>
-                <select {...register('deployment_sub_type', { required: 'Required' })} className={selectCls(errors.deployment_sub_type)}>
-                  <option value="">Select job type...</option>
-                  {JOB_SUB_TYPES.map(s => <option key={s} value={s}>{s}</option>)}
-                </select>
-                {errMsg(errors.deployment_sub_type?.message)}
-              </div>
-            ) : (
-              <div /> // placeholder to keep grid alignment
-            )}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Job <span className="text-red-500">*</span>
+                {!watchedProduct && <span className="ml-1 text-xs text-gray-400 font-normal">— select a product first</span>}
+              </label>
+              <select
+                {...register('job_id', { required: 'Required' })}
+                className={selectCls(errors.job_id)}
+                disabled={!watchedProduct}
+              >
+                <option value="">Select job...</option>
+                {filteredJobs.map(j => (
+                  <option key={j.id} value={j.job_id}>{j.job_name}</option>
+                ))}
+              </select>
+              {errMsg(errors.job_id?.message)}
+            </div>
 
             {/* Downtime Required */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Downtime Required?</label>
               <Controller name="downtime_required" control={control} render={({ field }) => (
-                <div className="flex gap-2">
-                  {[true, false].map(val => (
-                    <button key={String(val)} type="button"
-                      onClick={() => field.onChange(val)}
-                      className={`px-5 py-1.5 rounded-full text-sm font-medium border transition-colors ${field.value === val ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-600 border-gray-300 hover:border-gray-400'}`}>
-                      {val ? 'Yes' : 'No'}
-                    </button>
-                  ))}
-                </div>
-              )} />
-            </div>
-
-            {/* DB Migration */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">DB Migration?</label>
-              <Controller name="db_migration" control={control} render={({ field }) => (
                 <div className="flex gap-2">
                   {[true, false].map(val => (
                     <button key={String(val)} type="button"
@@ -426,15 +444,108 @@ export const NewDeploymentPage: React.FC = () => {
             </div>
 
             <div className="md:col-span-3">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Config / Env Var Changes</label>
-              <textarea {...register('config_changes')} className={`${inputCls()} resize-none`} rows={2}
-                placeholder="List any configuration or environment variable changes..." />
-            </div>
-
-            <div className="md:col-span-3">
               <label className="block text-sm font-medium text-gray-700 mb-1">Dependencies / Order</label>
               <textarea {...register('dependencies')} className={`${inputCls()} resize-none`} rows={2}
                 placeholder="List any deployment dependencies or order of operations..." />
+            </div>
+
+            {/* ── Deployment Scope ── */}
+            <div className="md:col-span-3">
+              <div className="border border-gray-200 rounded-lg p-4 bg-gray-50 space-y-4">
+                <div className="flex items-center gap-2">
+                  <BuildingOffice2Icon className="w-4 h-4 text-gray-500" />
+                  <span className="text-sm font-medium text-gray-700">Deployment Scope <span className="text-red-500">*</span></span>
+                </div>
+
+                {/* Single / Multiple toggle */}
+                <Controller
+                  name="deployment_scope"
+                  control={control}
+                  render={({ field }) => (
+                    <div className="flex gap-3">
+                      {(['single', 'multiple'] as const).map(val => (
+                        <button
+                          key={val}
+                          type="button"
+                          onClick={() => {
+                            field.onChange(val);
+                            if (val === 'single') { setEmailSent(false); setValue('multi_project_names', ''); }
+                            if (val === 'multiple') { setValue('single_project_name', ''); }
+                          }}
+                          className={`px-5 py-2 rounded-lg text-sm font-medium border transition-colors ${field.value === val ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-600 border-gray-300 hover:border-blue-400'}`}
+                        >
+                          {val === 'single' ? 'Single Project' : 'Multiple Projects'}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                />
+
+                {/* Single project — direct name input */}
+                {watchedScope === 'single' && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Project Name <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      {...register('single_project_name', {
+                        validate: v => watchedScope !== 'single' || !!v?.trim() || 'Project name is required',
+                      })}
+                      className={inputCls(errors.single_project_name)}
+                      placeholder="e.g. Neutara Platform"
+                    />
+                    {errMsg(errors.single_project_name?.message)}
+                  </div>
+                )}
+
+                {/* Multiple project flow */}
+                {watchedScope === 'multiple' && (
+                  <div className="space-y-3 pt-1">
+                    {!emailSent ? (
+                      <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-lg p-3">
+                        <EnvelopeIcon className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                        <div className="flex-1">
+                          <p className="text-sm font-medium text-amber-800">Project names required</p>
+                          <p className="text-xs text-amber-700 mt-0.5">
+                            Send an email to the team requesting the full list of affected project names. You'll enter them below once received.
+                          </p>
+                          <button
+                            type="button"
+                            onClick={onSendScopeEmail}
+                            disabled={sendingEmail}
+                            className="mt-2 inline-flex items-center gap-2 px-4 py-1.5 text-sm font-medium text-white bg-amber-600 rounded-lg hover:bg-amber-700 transition-colors disabled:opacity-60"
+                          >
+                            {sendingEmail ? <ButtonSpinner /> : <EnvelopeIcon className="w-4 h-4" />}
+                            {sendingEmail ? 'Sending…' : 'Send Email'}
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2 text-green-700 bg-green-50 border border-green-200 rounded-lg px-3 py-2">
+                        <CheckIcon className="w-4 h-4 flex-shrink-0" />
+                        <span className="text-xs font-medium">Email sent — enter the project names below to unlock submission.</span>
+                      </div>
+                    )}
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Project Names <span className="text-red-500">*</span>
+                        {!emailSent && <span className="ml-1 text-xs text-gray-400 font-normal">— send the email first</span>}
+                      </label>
+                      <textarea
+                        {...register('multi_project_names', {
+                          validate: v => watchedScope !== 'multiple' || !!v?.trim() || 'Enter project names to proceed',
+                        })}
+                        disabled={!emailSent}
+                        rows={3}
+                        className={`${inputCls(errors.multi_project_names)} resize-none disabled:bg-gray-100 disabled:cursor-not-allowed`}
+                        placeholder={emailSent ? 'e.g. Neutara Platform, Neutara Mobile, Billing Service…' : 'Waiting for email to be sent…'}
+                      />
+                      {errMsg(errors.multi_project_names?.message)}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
           </div>
@@ -464,8 +575,13 @@ export const NewDeploymentPage: React.FC = () => {
               {savingDraft ? <ButtonSpinner /> : <DocumentTextIcon className="w-4 h-4" />}
               Save Draft
             </button>
-            <button type="button" onClick={onSubmitToQA} disabled={submitting}
-              className="inline-flex items-center gap-2 px-5 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-60">
+            <button
+              type="button"
+              onClick={onSubmitToQA}
+              disabled={submitting || submitBlocked}
+              title={submitBlocked ? 'Send the scope email and enter project names to proceed' : undefined}
+              className="inline-flex items-center gap-2 px-5 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+            >
               {submitting ? <ButtonSpinner /> : <PaperAirplaneIcon className="w-4 h-4" />}
               Submit to QA
             </button>

@@ -16,7 +16,7 @@ export const getPendingAcknowledgments = async (req: Request, res: Response): Pr
        LEFT JOIN users u  ON dr.raised_by     = u.id
        LEFT JOIN deployment_infra_logs il ON il.deployment_id = dr.id AND il.deployment_status = 'success'
        LEFT JOIN users iu ON il.infra_user_id = iu.id
-       WHERE dr.status = 'pending_dev_acknowledgment' AND dr.raised_by = ?
+       WHERE dr.status = 'pending_dev_acknowledgment' AND dr.raised_by = $1
        ORDER BY dr.updated_at DESC
        LIMIT 50`,
       [userId]
@@ -41,7 +41,7 @@ export const submitAcknowledgment = async (req: Request, res: Response): Promise
   }
 
   try {
-    const depResult = await query(`SELECT * FROM deployment_requests WHERE id = ?`, [id]);
+    const depResult = await query(`SELECT * FROM deployment_requests WHERE id = $1`, [id]);
     const dep = depResult.rows[0];
     if (!dep) { res.status(404).json({ success: false, message: 'Deployment not found' }); return; }
     if (dep.status !== 'pending_dev_acknowledgment') {
@@ -53,12 +53,12 @@ export const submitAcknowledgment = async (req: Request, res: Response): Promise
 
     await query(
       `INSERT INTO deployment_acknowledgments (id, deployment_id, acknowledged_by, acknowledgment_comment, status, acknowledged_at)
-       VALUES (?, ?, ?, ?, ?, NOW())`,
+       VALUES ($1, $2, $3, $4, $5, NOW())`,
       [uuidv4(), id, userId, acknowledgment_comment, status]
     );
 
     const newStatus = status === 'acknowledged' ? 'successfully_completed' : 'issue_raised';
-    await query(`UPDATE deployment_requests SET status = ? WHERE id = ?`, [newStatus, id]);
+    await query(`UPDATE deployment_requests SET status = $1 WHERE id = $2`, [newStatus, id]);
 
     await createAuditLog({
       deploymentId: id,

@@ -55,6 +55,15 @@ export const deploymentService = {
     const res = await api.get<ApiResponse<Branch[]>>('/deployments/meta/branches');
     return res.data.data;
   },
+
+  async getNextNumber(): Promise<string> {
+    const res = await api.get<ApiResponse<{ next_number: string }>>('/deployments/meta/next-number');
+    return res.data.data.next_number;
+  },
+
+  async sendScopeEmail(deployment_title: string, team: string): Promise<void> {
+    await api.post('/deployments/send-scope-email', { deployment_title, team });
+  },
 };
 
 export const qaService = {

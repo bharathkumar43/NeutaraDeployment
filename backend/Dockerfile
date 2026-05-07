@@ -26,21 +26,21 @@ COPY package*.json ./
 # Install only production dependencies
 RUN npm ci --only=production
 
-# Copy built application from builder stage
+# Copy compiled application
 COPY --from=builder /app/dist ./dist
 
-# Copy uploads directory if needed (for static files)
-COPY --from=builder /app/uploads ./uploads
+# Copy schema.sql into dist so the compiled migrate.js can find it
+COPY --from=builder /app/src/database/schema.sql ./dist/database/schema.sql
 
-# Create uploads directory if it doesn't exist
+# Uploads directory (mounted as a volume at runtime)
 RUN mkdir -p uploads
 
 # Expose port
-EXPOSE 5000
+EXPOSE 3200
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:5000/api/v1/health', (res) => process.exit(res.statusCode === 200 ? 0 : 1))"
+  CMD node -e "require('http').get('http://localhost:3200/api/v1/health', (res) => process.exit(res.statusCode === 200 ? 0 : 1))"
 
-# Start the application
-CMD ["npm", "start"]
+# Run migrations then start the server
+CMD ["sh", "-c", "node dist/database/migrate.js && node dist/server.js"]

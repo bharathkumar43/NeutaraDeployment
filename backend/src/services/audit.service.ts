@@ -15,7 +15,7 @@ interface AuditEntry {
 export const createAuditLog = async (entry: AuditEntry): Promise<void> => {
   await query(
     `INSERT INTO audit_logs (id, deployment_id, action, performed_by, old_status, new_status, comment, metadata, ip_address)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
     [
       uuidv4(),
       entry.deploymentId,
@@ -35,7 +35,7 @@ export const getAuditLogs = async (deploymentId: string) => {
     `SELECT al.*, u.name AS performed_by_name, u.role AS performed_by_role
      FROM audit_logs al
      LEFT JOIN users u ON al.performed_by = u.id
-     WHERE al.deployment_id = ?
+     WHERE al.deployment_id = $1
      ORDER BY al.created_at ASC`,
     [deploymentId]
   );

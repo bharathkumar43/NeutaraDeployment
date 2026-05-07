@@ -1,50 +1,75 @@
 version: '3.8'
 
 services:
-  backend:
-    build: ./backend
-    ports:
-      - "5000:5000"
+
+  db:
+    image: postgres:15
+    restart: unless-stopped
     environment:
-      - NODE_ENV=production
-      - DB_HOST=db
-      - DB_PORT=3306
-      - DB_NAME=neutara_deployment
-      - DB_USER=root
-      - DB_PASSWORD=rootpassword
-      - FRONTEND_URL=http://localhost:3000
-      - PORT=5000
-    depends_on:
-      - db
+      POSTGRES_DB:       neutara_deployment
+      POSTGRES_USER:     postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgrespassword}
     volumes:
-      - ./backend/uploads:/app/uploads
+      - db_data:/var/lib/postgresql/data
     networks:
       - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    ports:
+      - "3200:3200"
+    environment:
+      NODE_ENV:               production
+      PORT:                   3200
+      DB_HOST:                db
+      DB_PORT:                5432
+      DB_NAME:                neutara_deployment
+      DB_USER:                postgres
+      DB_PASSWORD:            ${DB_PASSWORD:-postgrespassword}
+      JWT_SECRET:             ${JWT_SECRET:-change_this_to_a_long_random_secret}
+      JWT_EXPIRES_IN:         24h
+      FRONTEND_URL:           ${APP_URL:-http://localhost}
+      RATE_LIMIT_WINDOW_MS:   900000
+      RATE_LIMIT_MAX:         200
+      UPLOAD_DIR:             uploads
+      MAX_FILE_SIZE:          10485760
+      SMTP_HOST:              ${SMTP_HOST:-smtp.gmail.com}
+      SMTP_PORT:              ${SMTP_PORT:-587}
+      SMTP_SECURE:            ${SMTP_SECURE:-false}
+      SMTP_USER:              ${SMTP_USER:-}
+      SMTP_PASS:              ${SMTP_PASS:-}
+      SMTP_FROM:              ${SMTP_FROM:-noreply@neutara.com}
+      SCOPE_EMAIL_RECIPIENT:  ${SCOPE_EMAIL_RECIPIENT:-}
+    volumes:
+      - ./backend/uploads:/app/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"require('http').get('http://localhost:3200/api/v1/health', r => process.exit(r.statusCode === 200 ? 0 : 1))\""]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
 
   frontend:
     build: ./frontend
+    restart: unless-stopped
     ports:
-      - "3000:80"
+      - "80:80"
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     networks:
       - app-network
-
-  db:
-    image: mysql:8.0
-    environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: neutara_deployment
-      MYSQL_USER: appuser
-      MYSQL_PASSWORD: apppassword
-    ports:
-      - "3306:3306"
-    volumes:
-      - db_data:/var/lib/mysql
-      - ./backend/src/database/schema.sql:/docker-entrypoint-initdb.d/schema.sql
-    networks:
-      - app-network
-    command: --default-authentication-plugin=mysql_native_password
 
 volumes:
   db_data:

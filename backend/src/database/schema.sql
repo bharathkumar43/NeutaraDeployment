@@ -1,203 +1,209 @@
 -- ============================================================
 -- Neutara Deployment Management System
--- MySQL Schema
+-- PostgreSQL Schema
 -- ============================================================
 
-CREATE DATABASE IF NOT EXISTS neutara_deployment
-  CHARACTER SET utf8mb4
-  COLLATE utf8mb4_unicode_ci;
-
-USE neutara_deployment;
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- ============================================================
 -- USERS
 -- ============================================================
 CREATE TABLE IF NOT EXISTS users (
-  id            CHAR(36)      NOT NULL PRIMARY KEY,
-  name          VARCHAR(255)  NOT NULL,
-  email         VARCHAR(255)  NOT NULL,
-  password_hash VARCHAR(255)  NOT NULL,
-  role          VARCHAR(50)   NOT NULL CHECK (role IN ('dev','qa','infra','admin','viewer')),
-  team          VARCHAR(100)  DEFAULT NULL,
-  avatar_url    TEXT          DEFAULT NULL,
-  is_active     TINYINT(1)    NOT NULL DEFAULT 1,
-  last_login    DATETIME      DEFAULT NULL,
-  created_at    DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at    DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  UNIQUE KEY uq_users_email (email),
-  KEY idx_users_role (role)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  id            UUID         PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name          VARCHAR(255) NOT NULL,
+  email         VARCHAR(255) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
+  role          VARCHAR(50)  NOT NULL CHECK (role IN ('dev','qa','infra','admin','viewer')),
+  team          VARCHAR(100),
+  avatar_url    TEXT,
+  is_active     BOOLEAN      NOT NULL DEFAULT true,
+  last_login    TIMESTAMP,
+  created_at    TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at    TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
 
 -- ============================================================
 -- JOBS
 -- ============================================================
 CREATE TABLE IF NOT EXISTS jobs (
-  id           CHAR(36)     NOT NULL PRIMARY KEY,
-  job_id       VARCHAR(100) NOT NULL,
+  id           UUID         PRIMARY KEY DEFAULT uuid_generate_v4(),
+  job_id       VARCHAR(100) NOT NULL UNIQUE,
   job_name     VARCHAR(255) NOT NULL,
-  project_name VARCHAR(255) DEFAULT NULL,
-  jenkins_url  TEXT         DEFAULT NULL,
-  is_active    TINYINT(1)   NOT NULL DEFAULT 1,
-  created_at   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  UNIQUE KEY uq_jobs_job_id (job_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  project_name VARCHAR(255),
+  jenkins_url  TEXT,
+  is_active    BOOLEAN      NOT NULL DEFAULT true,
+  created_at   TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
 
 -- ============================================================
 -- BRANCHES
 -- ============================================================
 CREATE TABLE IF NOT EXISTS branches (
-  id           CHAR(36)     NOT NULL PRIMARY KEY,
+  id           UUID         PRIMARY KEY DEFAULT uuid_generate_v4(),
   branch_name  VARCHAR(255) NOT NULL,
-  project_name VARCHAR(255) DEFAULT NULL,
-  is_active    TINYINT(1)   NOT NULL DEFAULT 1,
-  created_at   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  project_name VARCHAR(255),
+  is_active    BOOLEAN      NOT NULL DEFAULT true,
+  created_at   TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
 
 -- ============================================================
 -- DEPLOYMENT REQUESTS
 -- ============================================================
 CREATE TABLE IF NOT EXISTS deployment_requests (
-  id               CHAR(36)      NOT NULL PRIMARY KEY,
-  deployment_title VARCHAR(500)  NOT NULL,
-  project_name     VARCHAR(255)  NOT NULL,
-  job_id           VARCHAR(100)  DEFAULT NULL,
-  branch_name      VARCHAR(255)  NOT NULL,
-  environment      VARCHAR(50)   NOT NULL,
-  ticket_link      TEXT          DEFAULT NULL,
-  description      TEXT          NOT NULL,
-  priority         VARCHAR(20)   NOT NULL CHECK (priority IN ('low','medium','high','critical')),
-  raised_by        CHAR(36)      NOT NULL,
-  status           VARCHAR(50)   NOT NULL DEFAULT 'draft'
+  id               UUID         PRIMARY KEY DEFAULT uuid_generate_v4(),
+  request_number   VARCHAR(20)  UNIQUE,
+  deployment_title VARCHAR(500) NOT NULL,
+  project_name     VARCHAR(255) NOT NULL,
+  job_id           VARCHAR(100),
+  branch_name      VARCHAR(255) NOT NULL,
+  environment      VARCHAR(50)  NOT NULL,
+  ticket_link      TEXT,
+  description      TEXT         NOT NULL,
+  priority         VARCHAR(20)  NOT NULL CHECK (priority IN ('low','medium','high','critical')),
+  raised_by        UUID         NOT NULL REFERENCES users(id),
+  status           VARCHAR(50)  NOT NULL DEFAULT 'draft'
                    CHECK (status IN (
                      'draft','pending_qa_approval','qa_approved','rejected_by_qa',
                      'pending_infra_deployment','deployment_in_progress','deployment_completed',
                      'deployment_failed','pending_dev_acknowledgment',
                      'successfully_completed','issue_raised'
                    )),
-  submitted_at     DATETIME      DEFAULT NULL,
-  created_at       DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at       DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  CONSTRAINT fk_dr_raised_by FOREIGN KEY (raised_by) REFERENCES users(id),
-  KEY idx_dr_status      (status),
-  KEY idx_dr_raised_by   (raised_by),
-  KEY idx_dr_environment (environment),
-  KEY idx_dr_priority    (priority),
-  KEY idx_dr_created_at  (created_at)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  submitted_at          TIMESTAMP,
+  risk_level            VARCHAR(20),
+  downtime_required     BOOLEAN      NOT NULL DEFAULT false,
+  db_migration          BOOLEAN      NOT NULL DEFAULT false,
+  requested_deploy_date TIMESTAMP,
+  extra_meta            JSONB,
+  created_at            TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at            TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Add columns if upgrading an existing database
+ALTER TABLE deployment_requests ADD COLUMN IF NOT EXISTS request_number        VARCHAR(20) UNIQUE;
+ALTER TABLE deployment_requests ADD COLUMN IF NOT EXISTS risk_level            VARCHAR(20);
+ALTER TABLE deployment_requests ADD COLUMN IF NOT EXISTS downtime_required     BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE deployment_requests ADD COLUMN IF NOT EXISTS db_migration          BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE deployment_requests ADD COLUMN IF NOT EXISTS requested_deploy_date TIMESTAMP;
+ALTER TABLE deployment_requests ADD COLUMN IF NOT EXISTS extra_meta            JSONB;
+
+CREATE INDEX IF NOT EXISTS idx_dr_status ON deployment_requests(status);
+CREATE INDEX IF NOT EXISTS idx_dr_raised_by ON deployment_requests(raised_by);
+CREATE INDEX IF NOT EXISTS idx_dr_environment ON deployment_requests(environment);
+CREATE INDEX IF NOT EXISTS idx_dr_priority ON deployment_requests(priority);
+CREATE INDEX IF NOT EXISTS idx_dr_created_at ON deployment_requests(created_at);
 
 -- ============================================================
 -- QA APPROVALS
 -- ============================================================
 CREATE TABLE IF NOT EXISTS deployment_qa_approvals (
-  id              CHAR(36)    NOT NULL PRIMARY KEY,
-  deployment_id   CHAR(36)    NOT NULL,
-  qa_user_id      CHAR(36)    NOT NULL,
-  qa_ticket_link  TEXT        DEFAULT NULL,
-  qa_description  TEXT        DEFAULT NULL,
-  qa_comments     TEXT        NOT NULL,
-  approval_status VARCHAR(20) NOT NULL CHECK (approval_status IN ('approved','rejected','sent_back')),
-  approved_at     DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  created_at      DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT fk_qa_deployment FOREIGN KEY (deployment_id) REFERENCES deployment_requests(id) ON DELETE CASCADE,
-  CONSTRAINT fk_qa_user       FOREIGN KEY (qa_user_id)    REFERENCES users(id),
-  KEY idx_qa_deployment_id (deployment_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  id              UUID         PRIMARY KEY DEFAULT uuid_generate_v4(),
+  deployment_id   UUID         NOT NULL REFERENCES deployment_requests(id) ON DELETE CASCADE,
+  qa_user_id      UUID         NOT NULL REFERENCES users(id),
+  qa_ticket_link  TEXT,
+  qa_description  TEXT,
+  qa_comments     TEXT         NOT NULL,
+  approval_status VARCHAR(20)  NOT NULL CHECK (approval_status IN ('approved','rejected','sent_back')),
+  approved_at     TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  created_at      TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_qa_deployment_id ON deployment_qa_approvals(deployment_id);
 
 -- ============================================================
 -- INFRA LOGS
 -- ============================================================
 CREATE TABLE IF NOT EXISTS deployment_infra_logs (
-  id                       CHAR(36)    NOT NULL PRIMARY KEY,
-  deployment_id            CHAR(36)    NOT NULL,
-  infra_user_id            CHAR(36)    NOT NULL,
-  deployment_notes         TEXT        NOT NULL,
-  screenshot_path          TEXT        DEFAULT NULL,
-  screenshot_original_name VARCHAR(255) DEFAULT NULL,
-  deployment_status        VARCHAR(20) NOT NULL CHECK (deployment_status IN ('in_progress','success','failed')),
-  completion_comments      TEXT        DEFAULT NULL,
-  started_at               DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  completed_at             DATETIME    DEFAULT NULL,
-  created_at               DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT fk_infra_deployment FOREIGN KEY (deployment_id) REFERENCES deployment_requests(id) ON DELETE CASCADE,
-  CONSTRAINT fk_infra_user       FOREIGN KEY (infra_user_id) REFERENCES users(id),
-  KEY idx_infra_deployment_id (deployment_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  id                       UUID         PRIMARY KEY DEFAULT uuid_generate_v4(),
+  deployment_id            UUID         NOT NULL REFERENCES deployment_requests(id) ON DELETE CASCADE,
+  infra_user_id            UUID         NOT NULL REFERENCES users(id),
+  deployment_notes         TEXT         NOT NULL,
+  screenshot_path          TEXT,
+  screenshot_original_name VARCHAR(255),
+  deployment_status        VARCHAR(20)  NOT NULL CHECK (deployment_status IN ('in_progress','success','failed')),
+  completion_comments      TEXT,
+  started_at               TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  completed_at             TIMESTAMP,
+  created_at               TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_infra_deployment_id ON deployment_infra_logs(deployment_id);
 
 -- ============================================================
 -- ACKNOWLEDGMENTS
 -- ============================================================
 CREATE TABLE IF NOT EXISTS deployment_acknowledgments (
-  id                     CHAR(36)    NOT NULL PRIMARY KEY,
-  deployment_id          CHAR(36)    NOT NULL,
-  acknowledged_by        CHAR(36)    NOT NULL,
-  acknowledgment_comment TEXT        NOT NULL,
-  status                 VARCHAR(20) NOT NULL DEFAULT 'acknowledged'
+  id                     UUID         PRIMARY KEY DEFAULT uuid_generate_v4(),
+  deployment_id          UUID         NOT NULL REFERENCES deployment_requests(id) ON DELETE CASCADE,
+  acknowledged_by        UUID         NOT NULL REFERENCES users(id),
+  acknowledgment_comment TEXT         NOT NULL,
+  status                 VARCHAR(20)  NOT NULL DEFAULT 'acknowledged'
                          CHECK (status IN ('acknowledged','issue_raised')),
-  acknowledged_at        DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT fk_ack_deployment FOREIGN KEY (deployment_id)   REFERENCES deployment_requests(id) ON DELETE CASCADE,
-  CONSTRAINT fk_ack_user       FOREIGN KEY (acknowledged_by) REFERENCES users(id),
-  KEY idx_ack_deployment_id (deployment_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  acknowledged_at        TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_ack_deployment_id ON deployment_acknowledgments(deployment_id);
 
 -- ============================================================
 -- AUDIT LOGS
 -- ============================================================
 CREATE TABLE IF NOT EXISTS audit_logs (
-  id            CHAR(36)    NOT NULL PRIMARY KEY,
-  deployment_id CHAR(36)    DEFAULT NULL,
+  id            UUID         PRIMARY KEY DEFAULT uuid_generate_v4(),
+  deployment_id UUID         REFERENCES deployment_requests(id) ON DELETE SET NULL,
   action        VARCHAR(255) NOT NULL,
-  performed_by  CHAR(36)    DEFAULT NULL,
-  old_status    VARCHAR(50) DEFAULT NULL,
-  new_status    VARCHAR(50) DEFAULT NULL,
-  comment       TEXT        DEFAULT NULL,
-  metadata      JSON        DEFAULT NULL,
-  ip_address    VARCHAR(45) DEFAULT NULL,
-  created_at    DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT fk_audit_deployment FOREIGN KEY (deployment_id) REFERENCES deployment_requests(id) ON DELETE SET NULL,
-  KEY idx_audit_deployment_id (deployment_id),
-  KEY idx_audit_created_at    (created_at)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  performed_by  UUID         REFERENCES users(id),
+  old_status    VARCHAR(50),
+  new_status    VARCHAR(50),
+  comment       TEXT,
+  metadata      JSONB,
+  ip_address    VARCHAR(45),
+  created_at    TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_audit_deployment_id ON audit_logs(deployment_id);
+CREATE INDEX IF NOT EXISTS idx_audit_created_at ON audit_logs(created_at);
 
 -- ============================================================
 -- NOTIFICATIONS
 -- ============================================================
 CREATE TABLE IF NOT EXISTS notifications (
-  id            CHAR(36)    NOT NULL PRIMARY KEY,
-  user_id       CHAR(36)    NOT NULL,
-  deployment_id CHAR(36)    DEFAULT NULL,
+  id            UUID         PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id       UUID         NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  deployment_id UUID         REFERENCES deployment_requests(id) ON DELETE SET NULL,
   title         VARCHAR(500) NOT NULL,
-  message       TEXT        NOT NULL,
-  type          VARCHAR(20) NOT NULL CHECK (type IN ('info','success','warning','error')),
-  is_read       TINYINT(1)  NOT NULL DEFAULT 0,
-  created_at    DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT fk_notif_user       FOREIGN KEY (user_id)       REFERENCES users(id) ON DELETE CASCADE,
-  CONSTRAINT fk_notif_deployment FOREIGN KEY (deployment_id) REFERENCES deployment_requests(id) ON DELETE SET NULL,
-  KEY idx_notif_user_id (user_id),
-  KEY idx_notif_is_read  (is_read)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  message       TEXT         NOT NULL,
+  type          VARCHAR(20)  NOT NULL CHECK (type IN ('info','success','warning','error')),
+  is_read       BOOLEAN      NOT NULL DEFAULT false,
+  created_at    TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_notif_user_id ON notifications(user_id);
+CREATE INDEX IF NOT EXISTS idx_notif_is_read ON notifications(is_read);
 
 -- ============================================================
 -- SEED DATA  (password = Admin@123)
 -- ============================================================
 INSERT INTO users (id, name, email, password_hash, role, team) VALUES
-  (UUID(), 'Admin User',      'admin@neutara.com', '$2a$10$tZ2ourCNMUxQfoiDhBxDee/1ibM3vTJgiGwV3B9TLCjDF4mKMAfA6', 'admin', 'Management'),
-  (UUID(), 'Dev User',        'dev@neutara.com',   '$2a$10$tZ2ourCNMUxQfoiDhBxDee/1ibM3vTJgiGwV3B9TLCjDF4mKMAfA6', 'dev',   'Development'),
-  (UUID(), 'QA Engineer',     'qa@neutara.com',    '$2a$10$tZ2ourCNMUxQfoiDhBxDee/1ibM3vTJgiGwV3B9TLCjDF4mKMAfA6', 'qa',    'Quality Assurance'),
-  (UUID(), 'Infra Engineer',  'infra@neutara.com', '$2a$10$tZ2ourCNMUxQfoiDhBxDee/1ibM3vTJgiGwV3B9TLCjDF4mKMAfA6', 'infra', 'Infrastructure'),
-  (UUID(), 'Project Manager', 'pm@neutara.com',    '$2a$10$tZ2ourCNMUxQfoiDhBxDee/1ibM3vTJgiGwV3B9TLCjDF4mKMAfA6', 'viewer','Management')
-ON DUPLICATE KEY UPDATE password_hash = VALUES(password_hash);
+  (uuid_generate_v4(), 'Admin User',      'admin@neutara.com', '$2a$10$tZ2ourCNMUxQfoiDhBxDee/1ibM3vTJgiGwV3B9TLCjDF4mKMAfA6', 'admin', 'Management'),
+  (uuid_generate_v4(), 'Dev User',        'dev@neutara.com',   '$2a$10$tZ2ourCNMUxQfoiDhBxDee/1ibM3vTJgiGwV3B9TLCjDF4mKMAfA6', 'dev',   'Development'),
+  (uuid_generate_v4(), 'QA Engineer',     'qa@neutara.com',    '$2a$10$tZ2ourCNMUxQfoiDhBxDee/1ibM3vTJgiGwV3B9TLCjDF4mKMAfA6', 'qa',    'Quality Assurance'),
+  (uuid_generate_v4(), 'Infra Engineer',  'infra@neutara.com', '$2a$10$tZ2ourCNMUxQfoiDhBxDee/1ibM3vTJgiGwV3B9TLCjDF4mKMAfA6', 'infra', 'Infrastructure'),
+  (uuid_generate_v4(), 'Project Manager', 'pm@neutara.com',    '$2a$10$tZ2ourCNMUxQfoiDhBxDee/1ibM3vTJgiGwV3B9TLCjDF4mKMAfA6', 'viewer','Management')
+ON CONFLICT (email) DO NOTHING;
 
-INSERT IGNORE INTO jobs (id, job_id, job_name, project_name) VALUES
-  (UUID(), 'JOB-001', 'Build & Deploy API Service',   'Neutara Platform'),
-  (UUID(), 'JOB-002', 'Deploy Frontend Application',  'Neutara Platform'),
-  (UUID(), 'JOB-003', 'Database Migration Job',       'Neutara Platform'),
-  (UUID(), 'JOB-004', 'Integration Test Suite',       'Neutara Platform'),
-  (UUID(), 'JOB-005', 'Mobile App Build',             'Neutara Mobile');
+INSERT INTO jobs (id, job_id, job_name, project_name) VALUES
+  (uuid_generate_v4(), 'JOB-001', 'Build & Deploy API Service',   'Neutara Platform'),
+  (uuid_generate_v4(), 'JOB-002', 'Deploy Frontend Application',  'Neutara Platform'),
+  (uuid_generate_v4(), 'JOB-003', 'Database Migration Job',       'Neutara Platform'),
+  (uuid_generate_v4(), 'JOB-004', 'Integration Test Suite',       'Neutara Platform'),
+  (uuid_generate_v4(), 'JOB-005', 'Mobile App Build',             'Neutara Mobile')
+ON CONFLICT (job_id) DO NOTHING;
 
-INSERT IGNORE INTO branches (id, branch_name, project_name) VALUES
-  (UUID(), 'main',               'Neutara Platform'),
-  (UUID(), 'develop',            'Neutara Platform'),
-  (UUID(), 'release/v2.0',       'Neutara Platform'),
-  (UUID(), 'feature/auth-module','Neutara Platform'),
-  (UUID(), 'hotfix/critical-bug','Neutara Platform'),
-  (UUID(), 'staging',            'Neutara Mobile');
+INSERT INTO branches (id, branch_name, project_name) VALUES
+  (uuid_generate_v4(), 'main',               'Neutara Platform'),
+  (uuid_generate_v4(), 'develop',            'Neutara Platform'),
+  (uuid_generate_v4(), 'release/v2.0',       'Neutara Platform'),
+  (uuid_generate_v4(), 'feature/auth',       'Neutara Platform'),
+  (uuid_generate_v4(), 'hotfix/security',    'Neutara Platform')
+ON CONFLICT DO NOTHING;
