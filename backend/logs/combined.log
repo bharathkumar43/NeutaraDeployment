@@ -1172,3 +1172,569 @@
 {"level":"info","message":"::1 - - [06/May/2026:23:44:50 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/infra\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:44:50.008Z"}
 {"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:44:50.013Z"}
 {"level":"info","message":"::1 - - [06/May/2026:23:44:50 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:44:50.015Z"}
+{"level":"info","message":"🚀 Neutara Deployment API running on port 3200","timestamp":"2026-05-06T23:44:53.720Z"}
+{"level":"info","message":"Environment: development","timestamp":"2026-05-06T23:44:53.725Z"}
+{"duration":187,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:44:59.990Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:44:59 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/infra\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:44:59.994Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:44:59.998Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:44:59 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:44:59.999Z"}
+{"duration":160,"level":"debug","message":"Executed query","rows":15,"timestamp":"2026-05-06T23:45:00.001Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:45:00 +0000] \"GET /api/v1/deployments/meta/branches HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:45:00.001Z"}
+{"duration":167,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:45:00.003Z"}
+{"duration":11,"level":"debug","message":"Executed query","rows":0,"timestamp":"2026-05-06T23:45:00.014Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:45:00 +0000] \"GET /api/v1/infra/queue? HTTP/1.1\" 304 - \"http://localhost:3000/infra\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:45:00.015Z"}
+{"duration":171,"level":"debug","message":"Executed query","rows":5,"timestamp":"2026-05-06T23:45:00.016Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:45:00 +0000] \"GET /api/v1/deployments/meta/jobs HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:45:00.017Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":15,"timestamp":"2026-05-06T23:45:05.729Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:45:05 +0000] \"GET /api/v1/deployments/meta/branches HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:45:05.732Z"}
+{"duration":8,"level":"debug","message":"Executed query","rows":5,"timestamp":"2026-05-06T23:45:05.735Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:45:05 +0000] \"GET /api/v1/deployments/meta/jobs HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:45:05.740Z"}
+{"duration":10,"level":"debug","message":"Executed query","rows":15,"timestamp":"2026-05-06T23:45:05.757Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:45:05 +0000] \"GET /api/v1/deployments/meta/branches HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:45:05.759Z"}
+{"duration":10,"level":"debug","message":"Executed query","rows":5,"timestamp":"2026-05-06T23:45:05.762Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:45:05 +0000] \"GET /api/v1/deployments/meta/jobs HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:45:05.772Z"}
+{"duration":7,"level":"debug","message":"Executed query","rows":15,"timestamp":"2026-05-06T23:45:11.801Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:45:11 +0000] \"GET /api/v1/deployments/meta/branches HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:45:11.805Z"}
+{"duration":12,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:45:11.809Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:45:11 +0000] \"GET /api/v1/deployments/meta/next-number HTTP/1.1\" 200 49 \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:45:11.814Z"}
+{"duration":20,"level":"debug","message":"Executed query","rows":5,"timestamp":"2026-05-06T23:45:11.819Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:45:11 +0000] \"GET /api/v1/deployments/meta/jobs HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:45:11.822Z"}
+{"duration":15,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:45:13.317Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:45:13 +0000] \"GET /api/v1/deployments/stats/dashboard HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:45:13.322Z"}
+{"duration":10,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:45:13.325Z"}
+{"duration":10,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:45:13.337Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:45:13 +0000] \"GET /api/v1/deployments?limit=8 HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:45:13.342Z"}
+{"duration":8,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:45:13.376Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:45:13 +0000] \"GET /api/v1/deployments/stats/dashboard HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:45:13.377Z"}
+{"duration":5,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:45:13.379Z"}
+{"duration":11,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:45:13.391Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:45:13 +0000] \"GET /api/v1/deployments?limit=8 HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:45:13.393Z"}
+{"duration":4,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:45:19.110Z"}
+{"duration":11,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:45:19.125Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:45:19 +0000] \"GET /api/v1/deployments?page=1&limit=15 HTTP/1.1\" 304 - \"http://localhost:3000/deployments\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:45:19.129Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:45:19.154Z"}
+{"duration":4,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:45:19.160Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:45:19 +0000] \"GET /api/v1/deployments?page=1&limit=15 HTTP/1.1\" 304 - \"http://localhost:3000/deployments\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:45:19.163Z"}
+{"duration":5,"level":"debug","message":"Executed query","rows":15,"timestamp":"2026-05-06T23:45:21.130Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:45:21 +0000] \"GET /api/v1/deployments/meta/branches HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:45:21.133Z"}
+{"duration":6,"level":"debug","message":"Executed query","rows":5,"timestamp":"2026-05-06T23:45:21.147Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:45:21 +0000] \"GET /api/v1/deployments/meta/jobs HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:45:21.151Z"}
+{"duration":18,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:45:21.164Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:45:21 +0000] \"GET /api/v1/deployments/meta/next-number HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:45:21.167Z"}
+{"duration":13,"level":"debug","message":"Executed query","rows":15,"timestamp":"2026-05-06T23:45:21.176Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:45:21 +0000] \"GET /api/v1/deployments/meta/branches HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:45:21.180Z"}
+{"duration":7,"level":"debug","message":"Executed query","rows":5,"timestamp":"2026-05-06T23:45:21.192Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:45:21 +0000] \"GET /api/v1/deployments/meta/jobs HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:45:21.195Z"}
+{"duration":8,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:45:21.199Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:45:21 +0000] \"GET /api/v1/deployments/meta/next-number HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:45:21.202Z"}
+{"duration":10,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:45:29.800Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:45:29 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:45:29.802Z"}
+{"duration":4,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:45:30.755Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:45:30 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/infra\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:45:30.758Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:45:59.806Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:45:59 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:45:59.808Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:46:00.750Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:46:00 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/infra\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:46:00.752Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:46:29.799Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:46:29 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:46:29.801Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:46:30.757Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:46:30 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/infra\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:46:30.759Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:46:59.804Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:46:59 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:46:59.807Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:47:29.804Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:47:29 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:47:29.806Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:47:49.303Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:47:49 +0000] \"GET /api/v1/deployments/stats/dashboard HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:47:49.306Z"}
+{"duration":4,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:47:49.318Z"}
+{"duration":4,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:47:49.324Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:47:49 +0000] \"GET /api/v1/deployments?limit=8 HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:47:49.327Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:47:49.342Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:47:49 +0000] \"GET /api/v1/deployments/stats/dashboard HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:47:49.346Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:47:49.363Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:47:49.367Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:47:49 +0000] \"GET /api/v1/deployments?limit=8 HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:47:49.370Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:47:49.807Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:47:49 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/infra\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:47:49.810Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:47:53.080Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:47:53.085Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:47:53 +0000] \"GET /api/v1/deployments?page=1&limit=15 HTTP/1.1\" 304 - \"http://localhost:3000/deployments\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:47:53.087Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:47:53.103Z"}
+{"duration":4,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:47:53.108Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:47:53 +0000] \"GET /api/v1/deployments?page=1&limit=15 HTTP/1.1\" 304 - \"http://localhost:3000/deployments\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:47:53.116Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:47:59.804Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:47:59 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/deployments\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:47:59.806Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:48:29.801Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:48:29 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/deployments\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:48:29.803Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:48:49.763Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:48:49 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/infra\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:48:49.764Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:48:59.802Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:48:59 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/deployments\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:48:59.803Z"}
+{"duration":51,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:49:30.795Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:49:30 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/deployments\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:49:30.796Z"}
+{"duration":4,"level":"debug","message":"Executed query","rows":15,"timestamp":"2026-05-06T23:49:34.442Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:49:34 +0000] \"GET /api/v1/deployments/meta/branches HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:49:34.447Z"}
+{"duration":7,"level":"debug","message":"Executed query","rows":5,"timestamp":"2026-05-06T23:49:34.460Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:49:34 +0000] \"GET /api/v1/deployments/meta/jobs HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:49:34.463Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":15,"timestamp":"2026-05-06T23:49:34.476Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:49:34 +0000] \"GET /api/v1/deployments/meta/branches HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:49:34.478Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":5,"timestamp":"2026-05-06T23:49:34.488Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:49:34 +0000] \"GET /api/v1/deployments/meta/jobs HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:49:34.490Z"}
+{"duration":108,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:49:34.563Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:49:34 +0000] \"GET /api/v1/deployments/meta/next-number HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:49:34.566Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:49:34.575Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:49:34 +0000] \"GET /api/v1/deployments/meta/next-number HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:49:34.576Z"}
+{"duration":14,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:49:49.822Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:49:49 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/infra\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:49:49.825Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:49:59.802Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:49:59 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:49:59.805Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:50:29.788Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:50:29 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:50:29.790Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:50:49.772Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:50:49 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/infra\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:50:49.774Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:50:59.804Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:50:59 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:50:59.806Z"}
+{"duration":121,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:51:30.877Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:51:30 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:51:30.878Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:51:49.759Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:51:49 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/infra\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:51:49.761Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:52:00.766Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:52:00 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:52:00.767Z"}
+{"duration":151,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:52:49.952Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:52:49 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/infra\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:52:49.952Z"}
+{"duration":0,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:52:49.959Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:52:49 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:52:49.960Z"}
+{"duration":92,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:53:49.852Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:53:49 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:53:49.854Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:53:49.867Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:53:49 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/infra\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:53:49.869Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:54:19.443Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:54:19 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:54:19.444Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:54:30.744Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:54:30 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:54:30.744Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:54:49.792Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:54:49 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/infra\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:54:49.794Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:54:59.793Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:54:59 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:54:59.796Z"}
+{"duration":4,"level":"debug","message":"Executed query","rows":15,"timestamp":"2026-05-06T23:55:28.878Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:55:28 +0000] \"GET /api/v1/deployments/meta/branches HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:55:28.879Z"}
+{"duration":76,"level":"debug","message":"Executed query","rows":5,"timestamp":"2026-05-06T23:55:28.951Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:55:28 +0000] \"GET /api/v1/deployments/meta/jobs HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:55:28.952Z"}
+{"duration":85,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:55:28.962Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:55:28 +0000] \"GET /api/v1/deployments/meta/next-number HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:55:28.964Z"}
+{"duration":5,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:55:30.767Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:55:30 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:55:30.768Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:55:49.803Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:55:49 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/infra\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:55:49.805Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:56:00.764Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:56:00 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:56:00.766Z"}
+{"duration":83,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:56:49.847Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:56:49 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:56:49.848Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:56:49.864Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:56:49 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/infra\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:56:49.865Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:56:59.784Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:56:59 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:56:59.784Z"}
+{"duration":123,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:57:29.924Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:57:29 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:57:29.926Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:57:49.761Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:57:49 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/infra\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:57:49.762Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:58:00.753Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:58:00 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:58:00.753Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:58:30.755Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:58:30 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:58:30.756Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:58:49.794Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:58:49 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/infra\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:58:49.796Z"}
+{"duration":160,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:59:49.932Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:59:49 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:59:49.933Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:59:49.942Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:59:49 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/infra\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:59:49.944Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-06T23:59:59.802Z"}
+{"level":"info","message":"::1 - - [06/May/2026:23:59:59 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-06T23:59:59.805Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:00:29.792Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:00:29 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:00:29.793Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:00:49.832Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:00:49 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/infra\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:00:49.834Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:00:59.796Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:00:59 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:00:59.799Z"}
+{"duration":48,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:01:30.789Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:01:30 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:01:30.790Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:01:49.773Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:01:49 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/infra\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:01:49.774Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:01:59.807Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:01:59 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:01:59.811Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:02:29.800Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:02:29 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:02:29.802Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:02:49.764Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:02:49 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/infra\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:02:49.765Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:02:59.794Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:02:59 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:02:59.797Z"}
+{"duration":117,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:03:29.921Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:03:29 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:03:29.923Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:03:49.767Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:03:49 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/infra\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:03:49.769Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:03:59.796Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:03:59 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:03:59.796Z"}
+{"duration":83,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:04:30.841Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:04:30 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:04:30.842Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:04:49.785Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:04:49 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/infra\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:04:49.787Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:05:00.763Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:05:00 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:05:00.765Z"}
+{"duration":152,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:05:49.907Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:05:49 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:05:49.908Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:05:49.920Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:05:49 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/infra\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:05:49.920Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:05:59.795Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:05:59 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:05:59.797Z"}
+{"duration":19,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:06:02.690Z"}
+{"duration":15,"level":"debug","message":"Executed query","rows":0,"timestamp":"2026-05-07T00:06:02.707Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:06:02 +0000] \"GET /api/v1/qa/pending? HTTP/1.1\" 304 - \"http://localhost:3000/qa\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:06:02.715Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:06:02.731Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":0,"timestamp":"2026-05-07T00:06:02.736Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:06:02 +0000] \"GET /api/v1/qa/pending? HTTP/1.1\" 304 - \"http://localhost:3000/qa\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:06:02.742Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:06:07.099Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":0,"timestamp":"2026-05-07T00:06:07.100Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:06:07 +0000] \"GET /api/v1/qa/pending?environment=QA HTTP/1.1\" 200 71 \"http://localhost:3000/qa\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:06:07.101Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:06:09.420Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":0,"timestamp":"2026-05-07T00:06:09.425Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:06:09 +0000] \"GET /api/v1/qa/pending?environment=DEV HTTP/1.1\" 200 71 \"http://localhost:3000/qa\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:06:09.429Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:06:11.451Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":0,"timestamp":"2026-05-07T00:06:11.455Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:06:11 +0000] \"GET /api/v1/qa/pending?environment=UAT HTTP/1.1\" 200 71 \"http://localhost:3000/qa\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:06:11.457Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:06:13.523Z"}
+{"duration":4,"level":"debug","message":"Executed query","rows":0,"timestamp":"2026-05-07T00:06:13.527Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:06:13 +0000] \"GET /api/v1/qa/pending?environment=PROD HTTP/1.1\" 200 71 \"http://localhost:3000/qa\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:06:13.531Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:06:15.503Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":0,"timestamp":"2026-05-07T00:06:15.504Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:06:15 +0000] \"GET /api/v1/qa/pending? HTTP/1.1\" 304 - \"http://localhost:3000/qa\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:06:15.505Z"}
+{"duration":4,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:06:20.297Z"}
+{"duration":15,"level":"debug","message":"Executed query","rows":0,"timestamp":"2026-05-07T00:06:20.313Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:06:20 +0000] \"GET /api/v1/infra/queue? HTTP/1.1\" 304 - \"http://localhost:3000/infra\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:06:20.316Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:06:20.337Z"}
+{"duration":4,"level":"debug","message":"Executed query","rows":0,"timestamp":"2026-05-07T00:06:20.343Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:06:20 +0000] \"GET /api/v1/infra/queue? HTTP/1.1\" 304 - \"http://localhost:3000/infra\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:06:20.345Z"}
+{"duration":10,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:06:23.874Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:06:23 +0000] \"GET /api/v1/acknowledgments/pending HTTP/1.1\" 304 - \"http://localhost:3000/acknowledgments\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:06:23.876Z"}
+{"duration":4,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:06:23.904Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:06:23 +0000] \"GET /api/v1/acknowledgments/pending HTTP/1.1\" 304 - \"http://localhost:3000/acknowledgments\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:06:23.907Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:06:29.798Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:06:29 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/acknowledgments\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:06:29.800Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:06:49.792Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:06:49 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/infra\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:06:49.795Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:06:59.806Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:06:59 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/acknowledgments\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:06:59.808Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:07:29.788Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:07:29 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/acknowledgments\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:07:29.790Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:07:48.579Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:07:48.584Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:07:48 +0000] \"GET /api/v1/deployments?page=1&limit=20 HTTP/1.1\" 304 - \"http://localhost:3000/history\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:07:48.589Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:07:48.623Z"}
+{"duration":4,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:07:48.632Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:07:48 +0000] \"GET /api/v1/deployments?page=1&limit=20 HTTP/1.1\" 304 - \"http://localhost:3000/history\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:07:48.642Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:07:49.780Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:07:49 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/infra\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:07:49.783Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":5,"timestamp":"2026-05-07T00:07:50.062Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:07:50 +0000] \"GET /api/v1/auth/users HTTP/1.1\" 200 763 \"http://localhost:3000/users\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:07:50.063Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":5,"timestamp":"2026-05-07T00:07:50.069Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:07:50 +0000] \"GET /api/v1/auth/users HTTP/1.1\" 304 - \"http://localhost:3000/users\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:07:50.070Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:07:59.793Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:07:59 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/users\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:07:59.795Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:08:16.511Z"}
+{"duration":4,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:08:16.516Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:08:16 +0000] \"GET /api/v1/deployments?page=1&limit=15 HTTP/1.1\" 304 - \"http://localhost:3000/deployments\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:08:16.519Z"}
+{"duration":5,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:08:16.575Z"}
+{"duration":4,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:08:16.588Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:08:16 +0000] \"GET /api/v1/deployments?page=1&limit=15 HTTP/1.1\" 304 - \"http://localhost:3000/deployments\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:08:16.594Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:08:19.592Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:08:19.595Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:08:19 +0000] \"GET /api/v1/deployments?page=1&limit=15 HTTP/1.1\" 304 - \"http://localhost:3000/deployments\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:08:19.598Z"}
+{"duration":14,"level":"debug","message":"Executed query","rows":15,"timestamp":"2026-05-07T00:08:22.142Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:08:22 +0000] \"GET /api/v1/deployments/meta/branches HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:08:22.145Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":15,"timestamp":"2026-05-07T00:08:22.166Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:08:22 +0000] \"GET /api/v1/deployments/meta/branches HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:08:22.168Z"}
+{"duration":107,"level":"debug","message":"Executed query","rows":5,"timestamp":"2026-05-07T00:08:22.244Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:08:22 +0000] \"GET /api/v1/deployments/meta/jobs HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:08:22.245Z"}
+{"duration":107,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:08:22.247Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:08:22 +0000] \"GET /api/v1/deployments/meta/next-number HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:08:22.248Z"}
+{"duration":6,"level":"debug","message":"Executed query","rows":5,"timestamp":"2026-05-07T00:08:22.263Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:08:22 +0000] \"GET /api/v1/deployments/meta/jobs HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:08:22.263Z"}
+{"duration":7,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:08:22.266Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:08:22 +0000] \"GET /api/v1/deployments/meta/next-number HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:08:22.267Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:08:25.587Z"}
+{"duration":9,"level":"debug","message":"Executed query","rows":0,"timestamp":"2026-05-07T00:08:25.598Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:08:25 +0000] \"GET /api/v1/qa/pending? HTTP/1.1\" 304 - \"http://localhost:3000/qa\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:08:25.600Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:08:25.625Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":0,"timestamp":"2026-05-07T00:08:25.628Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:08:25 +0000] \"GET /api/v1/qa/pending? HTTP/1.1\" 304 - \"http://localhost:3000/qa\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:08:25.629Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:08:26.547Z"}
+{"duration":14,"level":"debug","message":"Executed query","rows":0,"timestamp":"2026-05-07T00:08:26.562Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:08:26 +0000] \"GET /api/v1/infra/queue? HTTP/1.1\" 304 - \"http://localhost:3000/infra\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:08:26.565Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:08:26.583Z"}
+{"duration":5,"level":"debug","message":"Executed query","rows":0,"timestamp":"2026-05-07T00:08:26.589Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:08:26 +0000] \"GET /api/v1/infra/queue? HTTP/1.1\" 304 - \"http://localhost:3000/infra\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:08:26.592Z"}
+{"duration":5,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:08:27.599Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:08:27 +0000] \"GET /api/v1/acknowledgments/pending HTTP/1.1\" 304 - \"http://localhost:3000/acknowledgments\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:08:27.602Z"}
+{"duration":6,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:08:27.631Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:08:27 +0000] \"GET /api/v1/acknowledgments/pending HTTP/1.1\" 304 - \"http://localhost:3000/acknowledgments\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:08:27.633Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:08:28.842Z"}
+{"duration":4,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:08:28.847Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:08:28 +0000] \"GET /api/v1/deployments?page=1&limit=20 HTTP/1.1\" 304 - \"http://localhost:3000/history\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:08:28.850Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:08:28.877Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:08:28.880Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:08:28 +0000] \"GET /api/v1/deployments?page=1&limit=20 HTTP/1.1\" 304 - \"http://localhost:3000/history\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:08:28.882Z"}
+{"duration":16,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:08:29.863Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:08:29 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/users\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:08:29.865Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":5,"timestamp":"2026-05-07T00:08:29.887Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:08:29 +0000] \"GET /api/v1/auth/users HTTP/1.1\" 304 - \"http://localhost:3000/users\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:08:29.890Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":5,"timestamp":"2026-05-07T00:08:29.903Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:08:29 +0000] \"GET /api/v1/auth/users HTTP/1.1\" 304 - \"http://localhost:3000/users\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:08:29.906Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:08:31.293Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:08:31 +0000] \"GET /api/v1/deployments/stats/dashboard HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:08:31.295Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:08:31.337Z"}
+{"duration":19,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:08:31.357Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:08:31 +0000] \"GET /api/v1/deployments?limit=8 HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:08:31.367Z"}
+{"duration":41,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:08:31.385Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:08:31 +0000] \"GET /api/v1/deployments/stats/dashboard HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:08:31.393Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:08:31.401Z"}
+{"duration":13,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:08:31.415Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:08:31 +0000] \"GET /api/v1/deployments?limit=8 HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:08:31.421Z"}
+{"duration":13,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:08:34.304Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:08:34 +0000] \"GET /api/v1/acknowledgments/pending HTTP/1.1\" 304 - \"http://localhost:3000/acknowledgments\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:08:34.306Z"}
+{"duration":5,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:08:34.325Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:08:34 +0000] \"GET /api/v1/acknowledgments/pending HTTP/1.1\" 304 - \"http://localhost:3000/acknowledgments\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:08:34.328Z"}
+{"duration":10,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:08:49.769Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:08:49 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/infra\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:08:49.770Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:08:59.801Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:08:59 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/acknowledgments\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:08:59.805Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:09:05.690Z"}
+{"duration":23,"level":"debug","message":"Executed query","rows":0,"timestamp":"2026-05-07T00:09:05.716Z"}
+{"duration":6,"level":"debug","message":"Executed query","rows":0,"timestamp":"2026-05-07T00:09:05.723Z"}
+{"duration":8,"level":"debug","message":"Executed query","rows":0,"timestamp":"2026-05-07T00:09:05.732Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:09:05.735Z"}
+{"duration":5,"level":"debug","message":"Executed query","rows":0,"timestamp":"2026-05-07T00:09:05.742Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:09:05.746Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":0,"timestamp":"2026-05-07T00:09:05.751Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:09:05 +0000] \"POST /api/v1/acknowledgments/deployments/a1825be4-33d8-45eb-bb3a-332efedfb350/acknowledge HTTP/1.1\" 200 97 \"http://localhost:3000/acknowledgments\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:09:05.755Z"}
+{"duration":5,"level":"debug","message":"Executed query","rows":0,"timestamp":"2026-05-07T00:09:05.777Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:09:05 +0000] \"GET /api/v1/acknowledgments/pending HTTP/1.1\" 200 26 \"http://localhost:3000/acknowledgments\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:09:05.779Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:09:10.670Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:09:10 +0000] \"GET /api/v1/deployments/stats/dashboard HTTP/1.1\" 200 160 \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:09:10.675Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:09:10.691Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:09:10 +0000] \"GET /api/v1/deployments/stats/dashboard HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:09:10.693Z"}
+{"duration":113,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:09:10.782Z"}
+{"duration":6,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:09:10.789Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:09:10 +0000] \"GET /api/v1/deployments?limit=8 HTTP/1.1\" 200 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:09:10.802Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:09:10.807Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:09:10.808Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:09:10 +0000] \"GET /api/v1/deployments?limit=8 HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:09:10.809Z"}
+{"duration":7,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:09:29.808Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:09:29 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 200 35 \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:09:29.810Z"}
+{"duration":6,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:09:49.798Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:09:49 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/infra\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:09:49.800Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:09:59.792Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:09:59 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:09:59.794Z"}
+{"duration":88,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:10:29.882Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:10:29 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:10:29.883Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:10:49.755Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:10:49 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/infra\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:10:49.756Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:10:59.795Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:10:59 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:10:59.797Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:11:29.792Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:11:29 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:11:29.794Z"}
+{"duration":13,"level":"debug","message":"Executed query","rows":4,"timestamp":"2026-05-07T00:11:44.271Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:11:44 +0000] \"GET /api/v1/notifications HTTP/1.1\" 200 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:11:44.278Z"}
+{"duration":6,"level":"debug","message":"Executed query","rows":0,"timestamp":"2026-05-07T00:11:48.673Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:11:48 +0000] \"PUT /api/v1/notifications/mark-all-read HTTP/1.1\" 200 16 \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:11:48.675Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:11:49.779Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:11:49 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 200 35 \"http://localhost:3000/infra\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:11:49.784Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:11:59.789Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:11:59 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:11:59.791Z"}
+{"duration":11,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:12:25.601Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":0,"timestamp":"2026-05-07T00:12:25.747Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:12:25 +0000] \"POST /api/v1/auth/login HTTP/1.1\" 200 453 \"http://localhost:3000/login\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:12:25.749Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:12:25.787Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:12:25 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:12:25.788Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:12:25.798Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:12:25 +0000] \"GET /api/v1/deployments/stats/dashboard HTTP/1.1\" 200 160 \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:12:25.804Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:12:25.808Z"}
+{"duration":4,"level":"debug","message":"Executed query","rows":0,"timestamp":"2026-05-07T00:12:25.812Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:12:25 +0000] \"GET /api/v1/deployments?limit=8 HTTP/1.1\" 200 85 \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:12:25.813Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:12:25.822Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:12:25 +0000] \"GET /api/v1/deployments/stats/dashboard HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:12:25.823Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:12:25.831Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":0,"timestamp":"2026-05-07T00:12:25.833Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:12:25 +0000] \"GET /api/v1/deployments?limit=8 HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:12:25.835Z"}
+{"duration":78,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:12:25.889Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:12:25 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:12:25.890Z"}
+{"duration":20,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:12:29.691Z"}
+{"duration":14,"level":"debug","message":"Executed query","rows":0,"timestamp":"2026-05-07T00:12:29.706Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:12:29 +0000] \"GET /api/v1/deployments?page=1&limit=15 HTTP/1.1\" 200 86 \"http://localhost:3000/deployments\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:12:29.709Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:12:29.731Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":0,"timestamp":"2026-05-07T00:12:29.735Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:12:29 +0000] \"GET /api/v1/deployments?page=1&limit=15 HTTP/1.1\" 304 - \"http://localhost:3000/deployments\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:12:29.737Z"}
+{"duration":4,"level":"debug","message":"Executed query","rows":15,"timestamp":"2026-05-07T00:12:31.161Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:12:31 +0000] \"GET /api/v1/deployments/meta/branches HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:12:31.162Z"}
+{"duration":5,"level":"debug","message":"Executed query","rows":5,"timestamp":"2026-05-07T00:12:31.164Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:12:31 +0000] \"GET /api/v1/deployments/meta/jobs HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:12:31.164Z"}
+{"duration":10,"level":"debug","message":"Executed query","rows":15,"timestamp":"2026-05-07T00:12:31.179Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:12:31 +0000] \"GET /api/v1/deployments/meta/branches HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:12:31.179Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":5,"timestamp":"2026-05-07T00:12:31.181Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:12:31 +0000] \"GET /api/v1/deployments/meta/jobs HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:12:31.183Z"}
+{"duration":77,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:12:31.237Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:12:31 +0000] \"GET /api/v1/deployments/meta/next-number HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:12:31.237Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:12:31.243Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:12:31 +0000] \"GET /api/v1/deployments/meta/next-number HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:12:31.243Z"}
+{"duration":11,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:12:49.774Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:12:49 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/infra\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:12:49.776Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:12:55.793Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:12:55 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/deployments/new\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:12:55.795Z"}
+{"duration":16,"level":"debug","message":"Executed query","rows":0,"timestamp":"2026-05-07T00:12:57.251Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:12:57 +0000] \"GET /api/v1/acknowledgments/pending HTTP/1.1\" 304 - \"http://localhost:3000/acknowledgments\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:12:57.253Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":0,"timestamp":"2026-05-07T00:12:57.269Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:12:57 +0000] \"GET /api/v1/acknowledgments/pending HTTP/1.1\" 304 - \"http://localhost:3000/acknowledgments\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:12:57.271Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:12:58.751Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":0,"timestamp":"2026-05-07T00:12:58.754Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:12:58 +0000] \"GET /api/v1/deployments?page=1&limit=15 HTTP/1.1\" 304 - \"http://localhost:3000/deployments\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:12:58.755Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:12:58.777Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":0,"timestamp":"2026-05-07T00:12:58.781Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:12:58 +0000] \"GET /api/v1/deployments?page=1&limit=15 HTTP/1.1\" 304 - \"http://localhost:3000/deployments\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:12:58.787Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:12:59.774Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":0,"timestamp":"2026-05-07T00:12:59.778Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:12:59 +0000] \"GET /api/v1/deployments?page=1&limit=20 HTTP/1.1\" 200 86 \"http://localhost:3000/history\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:12:59.780Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:12:59.800Z"}
+{"duration":4,"level":"debug","message":"Executed query","rows":0,"timestamp":"2026-05-07T00:12:59.807Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:12:59 +0000] \"GET /api/v1/deployments?page=1&limit=20 HTTP/1.1\" 304 - \"http://localhost:3000/history\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:12:59.809Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:13:00.968Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:13:00 +0000] \"GET /api/v1/deployments/stats/dashboard HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:13:00.969Z"}
+{"duration":0,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:13:00.975Z"}
+{"duration":0,"level":"debug","message":"Executed query","rows":0,"timestamp":"2026-05-07T00:13:00.976Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:13:00 +0000] \"GET /api/v1/deployments?limit=8 HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:13:00.977Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:13:00.980Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:13:00 +0000] \"GET /api/v1/deployments/stats/dashboard HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:13:00.981Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:13:00.984Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":0,"timestamp":"2026-05-07T00:13:00.985Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:13:00 +0000] \"GET /api/v1/deployments?limit=8 HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:13:00.986Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:13:15.270Z"}
+{"duration":7,"level":"debug","message":"Executed query","rows":0,"timestamp":"2026-05-07T00:13:15.443Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:13:15 +0000] \"POST /api/v1/auth/login HTTP/1.1\" 200 461 \"http://localhost:3000/login\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:13:15.446Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:13:15.507Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:13:15 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 200 35 \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:13:15.510Z"}
+{"duration":4,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:13:15.535Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:13:15 +0000] \"GET /api/v1/deployments/stats/dashboard HTTP/1.1\" 200 160 \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:13:15.538Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:13:15.546Z"}
+{"duration":7,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:13:15.554Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:13:15 +0000] \"GET /api/v1/deployments?limit=8 HTTP/1.1\" 200 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:13:15.566Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:13:15.577Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:13:15 +0000] \"GET /api/v1/deployments/stats/dashboard HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:13:15.579Z"}
+{"duration":4,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:13:15.590Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:13:15.596Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:13:15 +0000] \"GET /api/v1/deployments?limit=8 HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:13:15.601Z"}
+{"duration":257,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:13:15.810Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:13:15 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:13:15.813Z"}
+{"duration":26,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:13:24.054Z"}
+{"duration":16,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:13:24.071Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:13:24 +0000] \"GET /api/v1/deployments?page=1&limit=15 HTTP/1.1\" 200 - \"http://localhost:3000/deployments\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:13:24.077Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:13:24.087Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:13:24.090Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:13:24 +0000] \"GET /api/v1/deployments?page=1&limit=15 HTTP/1.1\" 304 - \"http://localhost:3000/deployments\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:13:24.092Z"}
+{"duration":5,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:13:25.488Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":0,"timestamp":"2026-05-07T00:13:25.492Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:13:25 +0000] \"GET /api/v1/qa/pending? HTTP/1.1\" 304 - \"http://localhost:3000/qa\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:13:25.494Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:13:25.511Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":0,"timestamp":"2026-05-07T00:13:25.516Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:13:25 +0000] \"GET /api/v1/qa/pending? HTTP/1.1\" 304 - \"http://localhost:3000/qa\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:13:25.518Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:13:26.998Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:13:27.000Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:13:27 +0000] \"GET /api/v1/deployments?page=1&limit=15 HTTP/1.1\" 304 - \"http://localhost:3000/deployments\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:13:27.001Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:13:27.018Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:13:27.021Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:13:27 +0000] \"GET /api/v1/deployments?page=1&limit=15 HTTP/1.1\" 304 - \"http://localhost:3000/deployments\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:13:27.022Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:13:45.488Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:13:45 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/deployments\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:13:45.490Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:13:49.747Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:13:49 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/infra\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:13:49.747Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:13:58.793Z"}
+{"duration":4,"level":"debug","message":"Executed query","rows":0,"timestamp":"2026-05-07T00:13:58.798Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:13:58 +0000] \"GET /api/v1/qa/pending? HTTP/1.1\" 304 - \"http://localhost:3000/qa\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:13:58.808Z"}
+{"duration":5,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:13:58.830Z"}
+{"duration":4,"level":"debug","message":"Executed query","rows":0,"timestamp":"2026-05-07T00:13:58.835Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:13:58 +0000] \"GET /api/v1/qa/pending? HTTP/1.1\" 304 - \"http://localhost:3000/qa\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:13:58.838Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:14:05.171Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:14:05.174Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:14:05 +0000] \"GET /api/v1/deployments?page=1&limit=20 HTTP/1.1\" 200 - \"http://localhost:3000/history\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:14:05.182Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:14:05.202Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:14:05.205Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:14:05 +0000] \"GET /api/v1/deployments?page=1&limit=20 HTTP/1.1\" 304 - \"http://localhost:3000/history\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:14:05.207Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:14:11.064Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:14:11 +0000] \"GET /api/v1/deployments/stats/dashboard HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:14:11.067Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:14:11.074Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:14:11.078Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:14:11 +0000] \"GET /api/v1/deployments?limit=8 HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:14:11.080Z"}
+{"duration":4,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:14:11.088Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:14:11 +0000] \"GET /api/v1/deployments/stats/dashboard HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:14:11.096Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:14:11.104Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:14:11.109Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:14:11 +0000] \"GET /api/v1/deployments?limit=8 HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:14:11.110Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:14:15.478Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:14:15 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:14:15.479Z"}
+{"duration":80,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:14:45.563Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:14:45 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:14:45.564Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:14:49.766Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:14:49 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/infra\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:14:49.766Z"}
+{"duration":23,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:15:15.527Z"}
+{"duration":21,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:15:15.550Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:15:15 +0000] \"GET /api/v1/deployments?page=1&limit=20 HTTP/1.1\" 304 - \"http://localhost:3000/history\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:15:15.553Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:15:15.579Z"}
+{"duration":4,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:15:15.584Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:15:15 +0000] \"GET /api/v1/deployments?page=1&limit=20 HTTP/1.1\" 304 - \"http://localhost:3000/history\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:15:15.589Z"}
+{"duration":151,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:15:15.671Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:15:15 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/history\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:15:15.673Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:15:17.235Z"}
+{"duration":4,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:15:17.240Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:15:17 +0000] \"GET /api/v1/deployments?limit=8 HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:15:17.244Z"}
+{"duration":27,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:15:17.256Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:15:17 +0000] \"GET /api/v1/deployments/stats/dashboard HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:15:17.258Z"}
+{"duration":3,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:15:17.265Z"}
+{"duration":5,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:15:17.284Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:15:17 +0000] \"GET /api/v1/deployments/stats/dashboard HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:15:17.286Z"}
+{"duration":21,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:15:17.289Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:15:17 +0000] \"GET /api/v1/deployments?limit=8 HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:15:17.291Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:15:45.475Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:15:45 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:15:45.476Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:15:49.781Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:15:49 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/infra\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:15:49.782Z"}
+{"duration":2,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:16:15.751Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:16:15 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:16:15.752Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:16:45.747Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:16:45 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:16:45.748Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:16:49.871Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:16:49 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/infra\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:16:49.872Z"}
+{"duration":50,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:17:49.799Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:17:49 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:17:49.800Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:17:49.805Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:17:49 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/infra\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:17:49.805Z"}
+{"duration":226,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:18:50.001Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:18:50 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:18:50.002Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:18:50.008Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:18:50 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/infra\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:18:50.008Z"}
+{"duration":78,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:19:49.897Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:19:49 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:19:49.898Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:19:49.904Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:19:49 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/infra\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:19:49.905Z"}
+{"duration":79,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:20:49.840Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:20:49 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:20:49.841Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:20:49.850Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:20:49 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/infra\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:20:49.851Z"}
+{"duration":57,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:21:49.820Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:21:49 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/infra\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:21:49.821Z"}
+{"duration":0,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:21:49.828Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:21:49 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:21:49.829Z"}
+{"duration":70,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:22:49.830Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:22:49 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/infra\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:22:49.831Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:22:49.840Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:22:49 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:22:49.841Z"}
+{"duration":95,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:23:49.855Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:23:49 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/infra\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:23:49.855Z"}
+{"duration":1,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:23:49.864Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:23:49 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:23:49.866Z"}
+{"duration":64,"level":"debug","message":"Executed query","rows":1,"timestamp":"2026-05-07T00:24:37.402Z"}
+{"level":"info","message":"::1 - - [07/May/2026:00:24:37 +0000] \"GET /api/v1/notifications/unread-count HTTP/1.1\" 304 - \"http://localhost:3000/dashboard\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36\"","timestamp":"2026-05-07T00:24:37.403Z"}
