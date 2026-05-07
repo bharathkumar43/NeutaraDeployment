@@ -1,1 +1,0 @@
-{"version":3,"file":"qa.controller.d.ts","sourceRoot":"","sources":["../../src/controllers/qa.controller.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,OAAO,EAAE,QAAQ,EAAE,MAAM,SAAS,CAAC;AAO5C,eAAO,MAAM,oBAAoB,GAAU,KAAK,OAAO,EAAE,KAAK,QAAQ,KAAG,OAAO,CAAC,IAAI,CA0CpF,CAAC;AAEF,eAAO,MAAM,iBAAiB,GAAU,KAAK,OAAO,EAAE,KAAK,QAAQ,KAAG,OAAO,CAAC,IAAI,CA8DjF,CAAC"}

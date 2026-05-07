@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Build output
+dist/
+**/dist/
+build/
+**/build/
+
+# Environment files (contain secrets)
+.env
+**/.env
+.env.local
+.env.production
+.env.*.local
+
+# Uploads (runtime data, not source)
+backend/uploads/
+
+# Logs
+*.log
+npm-debug.log*
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE / Claude Code local settings
+.vscode/
+.idea/
+.claude/settings.local.json
+
+# Vite cache
+**/.vite/
