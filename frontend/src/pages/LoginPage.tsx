@@ -22,15 +22,17 @@ export const LoginPage: React.FC = () => {
     setAzureLoading(true);
     const state = crypto.randomUUID();
     sessionStorage.setItem('azure_oauth_state', state);
+    const TENANT_ID = '66d8848d-26b6-4147-8124-127624d7b3a6';
+    const CLIENT_ID = '861e696d-f41c-41ee-a7c2-c838fd185d6d';
     const params = new URLSearchParams({
-      client_id: import.meta.env.VITE_AZURE_CLIENT_ID,
+      client_id: CLIENT_ID,
       response_type: 'code',
       redirect_uri: `${window.location.origin}/auth/callback`,
       response_mode: 'query',
       scope: 'openid profile email',
       state,
     });
-    window.location.href = `https://login.microsoftonline.com/${import.meta.env.VITE_AZURE_TENANT_ID}/oauth2/v2.0/authorize?${params}`;
+    window.location.href = `https://login.microsoftonline.com/${TENANT_ID}/oauth2/v2.0/authorize?${params}`;
   };
 
   const handleAdminLogin = handleSubmit(async ({ email, password }) => {
