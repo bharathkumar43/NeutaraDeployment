@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
 import { query } from '../database/connection';
 import { generateToken } from '../utils/jwt';
-import { validateAzureToken } from '../utils/azureAuth';
+import { decodeAzureToken } from '../utils/azureAuth';
 import { UserRole } from '../types';
 import logger from '../utils/logger';
 
@@ -99,7 +99,7 @@ export const azureLogin = async (req: Request, res: Response): Promise<void> => 
     return;
   }
   try {
-    const payload = await validateAzureToken(idToken);
+    const payload = decodeAzureToken(idToken);
     const email = (payload.preferred_username || payload.email || '').toLowerCase();
     const displayName = payload.name || email.split('@')[0];
 
@@ -211,7 +211,7 @@ export const azureExchange = async (req: Request, res: Response): Promise<void> 
       return;
     }
 
-    const payload      = await validateAzureToken(tokenData.id_token);
+    const payload      = decodeAzureToken(tokenData.id_token);
     const email        = (payload.preferred_username || payload.email || '').toLowerCase();
     const displayName  = payload.name || email.split('@')[0];
 

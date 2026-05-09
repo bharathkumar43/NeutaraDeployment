@@ -12,10 +12,11 @@ CREATE TABLE IF NOT EXISTS users (
   id            UUID         PRIMARY KEY DEFAULT uuid_generate_v4(),
   name          VARCHAR(255) NOT NULL,
   email         VARCHAR(255) NOT NULL UNIQUE,
-  password_hash VARCHAR(255) NOT NULL,
+  password_hash VARCHAR(255),
   role          VARCHAR(50)  NOT NULL CHECK (role IN ('dev','qa','infra','admin','viewer')),
   team          VARCHAR(100),
   avatar_url    TEXT,
+  auth_type     VARCHAR(20)  NOT NULL DEFAULT 'azure',
   is_active     BOOLEAN      NOT NULL DEFAULT true,
   last_login    TIMESTAMP,
   created_at    TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -184,12 +185,12 @@ CREATE INDEX IF NOT EXISTS idx_notif_is_read ON notifications(is_read);
 -- ============================================================
 -- SEED DATA  (password = Admin@123)
 -- ============================================================
-INSERT INTO users (id, name, email, password_hash, role, team) VALUES
-  (uuid_generate_v4(), 'Admin User',      'admin@neutara.com', '$2a$10$tZ2ourCNMUxQfoiDhBxDee/1ibM3vTJgiGwV3B9TLCjDF4mKMAfA6', 'admin', 'Management'),
-  (uuid_generate_v4(), 'Dev User',        'dev@neutara.com',   '$2a$10$tZ2ourCNMUxQfoiDhBxDee/1ibM3vTJgiGwV3B9TLCjDF4mKMAfA6', 'dev',   'Development'),
-  (uuid_generate_v4(), 'QA Engineer',     'qa@neutara.com',    '$2a$10$tZ2ourCNMUxQfoiDhBxDee/1ibM3vTJgiGwV3B9TLCjDF4mKMAfA6', 'qa',    'Quality Assurance'),
-  (uuid_generate_v4(), 'Infra Engineer',  'infra@neutara.com', '$2a$10$tZ2ourCNMUxQfoiDhBxDee/1ibM3vTJgiGwV3B9TLCjDF4mKMAfA6', 'infra', 'Infrastructure'),
-  (uuid_generate_v4(), 'Project Manager', 'pm@neutara.com',    '$2a$10$tZ2ourCNMUxQfoiDhBxDee/1ibM3vTJgiGwV3B9TLCjDF4mKMAfA6', 'viewer','Management')
+INSERT INTO users (id, name, email, password_hash, role, team, auth_type) VALUES
+  (uuid_generate_v4(), 'Admin User',      'admin@neutara.com', '$2a$10$tZ2ourCNMUxQfoiDhBxDee/1ibM3vTJgiGwV3B9TLCjDF4mKMAfA6', 'admin', 'Management',       'password'),
+  (uuid_generate_v4(), 'Dev User',        'dev@neutara.com',   '$2a$10$tZ2ourCNMUxQfoiDhBxDee/1ibM3vTJgiGwV3B9TLCjDF4mKMAfA6', 'dev',   'Development',      'password'),
+  (uuid_generate_v4(), 'QA Engineer',     'qa@neutara.com',    '$2a$10$tZ2ourCNMUxQfoiDhBxDee/1ibM3vTJgiGwV3B9TLCjDF4mKMAfA6', 'qa',    'Quality Assurance','password'),
+  (uuid_generate_v4(), 'Infra Engineer',  'infra@neutara.com', '$2a$10$tZ2ourCNMUxQfoiDhBxDee/1ibM3vTJgiGwV3B9TLCjDF4mKMAfA6', 'infra', 'Infrastructure',   'password'),
+  (uuid_generate_v4(), 'Project Manager', 'pm@neutara.com',    '$2a$10$tZ2ourCNMUxQfoiDhBxDee/1ibM3vTJgiGwV3B9TLCjDF4mKMAfA6', 'viewer','Management',       'password')
 ON CONFLICT (email) DO NOTHING;
 
 INSERT INTO jobs (id, job_id, job_name, project_name) VALUES
