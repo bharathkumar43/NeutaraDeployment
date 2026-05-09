@@ -9,16 +9,18 @@ interface AuthStore {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
+  loginWithAzure: (idToken: string) => Promise<void>;
+  loginWithCode: (code: string, redirectUri: string) => Promise<void>;
   logout: () => void;
   hasRole: (...roles: UserRole[]) => boolean;
   canAccess: (feature: string) => boolean;
 }
 
 const ROLE_PERMISSIONS: Record<UserRole, string[]> = {
-  dev: ['create_deployment', 'view_own', 'acknowledge', 'view_all'],
-  qa: ['qa_approve', 'view_all', 'create_deployment'],
-  infra: ['infra_deploy', 'view_all'],
-  admin: ['create_deployment', 'view_all', 'qa_approve', 'infra_deploy', 'acknowledge', 'manage_users', 'view_audit'],
+  dev:    ['create_deployment', 'view_own', 'acknowledge', 'view_all'],
+  qa:     ['qa_approve', 'view_all', 'create_deployment'],
+  infra:  ['infra_deploy', 'view_all'],
+  admin:  ['create_deployment', 'view_all', 'qa_approve', 'infra_deploy', 'acknowledge', 'manage_users', 'view_audit'],
   viewer: ['view_all'],
 };
 
@@ -34,6 +36,30 @@ export const useAuthStore = create<AuthStore>()(
         set({ isLoading: true });
         try {
           const { token, user } = await authService.login(email, password);
+          localStorage.setItem('neutara_token', token);
+          set({ user, token, isAuthenticated: true, isLoading: false });
+        } catch (err) {
+          set({ isLoading: false });
+          throw err;
+        }
+      },
+
+      loginWithAzure: async (idToken) => {
+        set({ isLoading: true });
+        try {
+          const { token, user } = await authService.azureLogin(idToken);
+          localStorage.setItem('neutara_token', token);
+          set({ user, token, isAuthenticated: true, isLoading: false });
+        } catch (err) {
+          set({ isLoading: false });
+          throw err;
+        }
+      },
+
+      loginWithCode: async (code, redirectUri) => {
+        set({ isLoading: true });
+        try {
+          const { token, user } = await authService.exchangeAzureCode(code, redirectUri);
           localStorage.setItem('neutara_token', token);
           set({ user, token, isAuthenticated: true, isLoading: false });
         } catch (err) {
