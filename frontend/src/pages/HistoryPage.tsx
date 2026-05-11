@@ -83,6 +83,7 @@ export const HistoryPage: React.FC = () => {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-gray-100">
+                    <th className="table-header">Req #</th>
                     <th className="table-header">Deployment</th>
                     <th className="table-header">Env</th>
                     <th className="table-header">Branch</th>
@@ -96,6 +97,11 @@ export const HistoryPage: React.FC = () => {
                 <tbody className="divide-y divide-gray-50">
                   {deployments.map((dep) => (
                     <tr key={dep.id} onClick={() => navigate(`/deployments/${dep.id}`)} className="hover:bg-gray-50 cursor-pointer transition-colors group">
+                      <td className="table-cell">
+                        {dep.request_number
+                          ? <span className="text-xs font-bold text-blue-600 tracking-widest bg-blue-50 px-2 py-0.5 rounded whitespace-nowrap">{dep.request_number}</span>
+                          : <span className="text-xs text-gray-400">—</span>}
+                      </td>
                       <td className="table-cell">
                         <p className="font-medium text-blue-700 group-hover:text-blue-900 max-w-[200px] truncate">{dep.deployment_title}</p>
                         <p className="text-xs text-gray-400 mt-0.5">{dep.project_name}</p>

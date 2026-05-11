@@ -21,11 +21,11 @@ interface FormData {
   service_name:           string;
   branch_name:            string;
   base_branch:            string;
-  artifact_version:       string;
   pull_request_link:      string;
   pr_approved_by:         string;
   description:            string;
   risk_level:             string;
+  env_name:               string;
   // Section 3 — Deployment Target
   environments:           string[];
   product_type:           string;
@@ -221,7 +221,7 @@ export const NewDeploymentPage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Request Number</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Deployment Request</label>
               <input
                 readOnly
                 value={isEdit ? '' : (requestNumber || '…')}
@@ -249,8 +249,8 @@ export const NewDeploymentPage: React.FC = () => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Team <span className="text-red-500">*</span></label>
               <select {...register('team', { required: 'Required' })} className={selectCls(errors.team)}>
-                <option value="">e.g. Platform Team</option>
-                {['Platform Team','Backend Team','Frontend Team','DevOps Team','Data Team','QA Team','Mobile Team'].map(t => <option key={t} value={t}>{t}</option>)}
+                <option value="">Select team...</option>
+                {['Backend Team','Frontend Team','DevOps Team','QA Team'].map(t => <option key={t} value={t}>{t}</option>)}
               </select>
               {errMsg(errors.team?.message)}
             </div>
@@ -314,12 +314,6 @@ export const NewDeploymentPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Build / Artifact Version <span className="text-red-500">*</span></label>
-              <input {...register('artifact_version', { required: 'Required' })} className={inputCls(errors.artifact_version)} placeholder="e.g. 1.2.3" />
-              {errMsg(errors.artifact_version?.message)}
-            </div>
-
-            <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Pull Request Link</label>
               <input {...register('pull_request_link')} className={inputCls()} placeholder="e.g. https://github.com/org/repo/pull/123" />
             </div>
@@ -337,6 +331,12 @@ export const NewDeploymentPage: React.FC = () => {
                 <option value="high">🟠 High</option>
                 <option value="critical">🔴 Critical</option>
               </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Environment <span className="text-red-500">*</span></label>
+              <input {...register('env_name', { required: 'Required' })} className={inputCls(errors.env_name)} placeholder="e.g. Staging, Production, QA" />
+              {errMsg(errors.env_name?.message)}
             </div>
 
             <div className="md:col-span-2">

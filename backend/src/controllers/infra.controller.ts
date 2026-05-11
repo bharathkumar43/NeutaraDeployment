@@ -49,9 +49,9 @@ export const getInfraQueue = async (req: Request, res: Response): Promise<void> 
 };
 
 export const startDeployment = async (req: Request, res: Response): Promise<void> => {
-  const { id }               = req.params;
-  const { deployment_notes } = req.body;
-  const infraUserId          = req.user!.userId;
+  const { id }                                   = req.params;
+  const { deployment_notes, artifact_version }   = req.body;
+  const infraUserId                              = req.user!.userId;
 
   try {
     const depResult = await query(`SELECT * FROM deployment_requests WHERE id = $1`, [id]);
@@ -63,9 +63,10 @@ export const startDeployment = async (req: Request, res: Response): Promise<void
 
     const logId = uuidv4();
     await query(
-      `INSERT INTO deployment_infra_logs (id, deployment_id, infra_user_id, deployment_notes, deployment_status)
-       VALUES ($1, $2, $3, $4, 'in_progress')`,
-      [logId, id, infraUserId, deployment_notes || 'Deployment started']
+      `INSERT INTO deployment_infra_logs
+         (id, deployment_id, infra_user_id, deployment_notes, artifact_version, deployment_status)
+       VALUES ($1, $2, $3, $4, $5, 'in_progress')`,
+      [logId, id, infraUserId, deployment_notes || 'Deployment started', artifact_version || null]
     );
 
     await query(`UPDATE deployment_requests SET status = 'deployment_in_progress' WHERE id = $1`, [id]);

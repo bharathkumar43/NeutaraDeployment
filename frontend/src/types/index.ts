@@ -24,6 +24,7 @@ export interface AuthState {
 
 export interface DeploymentRequest {
   id: string;
+  request_number?: string;
   deployment_title: string;
   project_name: string;
   job_id?: string;

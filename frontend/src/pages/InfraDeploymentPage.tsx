@@ -14,7 +14,7 @@ import { PageLoader, ButtonSpinner } from '../components/common/LoadingSpinner';
 import { EmptyState } from '../components/common/EmptyState';
 import { formatRelative } from '../utils/format';
 
-interface StartFormData { deployment_notes: string; }
+interface StartFormData { artifact_version: string; deployment_notes: string; }
 interface CompleteFormData {
   deployment_status: 'success' | 'failed';
   deployment_notes: string;
@@ -68,7 +68,7 @@ export const InfraDeploymentPage: React.FC = () => {
     if (!selectedDep) return;
     setSubmitting(true);
     try {
-      await infraService.startDeployment(selectedDep.id, data.deployment_notes);
+      await infraService.startDeployment(selectedDep.id, data.deployment_notes, data.artifact_version);
       toast.success('🚀 Deployment started successfully!');
       closeModal(); load();
     } finally { setSubmitting(false); }
@@ -220,6 +220,17 @@ export const InfraDeploymentPage: React.FC = () => {
                 <EnvBadge env={selectedDep.environment} />
                 <code className="text-xs bg-gray-200 px-1.5 py-0.5 rounded">{selectedDep.branch_name}</code>
               </div>
+            </div>
+            <div>
+              <label className="form-label">Build / Artifact Version <span className="text-red-500">*</span></label>
+              <input
+                {...startForm.register('artifact_version', { required: 'Artifact version is required' })}
+                className="form-input"
+                placeholder="e.g. 1.2.3 or build-456"
+              />
+              {startForm.formState.errors.artifact_version && (
+                <p className="form-error">{startForm.formState.errors.artifact_version.message}</p>
+              )}
             </div>
             <div>
               <label className="form-label">Deployment Notes <span className="text-red-500">*</span></label>

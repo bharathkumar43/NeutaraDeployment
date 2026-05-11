@@ -222,7 +222,7 @@ export const DeploymentDetailPage: React.FC = () => {
 
           {/* Audit Trail Tab */}
           {activeTab === 'audit' && (
-            <AuditTimeline logs={deployment.audit_trail || []} />
+            <AuditTimeline logs={deployment.audit_trail || []} requestNumber={deployment.request_number} />
           )}
         </div>
       </div>

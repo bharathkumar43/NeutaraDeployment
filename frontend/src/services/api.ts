@@ -18,16 +18,17 @@ let redirectingToLogin = false;
 api.interceptors.response.use(
   (response) => response,
   (error: AxiosError<{ message: string }>) => {
+    const url = error.config?.url ?? '';
     if (error.response?.status === 401) {
       if (!redirectingToLogin) {
         redirectingToLogin = true;
-        // Clear all auth state including the Zustand persisted store
         localStorage.removeItem('neutara_token');
         localStorage.removeItem('neutara_user');
         localStorage.removeItem('neutara_auth');
         window.location.href = '/login';
       }
-    } else if (error.response?.status !== 404) {
+    } else if (error.response?.status !== 404 && !url.includes('/auth/azure')) {
+      // Skip toast for Azure auth routes — AuthCallbackPage handles its own error UI
       const msg = error.response?.data?.message || 'Something went wrong';
       toast.error(msg);
     }

@@ -19,11 +19,17 @@ const ACTION_COLORS: Record<string, string> = {
   DEPLOYMENT_STARTED: 'border-blue-400 bg-blue-50',
 };
 
-export const AuditTimeline: React.FC<{ logs: AuditLog[] }> = ({ logs }) => {
+export const AuditTimeline: React.FC<{ logs: AuditLog[]; requestNumber?: string }> = ({ logs, requestNumber }) => {
   if (!logs.length) return <p className="text-sm text-gray-500 text-center py-4">No activity yet.</p>;
 
   return (
     <div className="relative">
+      {requestNumber && (
+        <div className="flex items-center gap-2 mb-4 pb-3 border-b border-gray-100">
+          <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Deployment Request</span>
+          <span className="text-sm font-bold text-blue-600 tracking-widest bg-blue-50 px-2 py-0.5 rounded">{requestNumber}</span>
+        </div>
+      )}
       <div className="absolute left-5 top-0 bottom-0 w-0.5 bg-gray-200" />
       <div className="space-y-4">
         {logs.map((log) => {

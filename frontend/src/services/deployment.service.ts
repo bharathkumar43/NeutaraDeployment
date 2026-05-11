@@ -92,8 +92,8 @@ export const infraService = {
     return { data: res.data.data, pagination: res.data.pagination! };
   },
 
-  async startDeployment(id: string, notes: string): Promise<void> {
-    await api.post(`/infra/deployments/${id}/start`, { deployment_notes: notes });
+  async startDeployment(id: string, notes: string, artifactVersion: string): Promise<void> {
+    await api.post(`/infra/deployments/${id}/start`, { deployment_notes: notes, artifact_version: artifactVersion });
   },
 
   async completeDeployment(id: string, formData: FormData): Promise<void> {

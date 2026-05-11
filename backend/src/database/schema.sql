@@ -194,11 +194,46 @@ INSERT INTO users (id, name, email, password_hash, role, team, auth_type) VALUES
 ON CONFLICT (email) DO NOTHING;
 
 INSERT INTO jobs (id, job_id, job_name, project_name) VALUES
-  (uuid_generate_v4(), 'JOB-001', 'Build & Deploy API Service',   'Neutara Platform'),
-  (uuid_generate_v4(), 'JOB-002', 'Deploy Frontend Application',  'Neutara Platform'),
-  (uuid_generate_v4(), 'JOB-003', 'Database Migration Job',       'Neutara Platform'),
-  (uuid_generate_v4(), 'JOB-004', 'Integration Test Suite',       'Neutara Platform'),
-  (uuid_generate_v4(), 'JOB-005', 'Mobile App Build',             'Neutara Mobile')
+  -- Content
+  (uuid_generate_v4(), 'MultiUserQueue',    'MultiUserQueue',    'Content'),
+  (uuid_generate_v4(), 'AutoDelta',         'AutoDelta',         'Content'),
+  (uuid_generate_v4(), 'MoveSmall',         'MoveSmall',         'Content'),
+  (uuid_generate_v4(), 'MoveLarge',         'MoveLarge',         'Content'),
+  (uuid_generate_v4(), 'Stale',             'Stale',             'Content'),
+  (uuid_generate_v4(), 'Permission',        'Permission',        'Content'),
+  (uuid_generate_v4(), 'Hyperlink',         'Hyperlink',         'Content'),
+  (uuid_generate_v4(), 'API',               'API',               'Content'),
+  (uuid_generate_v4(), 'PreScan',           'PreScan',           'Content'),
+  (uuid_generate_v4(), 'Aggregate',         'Aggregate',         'Content'),
+  (uuid_generate_v4(), 'ConflictAutoRetry', 'ConflictAutoRetry', 'Content'),
+  (uuid_generate_v4(), 'DataSize',          'DataSize',          'Content'),
+  (uuid_generate_v4(), 'sharedLink',        'sharedLink',        'Content'),
+  (uuid_generate_v4(), 'hyperLinkUpdate',   'hyperLinkUpdate',   'Content'),
+  -- Message
+  (uuid_generate_v4(), 'Channel Management Jobs',          'Channel Management Jobs',          'Message'),
+  (uuid_generate_v4(), 'Data Picking Jobs',                'Data Picking Jobs',                'Message'),
+  (uuid_generate_v4(), 'Message Movement Jobs',            'Message Movement Jobs',            'Message'),
+  (uuid_generate_v4(), 'Channel Closure & Sharing Jobs',   'Channel Closure & Sharing Jobs',   'Message'),
+  (uuid_generate_v4(), 'Monitoring & Recovery Jobs',       'Monitoring & Recovery Jobs',       'Message'),
+  (uuid_generate_v4(), 'Status Update Jobs',               'Status Update Jobs',               'Message'),
+  (uuid_generate_v4(), 'Reporting Jobs',                   'Reporting Jobs',                   'Message'),
+  (uuid_generate_v4(), 'API Jobs',                         'API Jobs',                         'Message'),
+  -- Email
+  (uuid_generate_v4(), 'Email Processing Jobs',            'Email Processing Jobs',            'Email'),
+  (uuid_generate_v4(), 'Email Picking',                    'Email Picking',                    'Email'),
+  (uuid_generate_v4(), 'Email Copying',                    'Email Copying',                    'Email'),
+  (uuid_generate_v4(), 'Calendar Migration Jobs',          'Calendar Migration Jobs',          'Email'),
+  (uuid_generate_v4(), 'Calendar Picking',                 'Calendar Picking',                 'Email'),
+  (uuid_generate_v4(), 'Calendar Copying',                 'Calendar Copying',                 'Email'),
+  (uuid_generate_v4(), 'Contact Migration Jobs',           'Contact Migration Jobs',           'Email'),
+  (uuid_generate_v4(), 'Contact Picking',                  'Contact Picking',                  'Email'),
+  (uuid_generate_v4(), 'Contact Moving',                   'Contact Moving',                   'Email'),
+  (uuid_generate_v4(), 'Status & Reporting Jobs',          'Status & Reporting Jobs',          'Email'),
+  (uuid_generate_v4(), 'Workspace Status Update',          'Workspace Status Update',          'Email'),
+  (uuid_generate_v4(), 'API Services',                     'API Services',                     'Email'),
+  (uuid_generate_v4(), 'General API Services',             'General API Services',             'Email'),
+  (uuid_generate_v4(), 'Email Migration API Services',     'Email Migration API Services',     'Email'),
+  (uuid_generate_v4(), 'UI Jobs',                          'UI Jobs',                          'Email')
 ON CONFLICT (job_id) DO NOTHING;
 
 INSERT INTO branches (id, branch_name, project_name) VALUES

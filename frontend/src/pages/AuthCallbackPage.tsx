@@ -1,13 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 
 export const AuthCallbackPage: React.FC = () => {
   const navigate = useNavigate();
-  const { loginWithCode } = useAuthStore();
+  const { loginWithCode, isAuthenticated } = useAuthStore();
   const [errorMsg, setErrorMsg] = useState('');
+  const attempted = useRef(false);
 
   useEffect(() => {
+    // Guard against React StrictMode double-invoke and back-navigation
+    if (attempted.current) return;
+    if (isAuthenticated) { navigate('/dashboard', { replace: true }); return; }
+    attempted.current = true;
+
     const params           = new URLSearchParams(window.location.search);
     const code             = params.get('code');
     const state            = params.get('state');
@@ -37,10 +43,7 @@ export const AuthCallbackPage: React.FC = () => {
 
     loginWithCode(code, redirectUri)
       .then(() => navigate('/dashboard', { replace: true }))
-      .catch(() => {
-        // Error toast is shown by the API interceptor; redirect back to login
-        navigate('/login', { replace: true });
-      });
+      .catch(() => navigate('/login', { replace: true }));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

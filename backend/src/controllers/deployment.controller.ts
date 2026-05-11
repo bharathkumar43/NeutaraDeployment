@@ -21,7 +21,7 @@ export const createDeployment = async (req: Request, res: Response): Promise<voi
     deployment_title, project_name, job_id, branch_name, environment,
     ticket_link, description, priority, status,
     risk_level, downtime_required, db_migration, requested_deploy_date,
-    repository, service_name, base_branch, commit_sha, artifact_version,
+    repository, service_name, base_branch, commit_sha, env_name,
     pull_request_link, pr_approved_by, feature_flags, config_changes, dependencies,
     requested_by_name, team,
   } = req.body;
@@ -30,7 +30,7 @@ export const createDeployment = async (req: Request, res: Response): Promise<voi
   const newId       = uuidv4();
 
   const extraMeta = JSON.stringify({
-    repository, service_name, base_branch, commit_sha, artifact_version,
+    repository, service_name, base_branch, commit_sha, env_name,
     pull_request_link, pr_approved_by, feature_flags, config_changes,
     dependencies, requested_by_name, team,
   });
@@ -89,12 +89,12 @@ export const updateDraft = async (req: Request, res: Response): Promise<void> =>
     deployment_title, project_name, job_id, branch_name, environment,
     ticket_link, description, priority, status,
     risk_level, downtime_required, db_migration, requested_deploy_date,
-    repository, service_name, base_branch, commit_sha, artifact_version,
+    repository, service_name, base_branch, commit_sha, env_name,
     pull_request_link, pr_approved_by, feature_flags, config_changes, dependencies,
     requested_by_name, team,
   } = req.body;
   const extraMeta = JSON.stringify({
-    repository, service_name, base_branch, commit_sha, artifact_version,
+    repository, service_name, base_branch, commit_sha, env_name,
     pull_request_link, pr_approved_by, feature_flags, config_changes,
     dependencies, requested_by_name, team,
   });
