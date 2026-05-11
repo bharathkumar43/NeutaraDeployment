@@ -3,8 +3,15 @@ import { v4 as uuidv4 } from 'uuid';
 import { query } from '../database/connection';
 import { createAuditLog } from '../services/audit.service';
 import { createNotification } from '../services/notification.service';
+import { sendDevAcknowledgmentEmail, sendDeploymentFailedEmail } from '../services/email.service';
 import logger from '../utils/logger';
 import path from 'path';
+
+const DEP_WITH_USER = `
+  SELECT dr.*, u.name AS raised_by_name, u.email AS raised_by_email
+  FROM deployment_requests dr
+  LEFT JOIN users u ON dr.raised_by = u.id
+`;
 
 export const getInfraQueue = async (req: Request, res: Response): Promise<void> => {
   const { environment, page = '1', limit = '20' } = req.query;
@@ -54,7 +61,7 @@ export const startDeployment = async (req: Request, res: Response): Promise<void
   const infraUserId                              = req.user!.userId;
 
   try {
-    const depResult = await query(`SELECT * FROM deployment_requests WHERE id = $1`, [id]);
+    const depResult = await query(`${DEP_WITH_USER} WHERE dr.id = $1`, [id]);
     const dep = depResult.rows[0];
     if (!dep) { res.status(404).json({ success: false, message: 'Deployment not found' }); return; }
     if (dep.status !== 'pending_infra_deployment') {
@@ -102,12 +109,15 @@ export const completeDeployment = async (req: Request, res: Response): Promise<v
   }
 
   try {
-    const depResult = await query(`SELECT * FROM deployment_requests WHERE id = $1`, [id]);
+    const depResult = await query(`${DEP_WITH_USER} WHERE dr.id = $1`, [id]);
     const dep = depResult.rows[0];
     if (!dep) { res.status(404).json({ success: false, message: 'Deployment not found' }); return; }
     if (!['deployment_in_progress', 'pending_infra_deployment'].includes(dep.status as string)) {
       res.status(400).json({ success: false, message: 'Deployment is not in a deployable state' }); return;
     }
+
+    const infraUserResult = await query(`SELECT name FROM users WHERE id = $1`, [infraUserId]);
+    const infraUserName   = infraUserResult.rows[0]?.name || 'Infra Team';
 
     const screenshotPath = file ? path.join('uploads', file.filename) : null;
     const screenshotName = file ? file.originalname : null;
@@ -119,6 +129,7 @@ export const completeDeployment = async (req: Request, res: Response): Promise<v
       [id, infraUserId]
     );
 
+    let savedNotes = deployment_notes;
     if (existingLog.rows[0]) {
       await query(
         `UPDATE deployment_infra_logs
@@ -138,6 +149,7 @@ export const completeDeployment = async (req: Request, res: Response): Promise<v
         [uuidv4(), id, infraUserId, deployment_notes || 'Deployment completed',
          screenshotPath, screenshotName, deployment_status, completion_comments || null]
       );
+      savedNotes = deployment_notes || 'Deployment completed';
     }
 
     const newStatus = deployment_status === 'success' ? 'pending_dev_acknowledgment' : 'deployment_failed';
@@ -158,6 +170,28 @@ export const completeDeployment = async (req: Request, res: Response): Promise<v
         : `"${dep.deployment_title}" deployment failed. ${completion_comments}`,
       type: deployment_status === 'success' ? 'success' : 'error',
     });
+
+    if (deployment_status === 'success') {
+      sendDevAcknowledgmentEmail({
+        requestNumber:   dep.request_number   || '',
+        deploymentTitle: dep.deployment_title as string,
+        environment:     dep.environment      as string,
+        devEmail:        dep.raised_by_email  || '',
+        devName:         dep.raised_by_name   || '',
+        infraUserName,
+        deploymentNotes: savedNotes,
+      }).catch((e) => logger.error('Acknowledgment email error', e));
+    } else {
+      sendDeploymentFailedEmail({
+        requestNumber:   dep.request_number   || '',
+        deploymentTitle: dep.deployment_title as string,
+        environment:     dep.environment      as string,
+        devEmail:        dep.raised_by_email  || '',
+        devName:         dep.raised_by_name   || '',
+        infraUserName,
+        failureComments: completion_comments,
+      }).catch((e) => logger.error('Deployment failed email error', e));
+    }
 
     res.json({ success: true, data: { status: newStatus }, message: `Deployment marked as ${deployment_status}` });
   } catch (err) {

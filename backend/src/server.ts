@@ -19,6 +19,9 @@ const PORT = parseInt(process.env.PORT || '3200');
 // Security headers
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
 
+// Trust reverse proxy so real client IPs are used for rate limiting
+app.set('trust proxy', 1);
+
 // CORS
 app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:3000',
@@ -31,7 +34,9 @@ app.use(cors({
 if (process.env.NODE_ENV === 'production') {
   app.use(rateLimit({
     windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000'),
-    max: parseInt(process.env.RATE_LIMIT_MAX || '200'),
+    max: parseInt(process.env.RATE_LIMIT_MAX || '1000'),
+    standardHeaders: true,
+    legacyHeaders: false,
     message: { success: false, message: 'Too many requests, please try again later.' },
   }));
 }

@@ -167,7 +167,7 @@ export const NewDeploymentPage: React.FC = () => {
       setEmailSent(true);
       toast.success('Email sent! Enter the project names below to proceed.');
     } catch {
-      toast.error('Failed to send email. Check SMTP configuration in backend .env');
+      toast.error('Failed to send email. Check Microsoft Graph API configuration (EMAIL_SENDER, SCOPE_EMAIL_RECIPIENT) in backend .env');
     } finally {
       setSendingEmail(false);
     }

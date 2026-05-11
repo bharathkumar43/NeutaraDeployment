@@ -32,20 +32,18 @@ services:
       DB_PASSWORD:           ${DB_PASSWORD:-postgrespassword}
       JWT_SECRET:            ${JWT_SECRET:-change_this_secret_in_production}
       JWT_EXPIRES_IN:        24h
+      APP_URL:               ${APP_URL:-}
       FRONTEND_URL:          ${APP_URL:-http://localhost:3201}
       RATE_LIMIT_WINDOW_MS:  900000
-      RATE_LIMIT_MAX:        200
+      RATE_LIMIT_MAX:        1000
       UPLOAD_DIR:            uploads
       MAX_FILE_SIZE:         10485760
       AZURE_TENANT_ID:       ${AZURE_TENANT_ID}
       AZURE_CLIENT_ID:       ${AZURE_CLIENT_ID}
       AZURE_CLIENT_SECRET:   ${AZURE_CLIENT_SECRET}
-      SMTP_HOST:             ${SMTP_HOST:-smtp.gmail.com}
-      SMTP_PORT:             ${SMTP_PORT:-587}
-      SMTP_SECURE:           ${SMTP_SECURE:-false}
-      SMTP_USER:             ${SMTP_USER:-}
-      SMTP_PASS:             ${SMTP_PASS:-}
-      SMTP_FROM:             ${SMTP_FROM:-noreply@neutara.com}
+      EMAIL_SENDER:          ${EMAIL_SENDER:-}
+      EMAIL_QA_DL:           ${EMAIL_QA_DL:-}
+      EMAIL_INFRA_DL:        ${EMAIL_INFRA_DL:-}
       SCOPE_EMAIL_RECIPIENT: ${SCOPE_EMAIL_RECIPIENT:-}
     volumes:
       - ./backend/uploads:/app/uploads

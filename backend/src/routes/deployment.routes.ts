@@ -2,7 +2,7 @@ import { Router } from 'express';
 import {
   createDeployment, updateDraft, getDeployments, getDeploymentById,
   getDashboardStats, getJobsList, getBranchesList, sendDeploymentScopeEmail,
-  getNextRequestNumber
+  getNextRequestNumber, deleteDeployment
 } from '../controllers/deployment.controller';
 import { authenticate, authorize } from '../middleware/auth';
 
@@ -20,5 +20,6 @@ router.get('/', getDeployments);
 router.get('/:id', getDeploymentById);
 router.post('/', authorize('dev', 'admin'), createDeployment);
 router.put('/:id', authorize('dev', 'admin'), updateDraft);
+router.delete('/:id', authorize('admin'), deleteDeployment);
 
 export default router;

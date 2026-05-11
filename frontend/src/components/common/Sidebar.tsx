@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import {
   HomeIcon, RocketLaunchIcon, CheckBadgeIcon, ServerStackIcon,
   ClipboardDocumentCheckIcon, ClockIcon, Bars3Icon, XMarkIcon,
-  UsersIcon, ChevronLeftIcon,
+  UsersIcon, ChevronLeftIcon, ShieldCheckIcon,
 } from '@heroicons/react/24/outline';
 import { useAuthStore } from '../../store/authStore';
 
@@ -23,7 +23,8 @@ const NAV_ITEMS: NavItem[] = [
   { label: 'Infra Queue',    path: '/infra',         icon: <ServerStackIcon className="w-5 h-5" />, roles: ['infra', 'admin'] },
   { label: 'Acknowledgments',path: '/acknowledgments',icon: <ClipboardDocumentCheckIcon className="w-5 h-5" />, roles: ['dev', 'admin'] },
   { label: 'History',        path: '/history',       icon: <ClockIcon className="w-5 h-5" /> },
-  { label: 'User Management',path: '/users',         icon: <UsersIcon className="w-5 h-5" />, roles: ['admin'] },
+  { label: 'User Management',path: '/users',         icon: <UsersIcon className="w-5 h-5" />,       roles: ['admin'] },
+  { label: 'Admin Dashboard',path: '/admin',         icon: <ShieldCheckIcon className="w-5 h-5" />, roles: ['admin'] },
 ];
 
 export const Sidebar: React.FC<{ collapsed: boolean; onToggle: () => void }> = ({ collapsed, onToggle }) => {

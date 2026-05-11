@@ -5,6 +5,7 @@ import qaRoutes from './qa.routes';
 import infraRoutes from './infra.routes';
 import ackRoutes from './acknowledgment.routes';
 import notificationRoutes from './notification.routes';
+import adminRoutes from './admin.routes';
 
 const router = Router();
 
@@ -14,6 +15,7 @@ router.use('/qa', qaRoutes);
 router.use('/infra', infraRoutes);
 router.use('/acknowledgments', ackRoutes);
 router.use('/notifications', notificationRoutes);
+router.use('/admin', adminRoutes);
 
 router.get('/health', (_req, res) => {
   res.json({ success: true, message: 'Neutara Deployment API is running', timestamp: new Date().toISOString() });

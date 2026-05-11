@@ -132,6 +132,37 @@ export interface Branch {
   project_name?: string;
 }
 
+export interface UserStat {
+  id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+  team?: string;
+  total_raised: string;
+  deployed: string;
+  in_progress: string;
+  failed: string;
+  rejected_by_qa: string;
+  sent_back: string;
+  drafts: string;
+}
+
+export interface AdminAuditEntry {
+  id: string;
+  deployment_id?: string;
+  request_number?: string;
+  deployment_title?: string;
+  action: string;
+  performed_by?: string;
+  performed_by_name?: string;
+  performed_by_role?: string;
+  old_status?: string;
+  new_status?: string;
+  comment?: string;
+  ip_address?: string;
+  created_at: string;
+}
+
 export interface PaginationMeta {
   total: number;
   page: number;

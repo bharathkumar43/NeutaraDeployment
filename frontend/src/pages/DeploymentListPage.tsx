@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
-  PlusIcon, MagnifyingGlassIcon, FunnelIcon,
-  ArrowPathIcon, ChevronLeftIcon, ChevronRightIcon,
+  PlusIcon, MagnifyingGlassIcon,
+  ArrowPathIcon, ChevronLeftIcon, ChevronRightIcon, TrashIcon,
 } from '@heroicons/react/24/outline';
 import { deploymentService } from '../services/deployment.service';
 import { DeploymentRequest } from '../types';
@@ -10,7 +10,7 @@ import { StatusBadge, PriorityBadge, EnvBadge } from '../components/common/Statu
 import { PageLoader } from '../components/common/LoadingSpinner';
 import { EmptyState } from '../components/common/EmptyState';
 import { useAuthStore } from '../store/authStore';
-import { formatDateTime, formatRelative } from '../utils/format';
+import { formatRelative } from '../utils/format';
 
 const STATUS_OPTIONS = [
   { value: '', label: 'All Statuses' },
@@ -28,7 +28,7 @@ const STATUS_OPTIONS = [
 export const DeploymentListPage: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { hasRole } = useAuthStore();
+  const { hasRole, user } = useAuthStore();
 
   const [deployments, setDeployments] = useState<DeploymentRequest[]>([]);
   const [loading, setLoading] = useState(true);
@@ -36,6 +36,7 @@ export const DeploymentListPage: React.FC = () => {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const [searchInput, setSearchInput] = useState('');
+  const [deleting, setDeleting] = useState<string | null>(null);
 
   const status = searchParams.get('status') || '';
   const environment = searchParams.get('environment') || '';
@@ -63,6 +64,24 @@ export const DeploymentListPage: React.FC = () => {
     if (value) params.set(key, value); else params.delete(key);
     setSearchParams(params);
     setPage(1);
+  };
+
+  const canDelete = (): boolean => {
+    return user?.role === 'admin';
+  };
+
+  const handleDelete = async (e: React.MouseEvent, dep: DeploymentRequest) => {
+    e.stopPropagation();
+    if (!window.confirm(`Delete "${dep.deployment_title}"?\n\nThis action cannot be undone.`)) return;
+    setDeleting(dep.id);
+    try {
+      await deploymentService.delete(dep.id);
+      await load();
+    } catch {
+      alert('Failed to delete deployment. Please try again.');
+    } finally {
+      setDeleting(null);
+    }
   };
 
   const totalPages = Math.ceil(total / LIMIT);
@@ -141,6 +160,7 @@ export const DeploymentListPage: React.FC = () => {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-gray-100">
+                    <th className="table-header">Req #</th>
                     <th className="table-header">Title</th>
                     <th className="table-header">Project</th>
                     <th className="table-header">Env</th>
@@ -149,6 +169,7 @@ export const DeploymentListPage: React.FC = () => {
                     <th className="table-header">Status</th>
                     <th className="table-header">Raised By</th>
                     <th className="table-header">Created</th>
+                    <th className="table-header w-10"></th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">
@@ -158,6 +179,15 @@ export const DeploymentListPage: React.FC = () => {
                       onClick={() => navigate(`/deployments/${dep.id}`)}
                       className="hover:bg-gray-50 cursor-pointer transition-colors group"
                     >
+                      <td className="table-cell">
+                        {dep.request_number ? (
+                          <span className="text-xs font-mono font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded whitespace-nowrap">
+                            {dep.request_number}
+                          </span>
+                        ) : (
+                          <span className="text-gray-300">—</span>
+                        )}
+                      </td>
                       <td className="table-cell">
                         <span className="font-medium text-blue-700 group-hover:text-blue-900 max-w-[220px] block truncate">
                           {dep.deployment_title}
@@ -172,6 +202,18 @@ export const DeploymentListPage: React.FC = () => {
                       <td className="table-cell"><StatusBadge status={dep.status} /></td>
                       <td className="table-cell text-gray-600">{dep.raised_by_name || '—'}</td>
                       <td className="table-cell text-gray-400 whitespace-nowrap text-xs">{formatRelative(dep.created_at)}</td>
+                      <td className="table-cell" onClick={(e) => e.stopPropagation()}>
+                        {canDelete() && (
+                          <button
+                            onClick={(e) => handleDelete(e, dep)}
+                            disabled={deleting === dep.id}
+                            className="p-1.5 rounded text-gray-300 hover:text-red-600 hover:bg-red-50 transition-colors disabled:opacity-40"
+                            title="Delete deployment"
+                          >
+                            <TrashIcon className="w-4 h-4" />
+                          </button>
+                        )}
+                      </td>
                     </tr>
                   ))}
                 </tbody>

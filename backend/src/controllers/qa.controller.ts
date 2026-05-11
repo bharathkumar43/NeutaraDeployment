@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { query } from '../database/connection';
 import { createAuditLog } from '../services/audit.service';
 import { createNotification, notifyRoleUsers } from '../services/notification.service';
+import { sendInfraReadyEmail, sendDevQARejectionEmail } from '../services/email.service';
 import logger from '../utils/logger';
 
 export const getPendingQARequests = async (req: Request, res: Response): Promise<void> => {
@@ -60,13 +61,23 @@ export const processQAApproval = async (req: Request, res: Response): Promise<vo
   }
 
   try {
-    const depResult = await query(`SELECT * FROM deployment_requests WHERE id = $1`, [id]);
+    // Include raised_by email and QA user name for emails
+    const depResult = await query(
+      `SELECT dr.*, u.name AS raised_by_name, u.email AS raised_by_email
+       FROM deployment_requests dr
+       LEFT JOIN users u ON dr.raised_by = u.id
+       WHERE dr.id = $1`,
+      [id]
+    );
     if (!depResult.rows[0]) { res.status(404).json({ success: false, message: 'Deployment not found' }); return; }
 
     const dep = depResult.rows[0];
     if (dep.status !== 'pending_qa_approval') {
       res.status(400).json({ success: false, message: 'Deployment is not pending QA approval' }); return;
     }
+
+    const qaUserResult = await query(`SELECT name FROM users WHERE id = $1`, [qaUserId]);
+    const qaUserName   = qaUserResult.rows[0]?.name || 'QA Team';
 
     const statusMap: Record<string, string> = {
       approved:  'pending_infra_deployment',
@@ -105,6 +116,28 @@ export const processQAApproval = async (req: Request, res: Response): Promise<vo
         message: `"${dep.deployment_title}" approved by QA. Ready for deployment.`,
         type: 'info',
       });
+      sendInfraReadyEmail({
+        requestNumber:   dep.request_number   || '',
+        deploymentTitle: dep.deployment_title as string,
+        environment:     dep.environment      as string,
+        priority:        dep.priority         as string,
+        raisedByName:    dep.raised_by_name   || '',
+        qaUserName,
+        qaComments:      qa_comments,
+      }).catch((e) => logger.error('Infra ready email error', e));
+    }
+
+    if (approval_status === 'rejected' || approval_status === 'sent_back') {
+      sendDevQARejectionEmail({
+        requestNumber:   dep.request_number   || '',
+        deploymentTitle: dep.deployment_title as string,
+        environment:     dep.environment      as string,
+        devEmail:        dep.raised_by_email  || '',
+        devName:         dep.raised_by_name   || '',
+        qaUserName,
+        approvalStatus:  approval_status as 'rejected' | 'sent_back',
+        qaComments:      qa_comments,
+      }).catch((e) => logger.error('Dev QA rejection email error', e));
     }
 
     res.json({ success: true, message: `Deployment ${approval_status} successfully`, data: { status: newStatus } });

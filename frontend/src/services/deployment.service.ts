@@ -64,6 +64,10 @@ export const deploymentService = {
   async sendScopeEmail(deployment_title: string, team: string): Promise<void> {
     await api.post('/deployments/send-scope-email', { deployment_title, team });
   },
+
+  async delete(id: string): Promise<void> {
+    await api.delete(`/deployments/${id}`);
+  },
 };
 
 export const qaService = {

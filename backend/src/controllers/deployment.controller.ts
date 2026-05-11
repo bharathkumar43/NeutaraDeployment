@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { query } from '../database/connection';
 import { createAuditLog } from '../services/audit.service';
 import { notifyRoleUsers, createNotification } from '../services/notification.service';
-import { sendScopeEmail } from '../services/email.service';
+import { sendScopeEmail, sendQASubmissionEmail } from '../services/email.service';
 import logger from '../utils/logger';
 
 const DEPLOYMENT_SELECT = `
@@ -73,6 +73,15 @@ export const createDeployment = async (req: Request, res: Response): Promise<voi
         message: `"${deployment_title}" submitted for QA review. Priority: ${priority.toUpperCase()}`,
         type:    'info',
       });
+      sendQASubmissionEmail({
+        requestNumber:   requestNumber,
+        deploymentTitle: deployment_title,
+        environment,
+        priority,
+        raisedByName:    deployment.raised_by_name  || raised_by,
+        raisedByEmail:   deployment.raised_by_email || '',
+        description,
+      }).catch((e) => logger.error('QA submission email error', e));
     }
 
     res.status(201).json({ success: true, data: deployment });
@@ -145,6 +154,16 @@ export const updateDraft = async (req: Request, res: Response): Promise<void> =>
         message: `"${deployment_title}" submitted for QA review.`,
         type:    'info',
       });
+      const updated = result.rows[0];
+      sendQASubmissionEmail({
+        requestNumber:   updated.request_number || '',
+        deploymentTitle: deployment_title,
+        environment,
+        priority,
+        raisedByName:    updated.raised_by_name  || userId,
+        raisedByEmail:   updated.raised_by_email || '',
+        description,
+      }).catch((e) => logger.error('QA resubmit email error', e));
     }
 
     res.json({ success: true, data: result.rows[0] });
@@ -290,6 +309,35 @@ export const getBranchesList = async (_req: Request, res: Response): Promise<voi
   }
 };
 
+export const deleteDeployment = async (req: Request, res: Response): Promise<void> => {
+  const { id } = req.params;
+  const userId = req.user!.userId;
+  const role   = req.user!.role;
+
+  try {
+    const existing = await query(
+      `SELECT id, raised_by, status, deployment_title FROM deployment_requests WHERE id = $1`, [id]
+    );
+    if (!existing.rows[0]) {
+      res.status(404).json({ success: false, message: 'Deployment not found' });
+      return;
+    }
+    const dep = existing.rows[0];
+
+    if (role !== 'admin') {
+      res.status(403).json({ success: false, message: 'Only admins can delete deployment requests' });
+      return;
+    }
+
+    await query(`DELETE FROM deployment_requests WHERE id = $1`, [id]);
+
+    res.json({ success: true, message: 'Deployment deleted successfully' });
+  } catch (err) {
+    logger.error('Delete deployment error', err);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
+
 export const sendDeploymentScopeEmail = async (req: Request, res: Response): Promise<void> => {
   const { deployment_title, team } = req.body;
   const user = req.user!;
@@ -309,6 +357,6 @@ export const sendDeploymentScopeEmail = async (req: Request, res: Response): Pro
     res.json({ success: true, message: 'Scope email sent successfully' });
   } catch (err) {
     logger.error('Send scope email error', err);
-    res.status(500).json({ success: false, message: 'Failed to send email. Check SMTP configuration.' });
+    res.status(500).json({ success: false, message: 'Failed to send email. Check Microsoft Graph API configuration (AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, EMAIL_SENDER, SCOPE_EMAIL_RECIPIENT).' });
   }
 };

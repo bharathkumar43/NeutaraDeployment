@@ -82,10 +82,6 @@ export const LoginPage: React.FC = () => {
             {azureLoading ? 'Signing in with Microsoft...' : 'Sign in with Microsoft'}
           </button>
 
-          <p className="text-xs text-center text-gray-400 mt-4">
-            Sign in using your <span className="font-medium text-gray-600">@cloudfuze.com</span> Microsoft account.
-            Your view is assigned based on your department.
-          </p>
 
           {/* Admin login toggle */}
           <div className="mt-6 pt-5 border-t border-gray-100">
@@ -150,7 +146,7 @@ export const LoginPage: React.FC = () => {
         </div>
 
         <p className="text-center text-blue-300 text-xs mt-6">
-          © 2024 Neutara · Enterprise Deployment Management
+          © 2026 Neutara · Enterprise Deployment Management
         </p>
       </div>
     </div>
