@@ -78,8 +78,8 @@ export const createDeployment = async (req: Request, res: Response): Promise<voi
         deploymentTitle: deployment_title,
         environment,
         priority,
-        raisedByName:    deployment.raised_by_name  || raised_by,
-        raisedByEmail:   deployment.raised_by_email || '',
+        raisedByName:    String(deployment.raised_by_name  || raised_by),
+        raisedByEmail:   String(deployment.raised_by_email || ''),
         description,
       }).catch((e) => logger.error('QA submission email error', e));
     }
@@ -156,12 +156,12 @@ export const updateDraft = async (req: Request, res: Response): Promise<void> =>
       });
       const updated = result.rows[0];
       sendQASubmissionEmail({
-        requestNumber:   updated.request_number || '',
+        requestNumber:   String(updated.request_number || ''),
         deploymentTitle: deployment_title,
         environment,
         priority,
-        raisedByName:    updated.raised_by_name  || userId,
-        raisedByEmail:   updated.raised_by_email || '',
+        raisedByName:    String(updated.raised_by_name  || userId),
+        raisedByEmail:   String(updated.raised_by_email || ''),
         description,
       }).catch((e) => logger.error('QA resubmit email error', e));
     }

@@ -77,7 +77,7 @@ export const processQAApproval = async (req: Request, res: Response): Promise<vo
     }
 
     const qaUserResult = await query(`SELECT name FROM users WHERE id = $1`, [qaUserId]);
-    const qaUserName   = qaUserResult.rows[0]?.name || 'QA Team';
+    const qaUserName   = String(qaUserResult.rows[0]?.name || 'QA Team');
 
     const statusMap: Record<string, string> = {
       approved:  'pending_infra_deployment',
@@ -117,11 +117,11 @@ export const processQAApproval = async (req: Request, res: Response): Promise<vo
         type: 'info',
       });
       sendInfraReadyEmail({
-        requestNumber:   dep.request_number   || '',
+        requestNumber:   String(dep.request_number   || ''),
         deploymentTitle: dep.deployment_title as string,
         environment:     dep.environment      as string,
         priority:        dep.priority         as string,
-        raisedByName:    dep.raised_by_name   || '',
+        raisedByName:    String(dep.raised_by_name   || ''),
         qaUserName,
         qaComments:      qa_comments,
       }).catch((e) => logger.error('Infra ready email error', e));
@@ -129,11 +129,11 @@ export const processQAApproval = async (req: Request, res: Response): Promise<vo
 
     if (approval_status === 'rejected' || approval_status === 'sent_back') {
       sendDevQARejectionEmail({
-        requestNumber:   dep.request_number   || '',
+        requestNumber:   String(dep.request_number   || ''),
         deploymentTitle: dep.deployment_title as string,
         environment:     dep.environment      as string,
-        devEmail:        dep.raised_by_email  || '',
-        devName:         dep.raised_by_name   || '',
+        devEmail:        String(dep.raised_by_email  || ''),
+        devName:         String(dep.raised_by_name   || ''),
         qaUserName,
         approvalStatus:  approval_status as 'rejected' | 'sent_back',
         qaComments:      qa_comments,

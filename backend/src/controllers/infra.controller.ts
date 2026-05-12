@@ -117,7 +117,7 @@ export const completeDeployment = async (req: Request, res: Response): Promise<v
     }
 
     const infraUserResult = await query(`SELECT name FROM users WHERE id = $1`, [infraUserId]);
-    const infraUserName   = infraUserResult.rows[0]?.name || 'Infra Team';
+    const infraUserName   = String(infraUserResult.rows[0]?.name || 'Infra Team');
 
     const screenshotPath = file ? path.join('uploads', file.filename) : null;
     const screenshotName = file ? file.originalname : null;
@@ -173,21 +173,21 @@ export const completeDeployment = async (req: Request, res: Response): Promise<v
 
     if (deployment_status === 'success') {
       sendDevAcknowledgmentEmail({
-        requestNumber:   dep.request_number   || '',
+        requestNumber:   String(dep.request_number   || ''),
         deploymentTitle: dep.deployment_title as string,
         environment:     dep.environment      as string,
-        devEmail:        dep.raised_by_email  || '',
-        devName:         dep.raised_by_name   || '',
+        devEmail:        String(dep.raised_by_email  || ''),
+        devName:         String(dep.raised_by_name   || ''),
         infraUserName,
         deploymentNotes: savedNotes,
       }).catch((e) => logger.error('Acknowledgment email error', e));
     } else {
       sendDeploymentFailedEmail({
-        requestNumber:   dep.request_number   || '',
+        requestNumber:   String(dep.request_number   || ''),
         deploymentTitle: dep.deployment_title as string,
         environment:     dep.environment      as string,
-        devEmail:        dep.raised_by_email  || '',
-        devName:         dep.raised_by_name   || '',
+        devEmail:        String(dep.raised_by_email  || ''),
+        devName:         String(dep.raised_by_name   || ''),
         infraUserName,
         failureComments: completion_comments,
       }).catch((e) => logger.error('Deployment failed email error', e));
