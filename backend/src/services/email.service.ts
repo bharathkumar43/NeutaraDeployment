@@ -241,9 +241,11 @@ export const sendDevAcknowledgmentEmail = async (opts: {
   devName: string;
   infraUserName: string;
   deploymentNotes?: string;
+  dlEmail?: string;
 }): Promise<void> => {
   if (!opts.devEmail) { logger.warn('No dev email — acknowledgment email skipped'); return; }
   const appUrl = process.env.APP_URL || process.env.FRONTEND_URL || '';
+  const recipients = [opts.devEmail, opts.dlEmail].filter(Boolean) as string[];
 
   const subject = `[Neutara] Deployment Successful — Please Acknowledge — ${opts.requestNumber}: ${opts.deploymentTitle}`;
   const body = `
@@ -264,7 +266,7 @@ export const sendDevAcknowledgmentEmail = async (opts: {
     </div>
     ${appUrl ? ctaButton('Acknowledge Deployment', `${appUrl}/deployments`, '#16a34a') : ''}
   `;
-  await sendGraphEmail(opts.devEmail, subject, layout('Deployment Successful', '#16a34a', body));
+  await sendGraphEmail(recipients, subject, layout('Deployment Successful', '#16a34a', body));
 };
 
 // ─── 5. Deployment Failed → Dev ──────────────────────────────────────────────
@@ -277,9 +279,11 @@ export const sendDeploymentFailedEmail = async (opts: {
   devName: string;
   infraUserName: string;
   failureComments?: string;
+  dlEmail?: string;
 }): Promise<void> => {
   if (!opts.devEmail) { logger.warn('No dev email — failure email skipped'); return; }
   const appUrl = process.env.APP_URL || process.env.FRONTEND_URL || '';
+  const recipients = [opts.devEmail, opts.dlEmail].filter(Boolean) as string[];
 
   const subject = `[Neutara] Deployment Failed — ${opts.requestNumber}: ${opts.deploymentTitle}`;
   const body = `
@@ -297,7 +301,7 @@ export const sendDeploymentFailedEmail = async (opts: {
     </div>` : ''}
     ${appUrl ? ctaButton('View Request', `${appUrl}/deployments`, '#dc2626') : ''}
   `;
-  await sendGraphEmail(opts.devEmail, subject, layout('Deployment Failed', '#dc2626', body));
+  await sendGraphEmail(recipients, subject, layout('Deployment Failed', '#dc2626', body));
 };
 
 // ─── 6. Scope Email (multi-project) ──────────────────────────────────────────

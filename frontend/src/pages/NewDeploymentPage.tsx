@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import toast from 'react-hot-toast';
@@ -29,7 +29,7 @@ interface FormData {
   // Section 3 — Deployment Target
   environments:           string[];
   product_type:           string;
-  job_id:                 string;
+  job_ids:                string[];
   downtime_required:      boolean;
   feature_flags:          string;
   dependencies:           string;
@@ -38,7 +38,7 @@ interface FormData {
   multi_project_names:    string;
 }
 
-const ALL_ENVS = ['DEV', 'QA', 'UAT', 'PROD'];
+const ALL_ENVS = ['DEV', 'QA', 'UI', 'PROD'];
 
 const SectionHeader: React.FC<{ num: string; title: string }> = ({ num, title }) => (
   <div className="flex items-center gap-3 mb-5 pb-2 border-b border-gray-200">
@@ -60,6 +60,18 @@ export const NewDeploymentPage: React.FC = () => {
   const [loading, setLoading]           = useState(isEdit);
   const [emailSent, setEmailSent]       = useState(false);
   const [sendingEmail, setSendingEmail] = useState(false);
+  const [jobDropdownOpen, setJobDropdownOpen] = useState(false);
+  const jobDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (jobDropdownRef.current && !jobDropdownRef.current.contains(e.target as Node)) {
+        setJobDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
 
   const {
     register, handleSubmit, control, watch,
@@ -68,7 +80,7 @@ export const NewDeploymentPage: React.FC = () => {
     defaultValues: {
       priority: 'medium', risk_level: 'low', base_branch: 'main',
       downtime_required: false, environments: [],
-      product_type: '', job_id: '',
+      product_type: '', job_ids: [],
       deployment_scope: 'single', single_project_name: '', multi_project_names: '',
       requested_by_name: user?.name || '', team: user?.team || '',
     },
@@ -78,6 +90,7 @@ export const NewDeploymentPage: React.FC = () => {
   const watchedTicket       = watch('ticket_link');
   const watchedDesc         = watch('description');
   const watchedProduct      = watch('product_type');
+  const watchedJobIds       = watch('job_ids') || [];
   const watchedScope        = watch('deployment_scope');
   const watchedProjectNames = watch('multi_project_names');
   const isSingleEnv         = watchedEnvs.length === 1;
@@ -85,6 +98,13 @@ export const NewDeploymentPage: React.FC = () => {
 
   const productTypes  = [...new Set(jobs.map(j => j.project_name).filter(Boolean))] as string[];
   const filteredJobs  = watchedProduct ? jobs.filter(j => j.project_name === watchedProduct) : [];
+  const allJobIds     = filteredJobs.map(j => j.job_id);
+
+  const toggleJob = (jobId: string, current: string[], onChange: (v: string[]) => void) => {
+    if (jobId === 'ALL') onChange(current.length === allJobIds.length ? [] : [...allJobIds]);
+    else onChange(current.includes(jobId) ? current.filter(id => id !== jobId) : [...current, jobId]);
+    clearErrors('job_ids');
+  };
   const watchedSingleName = watch('single_project_name');
   const submitBlocked =
     (watchedScope === 'single'   && !watchedSingleName?.trim()) ||
@@ -117,7 +137,7 @@ export const NewDeploymentPage: React.FC = () => {
           priority:              dep.priority,
           environments:          envs,
           product_type:          (dep as any).project_name || '',
-          job_id:                dep.job_id || '',
+          job_ids:               dep.job_id ? dep.job_id.split(',').map((s: string) => s.trim()).filter(Boolean) : [],
           risk_level:            (dep as any).risk_level || 'low',
           downtime_required:     !!(dep as any).downtime_required,
           requested_deploy_date: (dep as any).requested_deploy_date?.slice(0, 16) || '',
@@ -153,6 +173,7 @@ export const NewDeploymentPage: React.FC = () => {
     return {
       ...data,
       project_name: data.product_type,
+      job_id:       data.job_ids.join(','),
       environment:  data.environments.join(', '),
       status,
     } as any;
@@ -272,7 +293,7 @@ export const NewDeploymentPage: React.FC = () => {
             </div>
 
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Ticket / JIRA Link</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Ticket / JIRA Link <span className="text-red-500">*</span></label>
               <input {...register('ticket_link')} className={inputCls(errors.ticket_link)} placeholder="e.g. https://jira.company.com/browse/PROJ-123" onChange={() => clearErrors('ticket_link')} />
               {errMsg(errors.ticket_link?.message)}
             </div>
@@ -292,17 +313,18 @@ export const NewDeploymentPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Service / Application <span className="text-red-500">*</span></label>
-              <input {...register('service_name', { required: 'Required' })} className={inputCls(errors.service_name)} placeholder="e.g. Auth Service" />
-              {errMsg(errors.service_name?.message)}
+              <label className="block text-sm font-medium text-gray-700 mb-1">Service / Application</label>
+              <input {...register('service_name')} className={inputCls()} placeholder="e.g. Auth Service" />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Branch Name <span className="text-red-500">*</span></label>
               <select {...register('branch_name', { required: 'Required' })} className={selectCls(errors.branch_name)}>
                 <option value="">Select branch...</option>
-                {branches.map(b => <option key={b.id} value={b.branch_name}>{b.branch_name}</option>)}
-                <option value="custom">Custom branch...</option>
+                <option value="develop">Develop</option>
+                <option value="main">Main</option>
+                <option value="CF-Content-Trunk-Master">CF-Content-Trunk-Master</option>
+                <option value="custom">Custom branch</option>
               </select>
               {errMsg(errors.branch_name?.message)}
             </div>
@@ -340,15 +362,13 @@ export const NewDeploymentPage: React.FC = () => {
             </div>
 
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Change Summary <span className="text-red-500">*</span></label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Change Summary</label>
               <textarea
-                {...register('description', { required: 'Required', minLength: { value: 10, message: 'Min 10 characters' } })}
-                className={`${inputCls(errors.description)} resize-none`}
+                {...register('description')}
+                className={`${inputCls()} resize-none`}
                 rows={3}
                 placeholder="Describe the changes in this deployment..."
-                onChange={() => clearErrors('description')}
               />
-              {errMsg(errors.description?.message)}
             </div>
 
           </div>
@@ -377,7 +397,7 @@ export const NewDeploymentPage: React.FC = () => {
                     </button>
                     {ALL_ENVS.map(env => {
                       const active = field.value.includes(env);
-                      const c: Record<string,string> = { DEV:'bg-green-600 text-white border-green-600', QA:'bg-yellow-500 text-white border-yellow-500', UAT:'bg-orange-500 text-white border-orange-500', PROD:'bg-red-600 text-white border-red-600' };
+                      const c: Record<string,string> = { DEV:'bg-green-600 text-white border-green-600', QA:'bg-yellow-500 text-white border-yellow-500', UI:'bg-orange-500 text-white border-orange-500', PROD:'bg-red-600 text-white border-red-600' };
                       return (
                         <button key={env} type="button" onClick={() => toggleEnv(env, field.value, field.onChange)}
                           className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors inline-flex items-center gap-1 ${active ? c[env] : 'bg-white text-gray-600 border-gray-300 hover:border-gray-400'}`}>
@@ -396,30 +416,83 @@ export const NewDeploymentPage: React.FC = () => {
               <select
                 {...register('product_type', { required: 'Required' })}
                 className={selectCls(errors.product_type)}
-                onChange={(e) => { setValue('product_type', e.target.value); setValue('job_id', ''); }}
+                onChange={(e) => { setValue('product_type', e.target.value); setValue('job_ids', []); }}
               >
                 <option value="">Select product...</option>
                 {productTypes.map(p => <option key={p} value={p}>{p}</option>)}
+                <option value="Content-all">Content-all</option>
+                <option value="Message-all">Message-all</option>
+                <option value="Email-all">Email-all</option>
+                <option value="Manage">Manage</option>
               </select>
               {errMsg(errors.product_type?.message)}
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Job <span className="text-red-500">*</span>
-                {!watchedProduct && <span className="ml-1 text-xs text-gray-400 font-normal">— select a product first</span>}
+                Jobs <span className="text-red-500">*</span>
+                {!watchedProduct
+                  ? <span className="ml-1 text-xs text-gray-400 font-normal">— select a product first</span>
+                  : watchedJobIds.length > 0 && <span className="ml-1 text-xs text-blue-600 font-normal">— {watchedJobIds.length} selected</span>
+                }
               </label>
-              <select
-                {...register('job_id', { required: 'Required' })}
-                className={selectCls(errors.job_id)}
-                disabled={!watchedProduct}
-              >
-                <option value="">Select job...</option>
-                {filteredJobs.map(j => (
-                  <option key={j.id} value={j.job_id}>{j.job_name}</option>
-                ))}
-              </select>
-              {errMsg(errors.job_id?.message)}
+              <Controller
+                name="job_ids"
+                control={control}
+                rules={{ validate: v => v.length > 0 || 'Select at least one job' }}
+                render={({ field }) => (
+                  <div ref={jobDropdownRef} className="relative">
+                    {/* Trigger */}
+                    <button
+                      type="button"
+                      disabled={!watchedProduct}
+                      onClick={() => watchedProduct && setJobDropdownOpen(o => !o)}
+                      className={`w-full flex items-center justify-between px-3 py-2 border ${errors.job_ids ? 'border-red-400' : 'border-gray-300'} rounded-md text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 ${!watchedProduct ? 'bg-gray-50 text-gray-400 cursor-not-allowed' : 'cursor-pointer hover:border-gray-400'}`}
+                    >
+                      <span className={field.value.length === 0 ? 'text-gray-400' : 'text-gray-800'}>
+                        {!watchedProduct
+                          ? 'Select a product type first…'
+                          : field.value.length === 0
+                            ? 'Select jobs…'
+                            : field.value.length === allJobIds.length
+                              ? 'All Jobs'
+                              : `${field.value.length} job${field.value.length > 1 ? 's' : ''} selected`}
+                      </span>
+                      <svg className={`w-4 h-4 text-gray-400 transition-transform ${jobDropdownOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+
+                    {/* Dropdown panel */}
+                    {jobDropdownOpen && watchedProduct && (
+                      <div className="absolute z-50 w-full mt-1 border border-gray-200 rounded-md bg-white shadow-lg max-h-56 overflow-y-auto">
+                        {/* All Jobs row */}
+                        <label className="flex items-center gap-2.5 px-3 py-2.5 cursor-pointer hover:bg-blue-50 border-b border-gray-100 select-none">
+                          <input
+                            type="checkbox"
+                            className="rounded border-gray-400 text-blue-600 focus:ring-blue-500"
+                            checked={field.value.length === allJobIds.length && allJobIds.length > 0}
+                            onChange={() => toggleJob('ALL', field.value, field.onChange)}
+                          />
+                          <span className="text-sm font-semibold text-gray-800">All Jobs</span>
+                        </label>
+                        {filteredJobs.map(j => (
+                          <label key={j.id} className="flex items-center gap-2.5 px-3 py-2 cursor-pointer hover:bg-gray-50 select-none">
+                            <input
+                              type="checkbox"
+                              className="rounded border-gray-400 text-blue-600 focus:ring-blue-500"
+                              checked={field.value.includes(j.job_id)}
+                              onChange={() => toggleJob(j.job_id, field.value, field.onChange)}
+                            />
+                            <span className="text-sm text-gray-700">{j.job_name}</span>
+                          </label>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              />
+              {errors.job_ids && <p className="text-xs text-red-500 mt-1">{errors.job_ids.message}</p>}
             </div>
 
             {/* Downtime Required */}
@@ -485,14 +558,14 @@ export const NewDeploymentPage: React.FC = () => {
                 {watchedScope === 'single' && (
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Project Name <span className="text-red-500">*</span>
+                      Project Name / Server URL <span className="text-red-500">*</span>
                     </label>
                     <input
                       {...register('single_project_name', {
-                        validate: v => watchedScope !== 'single' || !!v?.trim() || 'Project name is required',
+                        validate: v => watchedScope !== 'single' || !!v?.trim() || 'Project name / server URL is required',
                       })}
                       className={inputCls(errors.single_project_name)}
-                      placeholder="e.g. Neutara Platform"
+                      placeholder="e.g. Neutara Platform or https://server.example.com"
                     />
                     {errMsg(errors.single_project_name?.message)}
                   </div>
@@ -529,7 +602,7 @@ export const NewDeploymentPage: React.FC = () => {
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Project Names <span className="text-red-500">*</span>
+                        Project Names / Server URLs <span className="text-red-500">*</span>
                         {!emailSent && <span className="ml-1 text-xs text-gray-400 font-normal">— send the email first</span>}
                       </label>
                       <textarea

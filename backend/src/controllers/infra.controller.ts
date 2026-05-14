@@ -171,6 +171,8 @@ export const completeDeployment = async (req: Request, res: Response): Promise<v
       type: deployment_status === 'success' ? 'success' : 'error',
     });
 
+    const deploymentDL = process.env.EMAIL_DEPLOYMENT_DL || '';
+
     if (deployment_status === 'success') {
       sendDevAcknowledgmentEmail({
         requestNumber:   String(dep.request_number   || ''),
@@ -180,6 +182,7 @@ export const completeDeployment = async (req: Request, res: Response): Promise<v
         devName:         String(dep.raised_by_name   || ''),
         infraUserName,
         deploymentNotes: savedNotes,
+        dlEmail:         deploymentDL,
       }).catch((e) => logger.error('Acknowledgment email error', e));
     } else {
       sendDeploymentFailedEmail({
@@ -190,6 +193,7 @@ export const completeDeployment = async (req: Request, res: Response): Promise<v
         devName:         String(dep.raised_by_name   || ''),
         infraUserName,
         failureComments: completion_comments,
+        dlEmail:         deploymentDL,
       }).catch((e) => logger.error('Deployment failed email error', e));
     }
 

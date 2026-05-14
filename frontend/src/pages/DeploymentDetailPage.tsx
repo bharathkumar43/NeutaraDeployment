@@ -1,17 +1,35 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
 import {
   ArrowLeftIcon, PencilSquareIcon, CalendarDaysIcon,
   UserCircleIcon, LinkIcon, ServerStackIcon, PhotoIcon,
+  CheckCircleIcon, XCircleIcon, ArrowUturnLeftIcon, ExclamationTriangleIcon,
 } from '@heroicons/react/24/outline';
-import { deploymentService } from '../services/deployment.service';
+import { deploymentService, qaService } from '../services/deployment.service';
 import { DeploymentRequest } from '../types';
 import { StatusBadge, PriorityBadge, EnvBadge } from '../components/common/StatusBadge';
 import { WorkflowProgress } from '../components/common/WorkflowProgress';
 import { AuditTimeline } from '../components/common/AuditTimeline';
-import { PageLoader } from '../components/common/LoadingSpinner';
+import { PageLoader, ButtonSpinner } from '../components/common/LoadingSpinner';
+import { Modal } from '../components/common/Modal';
 import { useAuthStore } from '../store/authStore';
 import { formatDateTime, formatRelative } from '../utils/format';
+
+interface QAFormData {
+  qa_ticket_link: string;
+  qa_description: string;
+  qa_comments: string;
+}
+
+type ActionType = 'approved' | 'rejected' | 'sent_back';
+
+const ACTION_CONFIG: Record<ActionType, { title: string; btnClass: string; icon: React.ReactNode; placeholder: string }> = {
+  approved:  { title: 'Approve Deployment',   btnClass: 'btn-success', icon: <CheckCircleIcon className="w-4 h-4" />,    placeholder: 'Add approval notes, testing done, sign-off comments...' },
+  rejected:  { title: 'Reject Deployment',    btnClass: 'btn-danger',  icon: <XCircleIcon className="w-4 h-4" />,        placeholder: 'Explain the reason for rejection clearly...' },
+  sent_back: { title: 'Send Back to Dev',     btnClass: 'bg-orange-500 text-white hover:bg-orange-600 btn-primary', icon: <ArrowUturnLeftIcon className="w-4 h-4" />, placeholder: 'Describe what needs to be fixed or changed...' },
+};
 
 const DetailRow: React.FC<{ label: string; value: React.ReactNode }> = ({ label, value }) => (
   <div className="flex gap-3 py-2.5 border-b border-gray-50 last:border-0">
@@ -27,22 +45,55 @@ export const DeploymentDetailPage: React.FC = () => {
   const [deployment, setDeployment] = useState<DeploymentRequest | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'details' | 'qa' | 'infra' | 'ack' | 'audit'>('details');
+  const [qaAction, setQaAction] = useState<ActionType | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
-  useEffect(() => {
-    const load = async () => {
-      if (!id) return;
-      setLoading(true);
-      try { setDeployment(await deploymentService.getById(id)); }
-      finally { setLoading(false); }
-    };
-    load();
-  }, [id]);
+  const { register: qaRegister, handleSubmit: qaHandleSubmit, formState: { errors: qaErrors }, reset: qaReset } = useForm<QAFormData>();
+
+  const loadDeployment = async () => {
+    if (!id) return;
+    setLoading(true);
+    try { setDeployment(await deploymentService.getById(id)); }
+    finally { setLoading(false); }
+  };
+
+  useEffect(() => { loadDeployment(); }, [id]);
+
+  const openQAModal = (actionType: ActionType) => { setQaAction(actionType); qaReset(); };
+  const closeQAModal = () => { setQaAction(null); qaReset(); };
+
+  const onQASubmit = qaHandleSubmit(async (data) => {
+    if (!deployment || !qaAction) return;
+    setSubmitting(true);
+    try {
+      await qaService.approve(deployment.id, { approval_status: qaAction, ...data });
+      const msgs: Record<ActionType, string> = {
+        approved:  '✅ Deployment approved and forwarded to Infra team!',
+        rejected:  '❌ Deployment rejected and Dev team notified.',
+        sent_back: '↩️ Deployment sent back to Dev team for revision.',
+      };
+      toast.success(msgs[qaAction]);
+      closeQAModal();
+      loadDeployment();
+    } finally { setSubmitting(false); }
+  });
 
   if (loading) return <PageLoader />;
   if (!deployment) return <div className="text-center py-20 text-gray-500">Deployment not found.</div>;
 
   const canEdit = (deployment.status === 'draft' || deployment.status === 'rejected_by_qa')
     && (deployment.raised_by === user?.id || hasRole('admin'));
+
+  const canQAReview = deployment.status === 'pending_qa_approval' && (hasRole('qa') || hasRole('admin'));
+
+  const meta = (deployment as any).extra_meta
+    ? (typeof (deployment as any).extra_meta === 'string'
+        ? JSON.parse((deployment as any).extra_meta)
+        : (deployment as any).extra_meta)
+    : {};
+  const projectServerUrl: string = meta.deployment_scope === 'multiple'
+    ? meta.multi_project_names || ''
+    : meta.single_project_name || '';
 
   const latestInfraLog = deployment.infra_logs?.[0];
   const latestQA = deployment.qa_approvals?.[0];
@@ -135,12 +186,47 @@ export const DeploymentDetailPage: React.FC = () => {
                   </a>
                 } />
               )}
+              <DetailRow
+                label="Project / Server URL"
+                value={
+                  projectServerUrl
+                    ? <span className="whitespace-pre-wrap">{projectServerUrl}</span>
+                    : <span className="text-gray-400">Not specified</span>
+                }
+              />
               <div className="pt-3">
                 <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Description</p>
                 <div className="bg-gray-50 rounded-lg p-4 text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">
-                  {deployment.description}
+                  {deployment.description || <span className="text-gray-400 italic">No description provided.</span>}
                 </div>
               </div>
+
+              {/* QA Action Buttons — visible to QA/admin when pending review */}
+              {canQAReview && (
+                <div className="mt-5 pt-5 border-t border-gray-200">
+                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">QA Review Action</p>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      onClick={() => openQAModal('sent_back')}
+                      className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-orange-700 bg-orange-50 border border-orange-200 rounded-md hover:bg-orange-100 transition-colors"
+                    >
+                      <ArrowUturnLeftIcon className="w-4 h-4" /> Send Back
+                    </button>
+                    <button
+                      onClick={() => openQAModal('rejected')}
+                      className="btn-danger text-sm py-2"
+                    >
+                      <XCircleIcon className="w-4 h-4" /> Reject
+                    </button>
+                    <button
+                      onClick={() => openQAModal('approved')}
+                      className="btn-success text-sm py-2"
+                    >
+                      <CheckCircleIcon className="w-4 h-4" /> Approve
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
@@ -226,6 +312,62 @@ export const DeploymentDetailPage: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* QA Review Modal */}
+      {qaAction && (
+        <Modal
+          isOpen={!!qaAction}
+          onClose={closeQAModal}
+          title={ACTION_CONFIG[qaAction].title}
+          size="lg"
+          footer={
+            <div className="flex justify-end gap-3">
+              <button onClick={closeQAModal} className="btn-secondary">Cancel</button>
+              <button onClick={onQASubmit} className={ACTION_CONFIG[qaAction].btnClass} disabled={submitting}>
+                {submitting ? <ButtonSpinner /> : ACTION_CONFIG[qaAction].icon}
+                Confirm {qaAction.charAt(0).toUpperCase() + qaAction.slice(1).replace('_', ' ')}
+              </button>
+            </div>
+          }
+        >
+          <div className="space-y-4">
+            <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+              <p className="text-sm font-semibold text-gray-900 mb-1">{deployment.deployment_title}</p>
+              <div className="flex gap-2 flex-wrap">
+                <EnvBadge env={deployment.environment} />
+                <PriorityBadge priority={deployment.priority} />
+              </div>
+              <p className="text-xs text-gray-500 mt-2">{deployment.project_name} · Branch: <code className="bg-gray-200 px-1 rounded">{deployment.branch_name}</code></p>
+            </div>
+
+            {qaAction === 'approved' && deployment.priority === 'critical' && (
+              <div className="flex gap-2 bg-red-50 border border-red-200 rounded-lg p-3">
+                <ExclamationTriangleIcon className="w-5 h-5 text-red-500 flex-shrink-0" />
+                <p className="text-sm text-red-700">This is a <strong>CRITICAL</strong> priority deployment. Please ensure thorough review before approving.</p>
+              </div>
+            )}
+
+            <div>
+              <label className="form-label">QA Ticket Link</label>
+              <input {...qaRegister('qa_ticket_link')} className="form-input" placeholder="https://jira.company.com/QA-456" />
+            </div>
+            <div>
+              <label className="form-label">QA Review Notes</label>
+              <input {...qaRegister('qa_description')} className="form-input" placeholder="Brief description of QA testing done..." />
+            </div>
+            <div>
+              <label className="form-label">Comments <span className="text-red-500">*</span></label>
+              <textarea
+                {...qaRegister('qa_comments', { required: 'Comments are required' })}
+                className="form-textarea"
+                rows={4}
+                placeholder={ACTION_CONFIG[qaAction].placeholder}
+              />
+              {qaErrors.qa_comments && <p className="form-error">{qaErrors.qa_comments.message}</p>}
+            </div>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 };

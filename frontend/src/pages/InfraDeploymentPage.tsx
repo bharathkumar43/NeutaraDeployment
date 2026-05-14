@@ -14,7 +14,7 @@ import { PageLoader, ButtonSpinner } from '../components/common/LoadingSpinner';
 import { EmptyState } from '../components/common/EmptyState';
 import { formatRelative } from '../utils/format';
 
-interface StartFormData { artifact_version: string; deployment_notes: string; }
+interface StartFormData { artifact_version: string; }
 interface CompleteFormData {
   deployment_status: 'success' | 'failed';
   deployment_notes: string;
@@ -64,11 +64,23 @@ export const InfraDeploymentPage: React.FC = () => {
     reader.readAsDataURL(file);
   };
 
+  const getProjectServerUrl = (dep: DeploymentRequest): string => {
+    const meta = (dep as any).extra_meta
+      ? (typeof (dep as any).extra_meta === 'string'
+          ? JSON.parse((dep as any).extra_meta)
+          : (dep as any).extra_meta)
+      : {};
+    return meta.deployment_scope === 'multiple'
+      ? meta.multi_project_names || ''
+      : meta.single_project_name || '';
+  };
+
   const onStartSubmit = startForm.handleSubmit(async (data) => {
     if (!selectedDep) return;
     setSubmitting(true);
     try {
-      await infraService.startDeployment(selectedDep.id, data.deployment_notes, data.artifact_version);
+      const notes = getProjectServerUrl(selectedDep);
+      await infraService.startDeployment(selectedDep.id, notes, data.artifact_version);
       toast.success('🚀 Deployment started successfully!');
       closeModal(); load();
     } finally { setSubmitting(false); }
@@ -222,6 +234,12 @@ export const InfraDeploymentPage: React.FC = () => {
               </div>
             </div>
             <div>
+              <label className="form-label">Project Name / Server URL</label>
+              <div className="form-input bg-gray-50 text-gray-700 min-h-[2.5rem] whitespace-pre-wrap cursor-default select-text">
+                {getProjectServerUrl(selectedDep) || <span className="text-gray-400 italic">Not specified</span>}
+              </div>
+            </div>
+            <div>
               <label className="form-label">Build / Artifact Version <span className="text-red-500">*</span></label>
               <input
                 {...startForm.register('artifact_version', { required: 'Artifact version is required' })}
@@ -230,18 +248,6 @@ export const InfraDeploymentPage: React.FC = () => {
               />
               {startForm.formState.errors.artifact_version && (
                 <p className="form-error">{startForm.formState.errors.artifact_version.message}</p>
-              )}
-            </div>
-            <div>
-              <label className="form-label">Deployment Notes <span className="text-red-500">*</span></label>
-              <textarea
-                {...startForm.register('deployment_notes', { required: 'Notes are required' })}
-                className="form-textarea"
-                rows={3}
-                placeholder="Describe the deployment steps, server details, Jenkins job URL..."
-              />
-              {startForm.formState.errors.deployment_notes && (
-                <p className="form-error">{startForm.formState.errors.deployment_notes.message}</p>
               )}
             </div>
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-xs text-blue-700">
@@ -308,7 +314,7 @@ export const InfraDeploymentPage: React.FC = () => {
               <input
                 {...completeForm.register('deployment_notes', { required: 'Notes are required' })}
                 className="form-input"
-                placeholder="Jenkins job #, server details, deployment steps taken..."
+                placeholder="Describe the Jenkins job or url details"
               />
               {completeForm.formState.errors.deployment_notes && (
                 <p className="form-error">{completeForm.formState.errors.deployment_notes.message}</p>

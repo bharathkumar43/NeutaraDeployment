@@ -13,11 +13,12 @@ interface NavItem {
   icon: React.ReactNode;
   roles?: string[];
   badge?: number;
+  end?: boolean;
 }
 
 const NAV_ITEMS: NavItem[] = [
   { label: 'Dashboard',      path: '/dashboard',     icon: <HomeIcon className="w-5 h-5" /> },
-  { label: 'Deployments',    path: '/deployments',   icon: <RocketLaunchIcon className="w-5 h-5" /> },
+  { label: 'Deployments',    path: '/deployments',   icon: <RocketLaunchIcon className="w-5 h-5" />, end: true },
   { label: 'New Request',    path: '/deployments/new', icon: <ClipboardDocumentCheckIcon className="w-5 h-5" />, roles: ['dev', 'admin'] },
   { label: 'QA Approvals',   path: '/qa',            icon: <CheckBadgeIcon className="w-5 h-5" />, roles: ['qa', 'admin'] },
   { label: 'Infra Queue',    path: '/infra',         icon: <ServerStackIcon className="w-5 h-5" />, roles: ['infra', 'admin'] },
@@ -67,6 +68,7 @@ export const Sidebar: React.FC<{ collapsed: boolean; onToggle: () => void }> = (
           <NavLink
             key={item.path}
             to={item.path}
+            end={item.end}
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-2.5 rounded-md text-sm transition-all group
               ${isActive
