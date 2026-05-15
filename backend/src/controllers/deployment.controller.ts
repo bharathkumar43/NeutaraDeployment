@@ -211,8 +211,9 @@ export const getDeployments = async (req: Request, res: Response): Promise<void>
       pagination: { total, page: pageNum, limit: limitNum, totalPages: Math.ceil(total / limitNum) },
     });
   } catch (err) {
-    logger.error('Get deployments error', err);
-    res.status(500).json({ success: false, message: 'Server error' });
+    const msg = err instanceof Error ? err.message : String(err);
+    logger.error('Get deployments error', { message: msg, stack: err instanceof Error ? err.stack : undefined });
+    res.status(500).json({ success: false, message: 'Server error', detail: process.env.NODE_ENV !== 'production' ? msg : undefined });
   }
 };
 
