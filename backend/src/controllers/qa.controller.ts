@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { query } from '../database/connection';
 import { createAuditLog } from '../services/audit.service';
 import { createNotification, notifyRoleUsers } from '../services/notification.service';
-import { sendInfraReadyEmail, sendDevQARejectionEmail } from '../services/email.service';
+import { sendInfraReadyEmail, sendDevQARejectionEmail, sendQATeamActionNotificationEmail } from '../services/email.service';
 import logger from '../utils/logger';
 
 export const getPendingQARequests = async (req: Request, res: Response): Promise<void> => {
@@ -139,6 +139,17 @@ export const processQAApproval = async (req: Request, res: Response): Promise<vo
         qaComments:      qa_comments,
       }).catch((e) => logger.error('Dev QA rejection email error', e));
     }
+
+    sendQATeamActionNotificationEmail({
+      requestNumber:   String(dep.request_number || ''),
+      deploymentTitle: dep.deployment_title as string,
+      environment:     dep.environment      as string,
+      priority:        dep.priority         as string,
+      qaUserName,
+      raisedByName:    String(dep.raised_by_name || ''),
+      approvalStatus:  approval_status as 'approved' | 'rejected' | 'sent_back',
+      qaComments:      qa_comments,
+    }).catch((e) => logger.error('QA team action notification email error', e));
 
     res.json({ success: true, message: `Deployment ${approval_status} successfully`, data: { status: newStatus } });
   } catch (err) {

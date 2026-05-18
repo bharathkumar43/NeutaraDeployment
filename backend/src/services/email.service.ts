@@ -159,6 +159,39 @@ export const sendQASubmissionEmail = async (opts: {
   await sendGraphEmail(recipients, subject, layout('QA Review Required', '#1d4ed8', body));
 };
 
+// ─── 1b. Dev Submission Confirmation ─────────────────────────────────────────
+
+export const sendDevSubmissionConfirmationEmail = async (opts: {
+  requestNumber: string;
+  deploymentTitle: string;
+  environment: string;
+  priority: string;
+  devName: string;
+  devEmail: string;
+  description: string;
+}): Promise<void> => {
+  if (!opts.devEmail) return;
+  const appUrl = process.env.APP_URL || process.env.FRONTEND_URL || '';
+  const priorityColor = opts.priority === 'critical' ? '#dc2626' : opts.priority === 'high' ? '#ea580c' : '#2563eb';
+  const subject = `[Neutara] Request Submitted for QA — ${opts.requestNumber}: ${opts.deploymentTitle}`;
+  const body = `
+    <p style="margin:0 0 20px;font-size:15px;color:#374151;">Hi ${opts.devName},</p>
+    <p style="margin:0 0 20px;font-size:15px;color:#374151;">Your deployment request has been <strong style="color:#1d4ed8;">submitted for QA review</strong>. You will be notified once the QA team takes action.</p>
+    <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin-bottom:24px;">
+      ${infoRow('Request #', `<span style="background:#eff6ff;color:#1d4ed8;padding:2px 8px;border-radius:4px;font-family:monospace;font-weight:700;">${opts.requestNumber}</span>`)}
+      ${infoRow('Deployment', opts.deploymentTitle)}
+      ${infoRow('Environment', `<span style="background:#f0fdf4;color:#166534;padding:2px 8px;border-radius:4px;font-weight:600;">${opts.environment}</span>`)}
+      ${infoRow('Priority', `<span style="color:${priorityColor};font-weight:700;text-transform:uppercase;">${opts.priority}</span>`)}
+    </table>
+    ${opts.description ? `<div style="background:#f9fafb;border-left:4px solid #3b82f6;padding:12px 16px;border-radius:4px;margin-bottom:16px;">
+      <p style="margin:0 0 4px;font-size:12px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:1px;">Description</p>
+      <p style="margin:0;font-size:13px;color:#374151;">${opts.description.replace(/\n/g, '<br>')}</p>
+    </div>` : ''}
+    ${appUrl ? ctaButton('Track Your Request', `${appUrl}/deployments`, '#1d4ed8') : ''}
+  `;
+  await sendGraphEmail(opts.devEmail, subject, layout('Request Submitted', '#1d4ed8', body));
+};
+
 // ─── 2. QA Approved → Infra DL ───────────────────────────────────────────────
 
 export const sendInfraReadyEmail = async (opts: {
@@ -233,6 +266,48 @@ export const sendDevQARejectionEmail = async (opts: {
     ${appUrl ? ctaButton('View Request', `${appUrl}/deployments`, '#1d4ed8') : ''}
   `;
   await sendGraphEmail(opts.devEmail, subject, layout(statusLabel, accentColor, body));
+};
+
+// ─── 3b. QA Action Done → QA DL (all outcomes: approved / rejected / sent back) ─
+
+export const sendQATeamActionNotificationEmail = async (opts: {
+  requestNumber: string;
+  deploymentTitle: string;
+  environment: string;
+  priority: string;
+  qaUserName: string;
+  raisedByName: string;
+  approvalStatus: 'approved' | 'rejected' | 'sent_back';
+  qaComments: string;
+}): Promise<void> => {
+  const qaDL = process.env.EMAIL_QA_DL || '';
+  if (!qaDL) { logger.warn('EMAIL_QA_DL not set — QA team action notification skipped'); return; }
+  const appUrl = process.env.APP_URL || process.env.FRONTEND_URL || '';
+  const statusConfig = {
+    approved:  { label: 'Approved',          color: '#16a34a', bg: '#f0fdf4', border: '#16a34a', note: 'The request has been forwarded to the Infrastructure team for deployment.' },
+    rejected:  { label: 'Rejected',          color: '#dc2626', bg: '#fef2f2', border: '#dc2626', note: 'The developer has been notified to address the issues and resubmit.' },
+    sent_back: { label: 'Sent Back',         color: '#d97706', bg: '#fffbeb', border: '#f59e0b', note: 'The developer has been notified to update and resubmit the request.' },
+  };
+  const cfg = statusConfig[opts.approvalStatus];
+  const subject = `[Neutara] QA Review ${cfg.label} — ${opts.requestNumber}: ${opts.deploymentTitle}`;
+  const body = `
+    <p style="margin:0 0 20px;font-size:15px;color:#374151;">A deployment request has been <strong style="color:${cfg.color};">${cfg.label.toLowerCase()}</strong> by ${opts.qaUserName}.</p>
+    <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin-bottom:24px;">
+      ${infoRow('Request #', `<span style="background:#eff6ff;color:#1d4ed8;padding:2px 8px;border-radius:4px;font-family:monospace;font-weight:700;">${opts.requestNumber}</span>`)}
+      ${infoRow('Deployment', opts.deploymentTitle)}
+      ${infoRow('Environment', `<span style="background:#f0fdf4;color:#166534;padding:2px 8px;border-radius:4px;font-weight:600;">${opts.environment}</span>`)}
+      ${infoRow('Priority', `<span style="font-weight:700;text-transform:uppercase;">${opts.priority}</span>`)}
+      ${infoRow('Raised By', opts.raisedByName)}
+      ${infoRow('Reviewed By', opts.qaUserName)}
+      ${infoRow('Decision', `<span style="color:${cfg.color};font-weight:700;text-transform:uppercase;">${cfg.label}</span>`)}
+    </table>
+    ${opts.qaComments ? `<div style="background:${cfg.bg};border-left:4px solid ${cfg.border};padding:12px 16px;border-radius:4px;margin-bottom:16px;">
+      <p style="margin:0 0 4px;font-size:12px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:1px;">QA Comments</p>
+      <p style="margin:0;font-size:13px;color:#374151;">${opts.qaComments}</p>
+    </div>` : ''}
+    <p style="margin:16px 0 0;font-size:13px;color:#6b7280;">${cfg.note}</p>
+  `;
+  await sendGraphEmail(qaDL, subject, layout(`QA Review — ${cfg.label}`, cfg.color, body));
 };
 
 // ─── 4. Deployment Completed ─────────────────────────────────────────────────
@@ -331,6 +406,48 @@ export const sendDeploymentFailedEmail = async (opts: {
     ${appUrl ? ctaButton('View Request', `${appUrl}/deployments`, '#dc2626') : ''}
   `;
   await sendGraphEmail(recipients, subject, layout('Deployment Failed', '#dc2626', body));
+};
+
+// ─── 5b. Infra Completion Notification → Infra DL ────────────────────────────
+
+export const sendInfraCompletionNotificationEmail = async (opts: {
+  requestNumber: string;
+  deploymentTitle: string;
+  environment: string;
+  infraUserName: string;
+  deploymentStatus: 'success' | 'failed';
+  completionComments?: string;
+  deploymentNotes?: string;
+  devName: string;
+}): Promise<void> => {
+  const infraDL = process.env.EMAIL_INFRA_DL || '';
+  if (!infraDL) { logger.warn('EMAIL_INFRA_DL not set — infra completion email skipped'); return; }
+  const appUrl = process.env.APP_URL || process.env.FRONTEND_URL || '';
+  const isSuccess   = opts.deploymentStatus === 'success';
+  const accentColor = isSuccess ? '#16a34a' : '#dc2626';
+  const statusLabel = isSuccess ? 'Successfully Completed' : 'Failed';
+  const subject = `[Neutara] Deployment ${statusLabel} — ${opts.requestNumber}: ${opts.deploymentTitle}`;
+  const body = `
+    <p style="margin:0 0 20px;font-size:15px;color:#374151;">The following deployment has been marked as <strong style="color:${accentColor};">${statusLabel.toLowerCase()}</strong> by ${opts.infraUserName}.</p>
+    <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin-bottom:24px;">
+      ${infoRow('Request #', `<span style="background:#eff6ff;color:#1d4ed8;padding:2px 8px;border-radius:4px;font-family:monospace;font-weight:700;">${opts.requestNumber}</span>`)}
+      ${infoRow('Deployment', opts.deploymentTitle)}
+      ${infoRow('Environment', `<span style="background:#f0fdf4;color:#166534;padding:2px 8px;border-radius:4px;font-weight:600;">${opts.environment}</span>`)}
+      ${infoRow('Completed By', opts.infraUserName)}
+      ${infoRow('Developer', opts.devName)}
+      ${infoRow('Status', `<span style="color:${accentColor};font-weight:700;text-transform:uppercase;">${statusLabel}</span>`)}
+    </table>
+    ${opts.deploymentNotes ? `<div style="background:#f9fafb;border-left:4px solid #6b7280;padding:12px 16px;border-radius:4px;margin-bottom:16px;">
+      <p style="margin:0 0 4px;font-size:12px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:1px;">Deployment Notes</p>
+      <p style="margin:0;font-size:13px;color:#374151;">${opts.deploymentNotes}</p>
+    </div>` : ''}
+    ${opts.completionComments ? `<div style="background:${isSuccess ? '#f0fdf4' : '#fef2f2'};border-left:4px solid ${accentColor};padding:12px 16px;border-radius:4px;margin-bottom:16px;">
+      <p style="margin:0 0 4px;font-size:12px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:1px;">${isSuccess ? 'Completion Notes' : 'Failure Details'}</p>
+      <p style="margin:0;font-size:13px;color:#374151;">${opts.completionComments}</p>
+    </div>` : ''}
+    ${appUrl ? ctaButton('View in Neutara', `${appUrl}/infra`, accentColor) : ''}
+  `;
+  await sendGraphEmail(infraDL, subject, layout(`Deployment ${statusLabel}`, accentColor, body));
 };
 
 // ─── 6. Scope Email (multi-project) ──────────────────────────────────────────

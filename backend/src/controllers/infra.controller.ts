@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { query } from '../database/connection';
 import { createAuditLog } from '../services/audit.service';
 import { createNotification } from '../services/notification.service';
-import { sendDevAcknowledgmentEmail, sendDeploymentFailedEmail } from '../services/email.service';
+import { sendDevAcknowledgmentEmail, sendDeploymentFailedEmail, sendInfraCompletionNotificationEmail } from '../services/email.service';
 import logger from '../utils/logger';
 import path from 'path';
 
@@ -198,6 +198,17 @@ export const completeDeployment = async (req: Request, res: Response): Promise<v
         dlEmail:         deploymentDL,
       }).catch((e) => logger.error('Deployment failed email error', e));
     }
+
+    sendInfraCompletionNotificationEmail({
+      requestNumber:      String(dep.request_number  || ''),
+      deploymentTitle:    dep.deployment_title as string,
+      environment:        dep.environment      as string,
+      infraUserName,
+      deploymentStatus:   deployment_status as 'success' | 'failed',
+      completionComments: completion_comments,
+      deploymentNotes:    savedNotes,
+      devName:            String(dep.raised_by_name  || ''),
+    }).catch((e) => logger.error('Infra completion notification email error', e));
 
     res.json({ success: true, data: { status: newStatus }, message: `Deployment marked as ${deployment_status}` });
   } catch (err) {

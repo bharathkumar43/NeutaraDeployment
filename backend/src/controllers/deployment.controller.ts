@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { query } from '../database/connection';
 import { createAuditLog } from '../services/audit.service';
 import { notifyRoleUsers, createNotification } from '../services/notification.service';
-import { sendScopeEmail, sendQASubmissionEmail } from '../services/email.service';
+import { sendScopeEmail, sendQASubmissionEmail, sendDevSubmissionConfirmationEmail } from '../services/email.service';
 import logger from '../utils/logger';
 
 const DEPLOYMENT_SELECT = `
@@ -82,6 +82,15 @@ export const createDeployment = async (req: Request, res: Response): Promise<voi
         raisedByEmail:   String(deployment.raised_by_email || ''),
         description,
       }).catch((e) => logger.error('QA submission email error', e));
+      sendDevSubmissionConfirmationEmail({
+        requestNumber:   requestNumber,
+        deploymentTitle: deployment_title,
+        environment,
+        priority,
+        devName:         req.user!.name,
+        devEmail:        req.user!.email,
+        description,
+      }).catch((e) => logger.error('Dev submission confirmation email error', e));
     }
 
     res.status(201).json({ success: true, data: deployment });
@@ -164,6 +173,15 @@ export const updateDraft = async (req: Request, res: Response): Promise<void> =>
         raisedByEmail:   String(updated.raised_by_email || ''),
         description,
       }).catch((e) => logger.error('QA resubmit email error', e));
+      sendDevSubmissionConfirmationEmail({
+        requestNumber:   String(updated.request_number || ''),
+        deploymentTitle: deployment_title,
+        environment,
+        priority,
+        devName:         req.user!.name,
+        devEmail:        req.user!.email,
+        description,
+      }).catch((e) => logger.error('Dev resubmit confirmation email error', e));
     }
 
     res.json({ success: true, data: result.rows[0] });
