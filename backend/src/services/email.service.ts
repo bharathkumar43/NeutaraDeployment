@@ -120,7 +120,7 @@ function ctaButton(text: string, url: string, color: string): string {
   </div>`;
 }
 
-// ─── 1. Submitted for QA → QA DL ─────────────────────────────────────────────
+// ─── 1. Submitted for QA → QA DLs (up to 3) ─────────────────────────────────
 
 export const sendQASubmissionEmail = async (opts: {
   requestNumber: string;
@@ -131,8 +131,12 @@ export const sendQASubmissionEmail = async (opts: {
   raisedByEmail: string;
   description: string;
 }): Promise<void> => {
-  const qaDL  = process.env.EMAIL_QA_DL || '';
-  if (!qaDL) { logger.warn('EMAIL_QA_DL not set — QA submission email skipped'); return; }
+  const recipients = [
+    process.env.EMAIL_QA_DL,
+    process.env.EMAIL_QA_DL_2,
+    process.env.EMAIL_QA_DL_3,
+  ].filter(Boolean) as string[];
+  if (!recipients.length) { logger.warn('No QA DLs configured (EMAIL_QA_DL / EMAIL_QA_DL_2 / EMAIL_QA_DL_3) — QA submission email skipped'); return; }
   const appUrl = process.env.APP_URL || process.env.FRONTEND_URL || '';
 
   const priorityColor = opts.priority === 'critical' ? '#dc2626' : opts.priority === 'high' ? '#ea580c' : '#2563eb';
@@ -152,7 +156,7 @@ export const sendQASubmissionEmail = async (opts: {
     </div>` : ''}
     ${appUrl ? ctaButton('Review in Neutara', `${appUrl}/qa`, '#1d4ed8') : ''}
   `;
-  await sendGraphEmail(qaDL, subject, layout('QA Review Required', '#1d4ed8', body));
+  await sendGraphEmail(recipients, subject, layout('QA Review Required', '#1d4ed8', body));
 };
 
 // ─── 2. QA Approved → Infra DL ───────────────────────────────────────────────
@@ -231,7 +235,9 @@ export const sendDevQARejectionEmail = async (opts: {
   await sendGraphEmail(opts.devEmail, subject, layout(statusLabel, accentColor, body));
 };
 
-// ─── 4. Deployment Completed → Dev (please acknowledge) ──────────────────────
+// ─── 4. Deployment Completed ─────────────────────────────────────────────────
+//   4a. Dev who raised request → actionable email with Acknowledge button
+//   4b. DLs (EMAIL_DEPLOYMENT_DL + EMAIL_ACK_NOTIFY_DL) → FYI email, no action button
 
 export const sendDevAcknowledgmentEmail = async (opts: {
   requestNumber: string;
@@ -242,13 +248,14 @@ export const sendDevAcknowledgmentEmail = async (opts: {
   infraUserName: string;
   deploymentNotes?: string;
   dlEmail?: string;
+  additionalDlEmail?: string;
 }): Promise<void> => {
   if (!opts.devEmail) { logger.warn('No dev email — acknowledgment email skipped'); return; }
   const appUrl = process.env.APP_URL || process.env.FRONTEND_URL || '';
-  const recipients = [opts.devEmail, opts.dlEmail].filter(Boolean) as string[];
 
-  const subject = `[Neutara] Deployment Successful — Please Acknowledge — ${opts.requestNumber}: ${opts.deploymentTitle}`;
-  const body = `
+  // 4a — Actionable email to the developer only
+  const devSubject = `[Neutara] Deployment Successful — Please Acknowledge — ${opts.requestNumber}: ${opts.deploymentTitle}`;
+  const devBody = `
     <p style="margin:0 0 20px;font-size:15px;color:#374151;">Hi ${opts.devName},</p>
     <p style="margin:0 0 20px;font-size:15px;color:#374151;">Your deployment has been <strong style="color:#16a34a;">completed successfully</strong> by the Infrastructure team. Please log in to acknowledge the deployment.</p>
     <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin-bottom:24px;">
@@ -266,7 +273,29 @@ export const sendDevAcknowledgmentEmail = async (opts: {
     </div>
     ${appUrl ? ctaButton('Acknowledge Deployment', `${appUrl}/deployments`, '#16a34a') : ''}
   `;
-  await sendGraphEmail(recipients, subject, layout('Deployment Successful', '#16a34a', body));
+  await sendGraphEmail(opts.devEmail, devSubject, layout('Deployment Successful', '#16a34a', devBody));
+
+  // 4b — FYI notification email to DLs (no action button)
+  const dlRecipients = [opts.dlEmail, opts.additionalDlEmail].filter(Boolean) as string[];
+  if (!dlRecipients.length) return;
+
+  const fiySubject = `[Neutara] Deployment Completed — ${opts.requestNumber}: ${opts.deploymentTitle}`;
+  const fiyBody = `
+    <p style="margin:0 0 20px;font-size:15px;color:#374151;">The following deployment has been <strong style="color:#16a34a;">completed successfully</strong>. The developer has been notified to acknowledge.</p>
+    <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin-bottom:24px;">
+      ${infoRow('Request #', `<span style="background:#eff6ff;color:#1d4ed8;padding:2px 8px;border-radius:4px;font-family:monospace;font-weight:700;">${opts.requestNumber}</span>`)}
+      ${infoRow('Deployment', opts.deploymentTitle)}
+      ${infoRow('Environment', `<span style="background:#f0fdf4;color:#166534;padding:2px 8px;border-radius:4px;font-weight:600;">${opts.environment}</span>`)}
+      ${infoRow('Deployed By', opts.infraUserName)}
+      ${infoRow('Developer', opts.devName)}
+    </table>
+    ${opts.deploymentNotes ? `<div style="background:#f0fdf4;border-left:4px solid #16a34a;padding:12px 16px;border-radius:4px;margin-bottom:16px;">
+      <p style="margin:0 0 4px;font-size:12px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:1px;">Deployment Notes</p>
+      <p style="margin:0;font-size:13px;color:#374151;">${opts.deploymentNotes}</p>
+    </div>` : ''}
+    <p style="margin:16px 0 0;font-size:13px;color:#6b7280;">This is a notification-only email. Only the original requester (${opts.devName}) can acknowledge the deployment in Neutara.</p>
+  `;
+  await sendGraphEmail(dlRecipients, fiySubject, layout('Deployment Completed', '#16a34a', fiyBody));
 };
 
 // ─── 5. Deployment Failed → Dev ──────────────────────────────────────────────

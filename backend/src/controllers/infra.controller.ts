@@ -171,26 +171,28 @@ export const completeDeployment = async (req: Request, res: Response): Promise<v
       type: deployment_status === 'success' ? 'success' : 'error',
     });
 
-    const deploymentDL = process.env.EMAIL_DEPLOYMENT_DL || '';
+    const deploymentDL   = process.env.EMAIL_DEPLOYMENT_DL   || '';
+    const ackNotifyDL    = process.env.EMAIL_ACK_NOTIFY_DL   || '';
 
     if (deployment_status === 'success') {
       sendDevAcknowledgmentEmail({
-        requestNumber:   String(dep.request_number   || ''),
-        deploymentTitle: dep.deployment_title as string,
-        environment:     dep.environment      as string,
-        devEmail:        String(dep.raised_by_email  || ''),
-        devName:         String(dep.raised_by_name   || ''),
+        requestNumber:    String(dep.request_number  || ''),
+        deploymentTitle:  dep.deployment_title as string,
+        environment:      dep.environment      as string,
+        devEmail:         String(dep.raised_by_email || ''),
+        devName:          String(dep.raised_by_name  || ''),
         infraUserName,
-        deploymentNotes: savedNotes,
-        dlEmail:         deploymentDL,
+        deploymentNotes:  savedNotes,
+        dlEmail:          deploymentDL,
+        additionalDlEmail: ackNotifyDL,
       }).catch((e) => logger.error('Acknowledgment email error', e));
     } else {
       sendDeploymentFailedEmail({
-        requestNumber:   String(dep.request_number   || ''),
+        requestNumber:   String(dep.request_number  || ''),
         deploymentTitle: dep.deployment_title as string,
         environment:     dep.environment      as string,
-        devEmail:        String(dep.raised_by_email  || ''),
-        devName:         String(dep.raised_by_name   || ''),
+        devEmail:        String(dep.raised_by_email || ''),
+        devName:         String(dep.raised_by_name  || ''),
         infraUserName,
         failureComments: completion_comments,
         dlEmail:         deploymentDL,
