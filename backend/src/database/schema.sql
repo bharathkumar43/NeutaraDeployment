@@ -83,6 +83,7 @@ CREATE TABLE IF NOT EXISTS deployment_requests (
 
 -- Add columns if upgrading an existing database
 ALTER TABLE deployment_requests ADD COLUMN IF NOT EXISTS request_number        VARCHAR(20) UNIQUE;
+ALTER TABLE deployment_requests ADD COLUMN IF NOT EXISTS submitted_at          TIMESTAMP;
 ALTER TABLE deployment_requests ADD COLUMN IF NOT EXISTS risk_level            VARCHAR(20);
 ALTER TABLE deployment_requests ADD COLUMN IF NOT EXISTS downtime_required     BOOLEAN NOT NULL DEFAULT false;
 ALTER TABLE deployment_requests ADD COLUMN IF NOT EXISTS db_migration          BOOLEAN NOT NULL DEFAULT false;

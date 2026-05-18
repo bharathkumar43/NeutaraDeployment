@@ -294,7 +294,15 @@ export const NewDeploymentPage: React.FC = () => {
 
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-1">Ticket / JIRA Link <span className="text-red-500">*</span></label>
-              <input {...register('ticket_link')} className={inputCls(errors.ticket_link)} placeholder="e.g. https://jira.company.com/browse/PROJ-123" onChange={() => clearErrors('ticket_link')} />
+              <input
+                {...register('ticket_link')}
+                className={inputCls(errors.ticket_link)}
+                placeholder="e.g. https://jira.company.com/browse/PROJ-123"
+                onChange={(e) => {
+                  setValue('ticket_link', e.target.value);
+                  clearErrors('ticket_link');
+                }}
+              />
               {errMsg(errors.ticket_link?.message)}
             </div>
 
