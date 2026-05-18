@@ -95,8 +95,9 @@ export const createDeployment = async (req: Request, res: Response): Promise<voi
 
     res.status(201).json({ success: true, data: deployment });
   } catch (err) {
-    logger.error('Create deployment error', err);
-    res.status(500).json({ success: false, message: 'Server error' });
+    const msg = err instanceof Error ? err.message : String(err);
+    logger.error('Create deployment error', { message: msg, stack: err instanceof Error ? err.stack : undefined });
+    res.status(500).json({ success: false, message: 'Server error', detail: msg });
   }
 };
 

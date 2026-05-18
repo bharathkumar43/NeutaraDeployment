@@ -201,6 +201,9 @@ export const NewDeploymentPage: React.FC = () => {
     try {
       if (isEdit) { await deploymentService.update(id!, payload); toast.success('Draft updated'); }
       else { await deploymentService.create(payload); toast.success('Draft saved'); navigate('/deployments'); }
+    } catch (err: any) {
+      const detail = err?.response?.data?.detail || err?.response?.data?.message || err?.message || 'Unknown error';
+      toast.error(`Failed to save draft: ${detail}`);
     } finally { setSavingDraft(false); }
   });
 
@@ -212,6 +215,9 @@ export const NewDeploymentPage: React.FC = () => {
       if (isEdit) { await deploymentService.update(id!, payload); toast.success('Resubmitted to QA!'); }
       else { await deploymentService.create(payload); toast.success('Submitted to QA for approval!'); }
       navigate(['qa', 'admin'].includes(user?.role || '') ? '/qa' : '/deployments');
+    } catch (err: any) {
+      const detail = err?.response?.data?.detail || err?.response?.data?.message || err?.message || 'Unknown error';
+      toast.error(`Submission failed: ${detail}`);
     } finally { setSubmitting(false); }
   });
 
