@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS deployment_requests (
   request_number   VARCHAR(20)  UNIQUE,
   deployment_title VARCHAR(500) NOT NULL,
   project_name     VARCHAR(255) NOT NULL,
-  job_id           VARCHAR(100),
+  job_id           TEXT,
   branch_name      VARCHAR(255) NOT NULL,
   environment      VARCHAR(50)  NOT NULL,
   ticket_link      TEXT,
@@ -89,6 +89,7 @@ ALTER TABLE deployment_requests ADD COLUMN IF NOT EXISTS downtime_required     B
 ALTER TABLE deployment_requests ADD COLUMN IF NOT EXISTS db_migration          BOOLEAN NOT NULL DEFAULT false;
 ALTER TABLE deployment_requests ADD COLUMN IF NOT EXISTS requested_deploy_date TIMESTAMP;
 ALTER TABLE deployment_requests ADD COLUMN IF NOT EXISTS extra_meta            JSONB;
+ALTER TABLE deployment_requests ALTER COLUMN job_id TYPE TEXT;
 
 CREATE INDEX IF NOT EXISTS idx_dr_status ON deployment_requests(status);
 CREATE INDEX IF NOT EXISTS idx_dr_raised_by ON deployment_requests(raised_by);

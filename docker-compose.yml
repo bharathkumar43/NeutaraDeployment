@@ -43,7 +43,11 @@ services:
       AZURE_CLIENT_SECRET:   ${AZURE_CLIENT_SECRET}
       EMAIL_SENDER:          ${EMAIL_SENDER:-}
       EMAIL_QA_DL:           ${EMAIL_QA_DL:-}
+      EMAIL_QA_DL_2:         ${EMAIL_QA_DL_2:-}
+      EMAIL_QA_DL_3:         ${EMAIL_QA_DL_3:-}
       EMAIL_INFRA_DL:        ${EMAIL_INFRA_DL:-}
+      EMAIL_DEPLOYMENT_DL:   ${EMAIL_DEPLOYMENT_DL:-}
+      EMAIL_ACK_NOTIFY_DL:   ${EMAIL_ACK_NOTIFY_DL:-}
       SCOPE_EMAIL_RECIPIENT: ${SCOPE_EMAIL_RECIPIENT:-}
     volumes:
       - ./backend/uploads:/app/uploads

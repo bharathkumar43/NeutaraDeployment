@@ -8,6 +8,7 @@ ALTER TABLE deployment_requests ADD COLUMN IF NOT EXISTS downtime_required     B
 ALTER TABLE deployment_requests ADD COLUMN IF NOT EXISTS db_migration          BOOLEAN NOT NULL DEFAULT false;
 ALTER TABLE deployment_requests ADD COLUMN IF NOT EXISTS requested_deploy_date TIMESTAMP;
 ALTER TABLE deployment_requests ADD COLUMN IF NOT EXISTS extra_meta            JSONB;
+ALTER TABLE deployment_requests ALTER COLUMN job_id TYPE TEXT;
 
 -- Verify columns exist after migration
 SELECT column_name, data_type, is_nullable

@@ -327,8 +327,9 @@ export const NewDeploymentPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Service / Application</label>
-              <input {...register('service_name')} className={inputCls()} placeholder="e.g. Auth Service" />
+              <label className="block text-sm font-medium text-gray-700 mb-1">Service / Application <span className="text-red-500">*</span></label>
+              <input {...register('service_name', { required: 'Required' })} className={inputCls(errors.service_name)} placeholder="e.g. Auth Service" />
+              {errMsg(errors.service_name?.message)}
             </div>
 
             <div>
@@ -376,13 +377,14 @@ export const NewDeploymentPage: React.FC = () => {
             </div>
 
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Change Summary</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Change Summary <span className="text-red-500">*</span></label>
               <textarea
-                {...register('description')}
-                className={`${inputCls()} resize-none`}
+                {...register('description', { required: 'Required' })}
+                className={`${inputCls(errors.description)} resize-none`}
                 rows={3}
                 placeholder="Describe the changes in this deployment..."
               />
+              {errMsg(errors.description?.message)}
             </div>
 
           </div>
