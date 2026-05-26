@@ -327,12 +327,6 @@ export const NewDeploymentPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Service / Application <span className="text-red-500">*</span></label>
-              <input {...register('service_name', { required: 'Required' })} className={inputCls(errors.service_name)} placeholder="e.g. Auth Service" />
-              {errMsg(errors.service_name?.message)}
-            </div>
-
-            <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Branch Name <span className="text-red-500">*</span></label>
               <select {...register('branch_name', { required: 'Required' })} className={selectCls(errors.branch_name)}>
                 <option value="">Select branch...</option>
@@ -368,12 +362,6 @@ export const NewDeploymentPage: React.FC = () => {
                 <option value="high">🟠 High</option>
                 <option value="critical">🔴 Critical</option>
               </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Environment <span className="text-red-500">*</span></label>
-              <input {...register('env_name', { required: 'Required' })} className={inputCls(errors.env_name)} placeholder="e.g. Staging, Production, QA" />
-              {errMsg(errors.env_name?.message)}
             </div>
 
             <div className="md:col-span-2">

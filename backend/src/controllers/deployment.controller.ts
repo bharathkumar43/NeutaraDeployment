@@ -24,6 +24,7 @@ export const createDeployment = async (req: Request, res: Response): Promise<voi
     repository, service_name, base_branch, commit_sha, env_name,
     pull_request_link, pr_approved_by, feature_flags, config_changes, dependencies,
     requested_by_name, team,
+    deployment_scope, single_project_name, multi_project_names,
   } = req.body;
   const raised_by   = req.user!.userId;
   const finalStatus = status === 'draft' ? 'draft' : 'pending_qa_approval';
@@ -33,6 +34,7 @@ export const createDeployment = async (req: Request, res: Response): Promise<voi
     repository, service_name, base_branch, commit_sha, env_name,
     pull_request_link, pr_approved_by, feature_flags, config_changes,
     dependencies, requested_by_name, team,
+    deployment_scope, single_project_name, multi_project_names,
   });
 
   try {
@@ -111,11 +113,13 @@ export const updateDraft = async (req: Request, res: Response): Promise<void> =>
     repository, service_name, base_branch, commit_sha, env_name,
     pull_request_link, pr_approved_by, feature_flags, config_changes, dependencies,
     requested_by_name, team,
+    deployment_scope, single_project_name, multi_project_names,
   } = req.body;
   const extraMeta = JSON.stringify({
     repository, service_name, base_branch, commit_sha, env_name,
     pull_request_link, pr_approved_by, feature_flags, config_changes,
     dependencies, requested_by_name, team,
+    deployment_scope, single_project_name, multi_project_names,
   });
 
   try {

@@ -69,6 +69,17 @@ export const QAApprovalPage: React.FC = () => {
     } finally { setSubmitting(false); }
   });
 
+  const getProjectServerUrl = (dep: DeploymentRequest): string => {
+    const meta = (dep as any).extra_meta
+      ? (typeof (dep as any).extra_meta === 'string'
+          ? JSON.parse((dep as any).extra_meta)
+          : (dep as any).extra_meta)
+      : {};
+    return meta.deployment_scope === 'multiple'
+      ? meta.multi_project_names || ''
+      : meta.single_project_name || '';
+  };
+
   const ACTION_CONFIG: Record<ActionType, { title: string; btnClass: string; icon: React.ReactNode; placeholder: string }> = {
     approved: { title: 'Approve Deployment', btnClass: 'btn-success', icon: <CheckCircleIcon className="w-4 h-4" />, placeholder: 'Add approval notes, testing done, sign-off comments...' },
     rejected: { title: 'Reject Deployment', btnClass: 'btn-danger', icon: <XCircleIcon className="w-4 h-4" />, placeholder: 'Explain the reason for rejection clearly...' },
@@ -138,6 +149,12 @@ export const QAApprovalPage: React.FC = () => {
                         <p className="text-sm text-gray-600 mt-0.5">{dep.submitted_at ? formatRelative(dep.submitted_at) : '—'}</p>
                       </div>
                     </div>
+                    {getProjectServerUrl(dep) && (
+                      <div className="mt-3 bg-blue-50 border border-blue-100 rounded-lg px-3 py-2">
+                        <p className="text-xs text-blue-500 uppercase font-medium mb-0.5">Project Name / Server URL</p>
+                        <p className="text-sm text-blue-900 whitespace-pre-wrap">{getProjectServerUrl(dep)}</p>
+                      </div>
+                    )}
 
                     <div className="mt-3 bg-gray-50 rounded-lg p-3">
                       <p className="text-xs font-medium text-gray-500 mb-1">Description</p>
@@ -204,6 +221,12 @@ export const QAApprovalPage: React.FC = () => {
                 <PriorityBadge priority={selectedDep.priority} />
               </div>
               <p className="text-xs text-gray-500 mt-2">{selectedDep.project_name} · Branch: <code className="bg-gray-200 px-1 rounded">{selectedDep.branch_name}</code></p>
+              {getProjectServerUrl(selectedDep) && (
+                <div className="mt-2 pt-2 border-t border-gray-200">
+                  <p className="text-xs text-gray-400 uppercase font-medium">Project Name / Server URL</p>
+                  <p className="text-sm text-gray-700 mt-0.5 whitespace-pre-wrap">{getProjectServerUrl(selectedDep)}</p>
+                </div>
+              )}
             </div>
 
             {/* Warning for critical */}
