@@ -160,6 +160,12 @@ export const NewDeploymentPage: React.FC = () => {
     if (data.environments.length === 0) {
       setError('environments', { message: 'Select at least one environment' }); return null;
     }
+    if (data.deployment_scope === 'single' && !data.single_project_name?.trim()) {
+      setError('single_project_name', { message: 'Project name / server URL is required' }); return null;
+    }
+    if (data.deployment_scope === 'multiple' && !data.multi_project_names?.trim()) {
+      setError('multi_project_names', { message: 'Project names / server URLs are required' }); return null;
+    }
     if (isSingleEnv) {
       let ok = true;
       if (!data.ticket_link?.trim()) { setError('ticket_link', { message: 'Required for single environment' }); ok = false; }
@@ -546,8 +552,8 @@ export const NewDeploymentPage: React.FC = () => {
                           type="button"
                           onClick={() => {
                             field.onChange(val);
-                            if (val === 'single') { setEmailSent(false); setValue('multi_project_names', ''); }
-                            if (val === 'multiple') { setValue('single_project_name', ''); }
+                            if (val === 'single') { setEmailSent(false); setValue('multi_project_names', ''); clearErrors('multi_project_names'); }
+                            if (val === 'multiple') { setValue('single_project_name', ''); clearErrors('single_project_name'); }
                           }}
                           className={`px-5 py-2 rounded-lg text-sm font-medium border transition-colors ${field.value === val ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-600 border-gray-300 hover:border-blue-400'}`}
                         >
@@ -566,7 +572,7 @@ export const NewDeploymentPage: React.FC = () => {
                     </label>
                     <input
                       {...register('single_project_name', {
-                        validate: v => watchedScope !== 'single' || !!v?.trim() || 'Project name / server URL is required',
+                        required: 'Project name / server URL is required',
                       })}
                       className={inputCls(errors.single_project_name)}
                       placeholder="e.g. Neutara Platform or https://server.example.com"
@@ -611,7 +617,7 @@ export const NewDeploymentPage: React.FC = () => {
                       </label>
                       <textarea
                         {...register('multi_project_names', {
-                          validate: v => watchedScope !== 'multiple' || !!v?.trim() || 'Enter project names to proceed',
+                          required: emailSent ? 'Project names / server URLs are required' : false,
                         })}
                         disabled={!emailSent}
                         rows={3}

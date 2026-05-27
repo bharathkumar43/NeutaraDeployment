@@ -2,8 +2,8 @@ import { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { query } from '../database/connection';
 import { createAuditLog } from '../services/audit.service';
-import { createNotification } from '../services/notification.service';
-import { sendDevAcknowledgmentEmail, sendDeploymentFailedEmail, sendInfraCompletionNotificationEmail } from '../services/email.service';
+import { createNotification, notifyRoleUsers } from '../services/notification.service';
+import { sendDevAcknowledgmentEmail, sendDeploymentFailedEmail, sendInfraCompletionNotificationEmail, sendInfraSentBackEmail, sendInfraRejectedEmail } from '../services/email.service';
 import logger from '../utils/logger';
 import path from 'path';
 
@@ -214,5 +214,100 @@ export const completeDeployment = async (req: Request, res: Response): Promise<v
   } catch (err) {
     logger.error('Complete deployment error', err);
     res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
+
+export const infraReview = async (req: Request, res: Response): Promise<void> => {
+  const { id }               = req.params;
+  const { action, comments } = req.body;
+  const infraUserId          = req.user!.userId;
+
+  if (!['sent_back', 'rejected'].includes(action)) {
+    res.status(400).json({ success: false, message: 'action must be sent_back or rejected' }); return;
+  }
+  if (!comments?.trim()) {
+    res.status(400).json({ success: false, message: 'Comments are required' }); return;
+  }
+
+  try {
+    const depResult = await query(`${DEP_WITH_USER} WHERE dr.id = $1`, [id]);
+    const dep = depResult.rows[0];
+    if (!dep) { res.status(404).json({ success: false, message: 'Deployment not found' }); return; }
+    if (dep.status !== 'pending_infra_deployment') {
+      res.status(400).json({ success: false, message: 'Deployment is not in pending infra state' }); return;
+    }
+
+    const infraUserResult = await query(`SELECT name FROM users WHERE id = $1`, [infraUserId]);
+    const infraUserName   = String(infraUserResult.rows[0]?.name || 'Infra Team');
+
+    const newStatus = action === 'sent_back' ? 'pending_qa_approval' : 'rejected_by_infra';
+    await query(`UPDATE deployment_requests SET status = $1 WHERE id = $2`, [newStatus, id]);
+
+    // Store review info in extra_meta so QA and Dev can see it in their views
+    await query(
+      `UPDATE deployment_requests
+       SET extra_meta = COALESCE(extra_meta, '{}'::jsonb) || $1::jsonb
+       WHERE id = $2`,
+      [JSON.stringify({
+        infra_review_action:   action,
+        infra_review_comments: comments,
+        infra_reviewed_by:     infraUserName,
+      }), id]
+    );
+
+    await createAuditLog({
+      deploymentId: id,
+      action:       action === 'sent_back' ? 'INFRA_SENT_BACK' : 'INFRA_REJECTED',
+      performedBy:  infraUserId,
+      oldStatus:    'pending_infra_deployment',
+      newStatus,
+      comment:      comments,
+      ipAddress:    req.ip,
+    });
+
+    if (action === 'sent_back') {
+      await notifyRoleUsers('qa', {
+        deploymentId: id,
+        title:   'Deployment Sent Back by Infra — Re-review Required',
+        message: `"${dep.deployment_title}" was sent back by the Infra team: ${comments}`,
+        type:    'warning',
+      });
+      sendInfraSentBackEmail({
+        requestNumber:   String(dep.request_number  || ''),
+        deploymentTitle: dep.deployment_title as string,
+        environment:     dep.environment      as string,
+        priority:        dep.priority         as string,
+        raisedByName:    String(dep.raised_by_name  || ''),
+        infraUserName,
+        comments,
+      }).catch((e) => logger.error('Infra sent-back email error', e));
+    } else {
+      await createNotification({
+        userId:       dep.raised_by as string,
+        deploymentId: id,
+        title:   'Deployment Rejected by Infra Team',
+        message: `"${dep.deployment_title}" was rejected by the Infra team. ${comments}`,
+        type:    'error',
+      });
+      sendInfraRejectedEmail({
+        requestNumber:   String(dep.request_number  || ''),
+        deploymentTitle: dep.deployment_title as string,
+        environment:     dep.environment      as string,
+        devEmail:        String(dep.raised_by_email || ''),
+        devName:         String(dep.raised_by_name  || ''),
+        infraUserName,
+        comments,
+      }).catch((e) => logger.error('Infra rejected email error', e));
+    }
+
+    res.json({
+      success: true,
+      message: action === 'sent_back' ? 'Deployment sent back to QA for re-review' : 'Deployment rejected',
+      data: { status: newStatus },
+    });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    logger.error('Infra review error', { message: msg });
+    res.status(500).json({ success: false, message: 'Server error', detail: msg });
   }
 };

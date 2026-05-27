@@ -450,6 +450,74 @@ export const sendInfraCompletionNotificationEmail = async (opts: {
   await sendGraphEmail(infraDL, subject, layout(`Deployment ${statusLabel}`, accentColor, body));
 };
 
+// ─── 5c. Infra Sent Back → QA DL ─────────────────────────────────────────────
+
+export const sendInfraSentBackEmail = async (opts: {
+  requestNumber: string;
+  deploymentTitle: string;
+  environment: string;
+  priority: string;
+  raisedByName: string;
+  infraUserName: string;
+  comments: string;
+}): Promise<void> => {
+  const qaDL = process.env.EMAIL_QA_DL || '';
+  if (!qaDL) { logger.warn('EMAIL_QA_DL not set — infra sent-back email skipped'); return; }
+  const appUrl = process.env.APP_URL || process.env.FRONTEND_URL || '';
+  const subject = `[Neutara] Sent Back by Infra — QA Review Required — ${opts.requestNumber}: ${opts.deploymentTitle}`;
+  const body = `
+    <p style="margin:0 0 20px;font-size:15px;color:#374151;">A deployment request has been <strong style="color:#d97706;">sent back by the Infrastructure team</strong> and requires QA re-review.</p>
+    <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin-bottom:24px;">
+      ${infoRow('Request #', `<span style="background:#eff6ff;color:#1d4ed8;padding:2px 8px;border-radius:4px;font-family:monospace;font-weight:700;">${opts.requestNumber}</span>`)}
+      ${infoRow('Deployment', opts.deploymentTitle)}
+      ${infoRow('Environment', `<span style="background:#f0fdf4;color:#166534;padding:2px 8px;border-radius:4px;font-weight:600;">${opts.environment}</span>`)}
+      ${infoRow('Priority', `<span style="font-weight:700;text-transform:uppercase;">${opts.priority}</span>`)}
+      ${infoRow('Raised By', opts.raisedByName)}
+      ${infoRow('Sent Back By', opts.infraUserName)}
+    </table>
+    <div style="background:#fffbeb;border-left:4px solid #f59e0b;padding:12px 16px;border-radius:4px;margin-bottom:16px;">
+      <p style="margin:0 0 4px;font-size:12px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:1px;">Infra Comments</p>
+      <p style="margin:0;font-size:13px;color:#374151;">${opts.comments}</p>
+    </div>
+    <p style="margin:0 0 16px;font-size:13px;color:#6b7280;">Please review the infra team's feedback and re-approve or reject accordingly.</p>
+    ${appUrl ? ctaButton('Review in Neutara', `${appUrl}/qa`, '#d97706') : ''}
+  `;
+  await sendGraphEmail(qaDL, subject, layout('Sent Back by Infra — QA Review Required', '#d97706', body));
+};
+
+// ─── 5d. Infra Rejected → Dev ─────────────────────────────────────────────────
+
+export const sendInfraRejectedEmail = async (opts: {
+  requestNumber: string;
+  deploymentTitle: string;
+  environment: string;
+  devEmail: string;
+  devName: string;
+  infraUserName: string;
+  comments: string;
+}): Promise<void> => {
+  if (!opts.devEmail) { logger.warn('No dev email — infra rejection email skipped'); return; }
+  const appUrl = process.env.APP_URL || process.env.FRONTEND_URL || '';
+  const subject = `[Neutara] Deployment Rejected by Infra — ${opts.requestNumber}: ${opts.deploymentTitle}`;
+  const body = `
+    <p style="margin:0 0 20px;font-size:15px;color:#374151;">Hi ${opts.devName},</p>
+    <p style="margin:0 0 20px;font-size:15px;color:#374151;">Your deployment request has been <strong style="color:#dc2626;">rejected by the Infrastructure team</strong>.</p>
+    <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin-bottom:24px;">
+      ${infoRow('Request #', `<span style="background:#eff6ff;color:#1d4ed8;padding:2px 8px;border-radius:4px;font-family:monospace;font-weight:700;">${opts.requestNumber}</span>`)}
+      ${infoRow('Deployment', opts.deploymentTitle)}
+      ${infoRow('Environment', opts.environment)}
+      ${infoRow('Rejected By', opts.infraUserName)}
+    </table>
+    <div style="background:#fef2f2;border-left:4px solid #dc2626;padding:12px 16px;border-radius:4px;margin-bottom:16px;">
+      <p style="margin:0 0 4px;font-size:12px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:1px;">Rejection Reason</p>
+      <p style="margin:0;font-size:13px;color:#374151;">${opts.comments}</p>
+    </div>
+    <p style="margin:0 0 16px;font-size:13px;color:#6b7280;">Please address the issues raised and raise a new deployment request if needed.</p>
+    ${appUrl ? ctaButton('View Request', `${appUrl}/deployments`, '#dc2626') : ''}
+  `;
+  await sendGraphEmail(opts.devEmail, subject, layout('Deployment Rejected by Infra', '#dc2626', body));
+};
+
 // ─── 6. Scope Email (multi-project) ──────────────────────────────────────────
 
 export const sendScopeEmail = async (opts: {

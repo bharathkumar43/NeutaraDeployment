@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS deployment_requests (
                      'draft','pending_qa_approval','qa_approved','rejected_by_qa',
                      'pending_infra_deployment','deployment_in_progress','deployment_completed',
                      'deployment_failed','pending_dev_acknowledgment',
-                     'successfully_completed','issue_raised'
+                     'successfully_completed','issue_raised','rejected_by_infra'
                    )),
   submitted_at          TIMESTAMP,
   risk_level            VARCHAR(20),
@@ -90,6 +90,14 @@ ALTER TABLE deployment_requests ADD COLUMN IF NOT EXISTS db_migration          B
 ALTER TABLE deployment_requests ADD COLUMN IF NOT EXISTS requested_deploy_date TIMESTAMP;
 ALTER TABLE deployment_requests ADD COLUMN IF NOT EXISTS extra_meta            JSONB;
 ALTER TABLE deployment_requests ALTER COLUMN job_id TYPE TEXT;
+ALTER TABLE deployment_requests DROP CONSTRAINT IF EXISTS deployment_requests_status_check;
+ALTER TABLE deployment_requests ADD CONSTRAINT deployment_requests_status_check
+  CHECK (status IN (
+    'draft','pending_qa_approval','qa_approved','rejected_by_qa',
+    'pending_infra_deployment','deployment_in_progress','deployment_completed',
+    'deployment_failed','pending_dev_acknowledgment',
+    'successfully_completed','issue_raised','rejected_by_infra'
+  ));
 
 CREATE INDEX IF NOT EXISTS idx_dr_status ON deployment_requests(status);
 CREATE INDEX IF NOT EXISTS idx_dr_raised_by ON deployment_requests(raised_by);

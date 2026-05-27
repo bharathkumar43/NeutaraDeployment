@@ -20,6 +20,6 @@ router.get('/', getDeployments);
 router.get('/:id', getDeploymentById);
 router.post('/', authorize('dev', 'admin'), createDeployment);
 router.put('/:id', authorize('dev', 'admin'), updateDraft);
-router.delete('/:id', authorize('admin'), deleteDeployment);
+router.delete('/:id', authorize('dev', 'admin'), deleteDeployment);
 
 export default router;

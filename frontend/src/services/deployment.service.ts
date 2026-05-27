@@ -103,6 +103,10 @@ export const infraService = {
   async completeDeployment(id: string, formData: FormData): Promise<void> {
     await api.post(`/infra/deployments/${id}/complete`, formData);
   },
+
+  async reviewDeployment(id: string, action: 'sent_back' | 'rejected', comments: string): Promise<void> {
+    await api.post(`/infra/deployments/${id}/review`, { action, comments });
+  },
 };
 
 export const acknowledgmentService = {

@@ -22,6 +22,7 @@ const STATUS_OPTIONS = [
   { value: 'pending_dev_acknowledgment', label: 'Pending Ack.' },
   { value: 'successfully_completed', label: 'Completed' },
   { value: 'rejected_by_qa', label: 'Rejected by QA' },
+  { value: 'rejected_by_infra', label: 'Rejected by Infra' },
   { value: 'issue_raised', label: 'Issue Raised' },
 ];
 
@@ -66,19 +67,22 @@ export const DeploymentListPage: React.FC = () => {
     setPage(1);
   };
 
-  const canDelete = (): boolean => {
-    return user?.role === 'admin';
+  const DELETABLE_STATUSES = ['draft', 'pending_qa_approval'];
+
+  const canDelete = (dep: DeploymentRequest): boolean => {
+    if (user?.role === 'admin') return true;
+    return dep.raised_by === user?.id && DELETABLE_STATUSES.includes(dep.status);
   };
 
   const handleDelete = async (e: React.MouseEvent, dep: DeploymentRequest) => {
     e.stopPropagation();
-    if (!window.confirm(`Delete "${dep.deployment_title}"?\n\nThis action cannot be undone.`)) return;
+    if (!window.confirm(`Delete "${dep.deployment_title}"?\n\nThis cannot be undone.`)) return;
     setDeleting(dep.id);
     try {
       await deploymentService.delete(dep.id);
       await load();
     } catch {
-      alert('Failed to delete deployment. Please try again.');
+      alert('Failed to delete. Please try again.');
     } finally {
       setDeleting(null);
     }
@@ -203,7 +207,7 @@ export const DeploymentListPage: React.FC = () => {
                       <td className="table-cell text-gray-600">{dep.raised_by_name || '—'}</td>
                       <td className="table-cell text-gray-400 whitespace-nowrap text-xs">{formatRelative(dep.created_at)}</td>
                       <td className="table-cell" onClick={(e) => e.stopPropagation()}>
-                        {canDelete() && (
+                        {canDelete(dep) && (
                           <button
                             onClick={(e) => handleDelete(e, dep)}
                             disabled={deleting === dep.id}

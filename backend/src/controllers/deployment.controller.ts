@@ -120,6 +120,10 @@ export const updateDraft = async (req: Request, res: Response): Promise<void> =>
     pull_request_link, pr_approved_by, feature_flags, config_changes,
     dependencies, requested_by_name, team,
     deployment_scope, single_project_name, multi_project_names,
+    // Clear any stale infra review fields on resubmission
+    infra_review_action:   null,
+    infra_review_comments: null,
+    infra_reviewed_by:     null,
   });
 
   try {
@@ -130,7 +134,7 @@ export const updateDraft = async (req: Request, res: Response): Promise<void> =>
     if (dep.raised_by !== userId && req.user!.role !== 'admin') {
       res.status(403).json({ success: false, message: 'Not authorized to edit this deployment' }); return;
     }
-    if (!['draft', 'rejected_by_qa'].includes(dep.status as string) && req.user!.role !== 'admin') {
+    if (!['draft', 'rejected_by_qa', 'rejected_by_infra'].includes(dep.status as string) && req.user!.role !== 'admin') {
       res.status(400).json({ success: false, message: 'Cannot edit deployment in current status' }); return;
     }
 
@@ -348,10 +352,29 @@ export const deleteDeployment = async (req: Request, res: Response): Promise<voi
     }
     const dep = existing.rows[0];
 
+    // Admins can delete anything. Developers can only delete their own requests
+    // that haven't been touched by QA yet (draft or pending_qa_approval).
     if (role !== 'admin') {
-      res.status(403).json({ success: false, message: 'Only admins can delete deployment requests' });
-      return;
+      if (dep.raised_by !== userId) {
+        res.status(403).json({ success: false, message: 'You can only delete your own deployment requests' });
+        return;
+      }
+      if (!['draft', 'pending_qa_approval'].includes(dep.status as string)) {
+        res.status(400).json({ success: false, message: 'Cannot delete a request after QA has reviewed it' });
+        return;
+      }
     }
+
+    // Audit log must be created BEFORE delete — the FK goes away after deletion
+    await createAuditLog({
+      deploymentId: id,
+      action: 'DELETED',
+      performedBy: userId,
+      oldStatus: dep.status as string,
+      newStatus: 'deleted',
+      comment: `"${dep.deployment_title}" deleted by ${role}`,
+      ipAddress: req.ip,
+    });
 
     await query(`DELETE FROM deployment_requests WHERE id = $1`, [id]);
 

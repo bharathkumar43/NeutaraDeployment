@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
 import {
   CheckCircleIcon, XCircleIcon, ArrowUturnLeftIcon,
   ClockIcon, EyeIcon, FunnelIcon, ArrowPathIcon,
-  ExclamationTriangleIcon, LinkIcon,
+  ExclamationTriangleIcon, LinkIcon, ServerStackIcon,
 } from '@heroicons/react/24/outline';
 import { qaService } from '../services/deployment.service';
 import { DeploymentRequest } from '../types';
@@ -69,15 +69,25 @@ export const QAApprovalPage: React.FC = () => {
     } finally { setSubmitting(false); }
   });
 
+  const getMeta = (dep: DeploymentRequest) => {
+    const raw = (dep as any).extra_meta;
+    if (!raw) return {};
+    return typeof raw === 'string' ? JSON.parse(raw) : raw;
+  };
+
   const getProjectServerUrl = (dep: DeploymentRequest): string => {
-    const meta = (dep as any).extra_meta
-      ? (typeof (dep as any).extra_meta === 'string'
-          ? JSON.parse((dep as any).extra_meta)
-          : (dep as any).extra_meta)
-      : {};
+    const meta = getMeta(dep);
     return meta.deployment_scope === 'multiple'
       ? meta.multi_project_names || ''
       : meta.single_project_name || '';
+  };
+
+  const getInfraReview = (dep: DeploymentRequest) => {
+    const meta = getMeta(dep);
+    if (meta.infra_review_action === 'sent_back') {
+      return { comments: meta.infra_review_comments as string, by: meta.infra_reviewed_by as string };
+    }
+    return null;
   };
 
   const ACTION_CONFIG: Record<ActionType, { title: string; btnClass: string; icon: React.ReactNode; placeholder: string }> = {
@@ -156,6 +166,19 @@ export const QAApprovalPage: React.FC = () => {
                       </div>
                     )}
 
+                    {(() => {
+                      const infraReview = getInfraReview(dep);
+                      return infraReview ? (
+                        <div className="mt-3 bg-amber-50 border border-amber-300 rounded-lg p-3">
+                          <div className="flex items-center gap-1.5 mb-1">
+                            <ServerStackIcon className="w-3.5 h-3.5 text-amber-600 flex-shrink-0" />
+                            <p className="text-xs font-semibold text-amber-800 uppercase">Sent Back by Infra{infraReview.by ? ` — ${infraReview.by}` : ''}</p>
+                          </div>
+                          <p className="text-sm text-amber-900">{infraReview.comments}</p>
+                        </div>
+                      ) : null;
+                    })()}
+
                     <div className="mt-3 bg-gray-50 rounded-lg p-3">
                       <p className="text-xs font-medium text-gray-500 mb-1">Description</p>
                       <p className="text-sm text-gray-700 line-clamp-2">{dep.description}</p>
@@ -213,6 +236,20 @@ export const QAApprovalPage: React.FC = () => {
           }
         >
           <div className="space-y-4">
+            {/* Infra sent-back reason — shown prominently when QA is re-reviewing */}
+            {(() => {
+              const infraReview = selectedDep ? getInfraReview(selectedDep) : null;
+              return infraReview ? (
+                <div className="bg-amber-50 border border-amber-300 rounded-lg p-3">
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <ServerStackIcon className="w-4 h-4 text-amber-600 flex-shrink-0" />
+                    <p className="text-sm font-semibold text-amber-800">Sent Back by Infra{infraReview.by ? ` (${infraReview.by})` : ''}</p>
+                  </div>
+                  <p className="text-sm text-amber-900">{infraReview.comments}</p>
+                </div>
+              ) : null;
+            })()}
+
             {/* Deployment summary */}
             <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
               <p className="text-sm font-semibold text-gray-900 mb-1">{selectedDep.deployment_title}</p>

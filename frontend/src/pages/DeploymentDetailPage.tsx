@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
 import {
   ArrowLeftIcon, PencilSquareIcon, CalendarDaysIcon,
   UserCircleIcon, LinkIcon, ServerStackIcon, PhotoIcon,
-  CheckCircleIcon, XCircleIcon, ArrowUturnLeftIcon, ExclamationTriangleIcon,
+  CheckCircleIcon, XCircleIcon, ArrowUturnLeftIcon, ExclamationTriangleIcon, TrashIcon,
 } from '@heroicons/react/24/outline';
 import { deploymentService, qaService } from '../services/deployment.service';
 import { DeploymentRequest } from '../types';
@@ -81,8 +81,26 @@ export const DeploymentDetailPage: React.FC = () => {
   if (loading) return <PageLoader />;
   if (!deployment) return <div className="text-center py-20 text-gray-500">Deployment not found.</div>;
 
-  const canEdit = (deployment.status === 'draft' || deployment.status === 'rejected_by_qa')
-    && (deployment.raised_by === user?.id || hasRole('admin'));
+  const canEdit = (
+    deployment.status === 'draft' ||
+    deployment.status === 'rejected_by_qa' ||
+    deployment.status === 'rejected_by_infra'
+  ) && (deployment.raised_by === user?.id || hasRole('admin'));
+
+  const canDelete =
+    hasRole('admin') ||
+    (['draft', 'pending_qa_approval'].includes(deployment.status) && deployment.raised_by === user?.id);
+
+  const handleDelete = async () => {
+    if (!window.confirm(`Delete "${deployment.deployment_title}"?\n\nThis cannot be undone.`)) return;
+    try {
+      await deploymentService.delete(deployment.id);
+      toast.success('Deployment deleted.');
+      navigate('/deployments');
+    } catch {
+      toast.error('Failed to delete. Please try again.');
+    }
+  };
 
   const canQAReview = deployment.status === 'pending_qa_approval' && (hasRole('qa') || hasRole('admin'));
 
@@ -114,11 +132,18 @@ export const DeploymentDetailPage: React.FC = () => {
         <button onClick={() => navigate(-1)} className="btn-secondary py-1.5 px-3 text-sm">
           <ArrowLeftIcon className="w-4 h-4" /> Back
         </button>
-        {canEdit && (
-          <button onClick={() => navigate(`/deployments/${id}/edit`)} className="btn-primary py-1.5 px-3 text-sm">
-            <PencilSquareIcon className="w-4 h-4" /> Edit
-          </button>
-        )}
+        <div className="flex gap-2">
+          {canEdit && (
+            <button onClick={() => navigate(`/deployments/${id}/edit`)} className="btn-primary py-1.5 px-3 text-sm">
+              <PencilSquareIcon className="w-4 h-4" /> Edit
+            </button>
+          )}
+          {canDelete && (
+            <button onClick={handleDelete} className="btn-danger py-1.5 px-3 text-sm">
+              <TrashIcon className="w-4 h-4" /> Delete
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Header Card */}
@@ -168,6 +193,19 @@ export const DeploymentDetailPage: React.FC = () => {
           {/* Details Tab */}
           {activeTab === 'details' && (
             <div className="space-y-1">
+              {/* Infra rejection / sent-back banner */}
+              {deployment.status === 'rejected_by_infra' && meta.infra_review_comments && (
+                <div className="mb-4 bg-red-50 border border-red-300 rounded-lg p-4">
+                  <div className="flex items-center gap-2 mb-1">
+                    <XCircleIcon className="w-5 h-5 text-red-600 flex-shrink-0" />
+                    <p className="text-sm font-semibold text-red-800">
+                      Rejected by Infra{meta.infra_reviewed_by ? ` — ${meta.infra_reviewed_by}` : ''}
+                    </p>
+                  </div>
+                  <p className="text-sm text-red-700 ml-7">{meta.infra_review_comments}</p>
+                </div>
+              )}
+
               <DetailRow label="Project" value={<span className="font-medium">{deployment.project_name}</span>} />
               <DetailRow label="Branch" value={<code className="bg-gray-100 text-gray-700 px-2 py-0.5 rounded text-xs">{deployment.branch_name}</code>} />
               <DetailRow label="Job ID" value={deployment.job_id || <span className="text-gray-400">Not specified</span>} />

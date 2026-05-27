@@ -12,6 +12,7 @@ export const STATUS_CONFIG: Record<DeploymentStatus, { label: string; color: str
   pending_dev_acknowledgment: { label: 'Pending Acknowledgment',     color: 'text-orange-700', bg: 'bg-orange-100', dot: 'bg-orange-500' },
   successfully_completed:     { label: 'Successfully Completed',     color: 'text-green-700',  bg: 'bg-green-100',  dot: 'bg-green-500' },
   issue_raised:               { label: 'Issue Raised',               color: 'text-red-700',    bg: 'bg-red-100',    dot: 'bg-red-500' },
+  rejected_by_infra:          { label: 'Rejected by Infra',          color: 'text-red-700',    bg: 'bg-red-100',    dot: 'bg-red-500' },
 };
 
 export const PRIORITY_CONFIG: Record<Priority, { label: string; color: string; bg: string }> = {
@@ -40,6 +41,6 @@ export const WORKFLOW_STEPS = [
 export const getWorkflowStep = (status: DeploymentStatus): number => {
   const found = WORKFLOW_STEPS.find((s) => s.key === status);
   if (found) return found.step;
-  if (['rejected_by_qa', 'deployment_failed', 'issue_raised'].includes(status)) return -1;
+  if (['rejected_by_qa', 'rejected_by_infra', 'deployment_failed', 'issue_raised'].includes(status)) return -1;
   return 0;
 };

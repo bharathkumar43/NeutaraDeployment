@@ -2,7 +2,8 @@ export type UserRole = 'dev' | 'qa' | 'infra' | 'admin' | 'viewer';
 export type DeploymentStatus =
   | 'draft' | 'pending_qa_approval' | 'qa_approved' | 'rejected_by_qa'
   | 'pending_infra_deployment' | 'deployment_in_progress' | 'deployment_completed'
-  | 'deployment_failed' | 'pending_dev_acknowledgment' | 'successfully_completed' | 'issue_raised';
+  | 'deployment_failed' | 'pending_dev_acknowledgment' | 'successfully_completed'
+  | 'issue_raised' | 'rejected_by_infra';
 export type Environment = 'DEV' | 'QA' | 'UAT' | 'PROD';
 export type Priority = 'low' | 'medium' | 'high' | 'critical';
 
