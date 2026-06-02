@@ -201,7 +201,7 @@ export const updateDraft = async (req: Request, res: Response): Promise<void> =>
 };
 
 export const getDeployments = async (req: Request, res: Response): Promise<void> => {
-  const { status, environment, priority, search, page = '1', limit = '20' } = req.query;
+  const { status, environment, priority, search, page = '1', limit = '20', from_date, to_date } = req.query;
   const userId   = req.user!.userId;
   const role     = req.user!.role;
   const pageNum  = Math.max(1, parseInt(page as string) || 1);
@@ -219,6 +219,14 @@ export const getDeployments = async (req: Request, res: Response): Promise<void>
     if (search) {
       params.push(`%${search}%`, `%${search}%`);
       conditions.push(`(dr.deployment_title LIKE $${params.length - 1} OR dr.project_name LIKE $${params.length})`);
+    }
+    if (from_date) {
+      params.push(from_date);
+      conditions.push(`dr.created_at >= $${params.length}::date`);
+    }
+    if (to_date) {
+      params.push(to_date);
+      conditions.push(`dr.created_at < ($${params.length}::date + interval '1 day')`);
     }
 
     const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';

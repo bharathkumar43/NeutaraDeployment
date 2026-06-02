@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   MagnifyingGlassIcon, ArrowPathIcon, ChevronLeftIcon,
-  ChevronRightIcon, FunnelIcon,
+  ChevronRightIcon, CalendarDaysIcon,
 } from '@heroicons/react/24/outline';
 import { deploymentService } from '../services/deployment.service';
 import { DeploymentRequest } from '../types';
@@ -22,16 +22,22 @@ export const HistoryPage: React.FC = () => {
   const [status, setStatus] = useState('');
   const [environment, setEnvironment] = useState('');
   const [priority, setPriority] = useState('');
+  const [fromDate, setFromDate] = useState('');
+  const [toDate, setToDate] = useState('');
   const LIMIT = 20;
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const result = await deploymentService.getAll({ status, environment, priority, search, page, limit: LIMIT });
+      const result = await deploymentService.getAll({
+        status, environment, priority, search, page, limit: LIMIT,
+        from_date: fromDate || undefined,
+        to_date: toDate || undefined,
+      });
       setDeployments(result.data);
       setTotal(result.pagination?.total || 0);
     } finally { setLoading(false); }
-  }, [status, environment, priority, search, page]);
+  }, [status, environment, priority, search, page, fromDate, toDate]);
 
   useEffect(() => { load(); }, [load]);
 
@@ -42,17 +48,22 @@ export const HistoryPage: React.FC = () => {
 
   const totalPages = Math.ceil(total / LIMIT);
 
+  const hasActiveFilters = status || environment || priority || searchInput || fromDate || toDate;
+
   return (
     <div className="space-y-5 animate-fade-in">
       <div className="card p-4">
         <div className="flex flex-wrap gap-3 items-center">
+          {/* Search */}
           <div className="relative flex-1 min-w-[200px]">
             <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input value={searchInput} onChange={(e) => setSearchInput(e.target.value)} placeholder="Search by title or project..." className="form-input pl-9 w-full" />
           </div>
+
+          {/* Dropdowns */}
           <select value={status} onChange={(e) => { setStatus(e.target.value); setPage(1); }} className="form-select w-44">
             <option value="">All Statuses</option>
-            {[['draft','Draft'],['pending_qa_approval','Pending QA'],['pending_infra_deployment','Pending Infra'],['deployment_in_progress','In Progress'],['deployment_failed','Failed'],['successfully_completed','Completed'],['rejected_by_qa','Rejected by QA'],['issue_raised','Issue Raised']].map(([v,l])=><option key={v} value={v}>{l}</option>)}
+            {[['draft','Draft'],['pending_qa_approval','Pending QA'],['pending_infra_deployment','Pending Infra'],['deployment_in_progress','In Progress'],['deployment_failed','Failed'],['successfully_completed','Completed'],['rejected_by_qa','Rejected by QA'],['rejected_by_infra','Rejected by Infra'],['issue_raised','Issue Raised']].map(([v,l])=><option key={v} value={v}>{l}</option>)}
           </select>
           <select value={environment} onChange={(e) => { setEnvironment(e.target.value); setPage(1); }} className="form-select w-28">
             <option value="">All Envs</option>
@@ -62,11 +73,54 @@ export const HistoryPage: React.FC = () => {
             <option value="">All Priorities</option>
             {['critical','high','medium','low'].map((p) => <option key={p} value={p} className="capitalize">{p.charAt(0).toUpperCase()+p.slice(1)}</option>)}
           </select>
-          <button onClick={() => { setStatus(''); setEnvironment(''); setPriority(''); setSearchInput(''); setPage(1); }} className="btn-secondary text-sm py-2 px-3">Reset</button>
+
+          {/* Date range */}
+          <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5">
+            <CalendarDaysIcon className="w-4 h-4 text-gray-400 flex-shrink-0" />
+            <input
+              type="date"
+              value={fromDate}
+              max={toDate || undefined}
+              onChange={(e) => { setFromDate(e.target.value); setPage(1); }}
+              className="text-sm text-gray-700 bg-transparent border-0 outline-none w-36 cursor-pointer"
+              title="From date"
+            />
+            <span className="text-gray-400 text-xs">to</span>
+            <input
+              type="date"
+              value={toDate}
+              min={fromDate || undefined}
+              onChange={(e) => { setToDate(e.target.value); setPage(1); }}
+              className="text-sm text-gray-700 bg-transparent border-0 outline-none w-36 cursor-pointer"
+              title="To date"
+            />
+            {(fromDate || toDate) && (
+              <button
+                onClick={() => { setFromDate(''); setToDate(''); setPage(1); }}
+                className="text-gray-400 hover:text-gray-600 text-xs ml-1"
+                title="Clear dates"
+              >✕</button>
+            )}
+          </div>
+
+          {/* Refresh */}
           <button onClick={load} className="btn-secondary px-3">
             <ArrowPathIcon className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
           </button>
         </div>
+
+        {/* Active filter summary */}
+        {hasActiveFilters && (
+          <div className="mt-3 pt-3 border-t border-gray-100 flex items-center gap-2 flex-wrap">
+            <span className="text-xs text-gray-400">Active filters:</span>
+            {searchInput && <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">Search: "{searchInput}"</span>}
+            {status && <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">Status: {status.replace(/_/g, ' ')}</span>}
+            {environment && <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">Env: {environment}</span>}
+            {priority && <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">Priority: {priority}</span>}
+            {fromDate && <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">From: {fromDate}</span>}
+            {toDate && <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">To: {toDate}</span>}
+          </div>
+        )}
       </div>
 
       <div className="flex items-center justify-between text-sm text-gray-500">

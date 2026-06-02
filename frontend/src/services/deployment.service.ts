@@ -11,6 +11,8 @@ export interface DeploymentFilters {
   search?: string;
   page?: number;
   limit?: number;
+  from_date?: string;
+  to_date?: string;
 }
 
 export interface DeploymentListResponse {
