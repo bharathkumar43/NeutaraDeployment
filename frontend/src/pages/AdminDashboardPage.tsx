@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import {
   UsersIcon, RocketLaunchIcon, CheckCircleIcon, XCircleIcon,
   ArrowPathIcon, MagnifyingGlassIcon, FunnelIcon,
-  ChevronLeftIcon, ChevronRightIcon, ShieldCheckIcon,
+  ChevronLeftIcon, ChevronRightIcon, ShieldCheckIcon, CalendarDaysIcon,
 } from '@heroicons/react/24/outline';
-import { adminService, AuditFilters } from '../services/admin.service';
+import { adminService, AuditFilters, StatsFilters } from '../services/admin.service';
 import { UserStat, AdminAuditEntry } from '../types';
 import { formatDateTime, formatRelative } from '../utils/format';
 import { PageLoader } from '../components/common/LoadingSpinner';
@@ -74,6 +74,10 @@ export const AdminDashboardPage: React.FC = () => {
   const [page, setPage]         = useState(1);
   const LIMIT = 30;
 
+  // Stats date range filter
+  const [statsFrom, setStatsFrom]   = useState('');
+  const [statsTo, setStatsTo]       = useState('');
+
   // Audit filters
   const [search, setSearch]         = useState('');
   const [searchInput, setSearchInput] = useState('');
@@ -94,9 +98,14 @@ export const AdminDashboardPage: React.FC = () => {
 
   const loadStats = useCallback(async () => {
     setStatsLoading(true);
-    try { setStats(await adminService.getUserStats()); }
+    try {
+      const filters: StatsFilters = {};
+      if (statsFrom) filters.from_date = statsFrom;
+      if (statsTo)   filters.to_date   = statsTo;
+      setStats(await adminService.getUserStats(filters));
+    }
     finally { setStatsLoading(false); }
-  }, []);
+  }, [statsFrom, statsTo]);
 
   const loadLogs = useCallback(async () => {
     setLogsLoading(true);
@@ -151,6 +160,56 @@ export const AdminDashboardPage: React.FC = () => {
         </div>
       </div>
 
+      {/* ── Stats Date Range Filter ── */}
+      <div className="card p-4">
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-2 text-sm font-medium text-gray-600">
+            <CalendarDaysIcon className="w-4 h-4 text-gray-400" />
+            <span>Filter stats by date range:</span>
+          </div>
+          <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5">
+            <input
+              type="date"
+              value={statsFrom}
+              max={statsTo || undefined}
+              onChange={(e) => { setStatsFrom(e.target.value); }}
+              className="text-sm text-gray-700 bg-transparent border-0 outline-none w-36 cursor-pointer"
+              title="From date"
+            />
+            <span className="text-gray-400 text-xs">to</span>
+            <input
+              type="date"
+              value={statsTo}
+              min={statsFrom || undefined}
+              onChange={(e) => { setStatsTo(e.target.value); }}
+              className="text-sm text-gray-700 bg-transparent border-0 outline-none w-36 cursor-pointer"
+              title="To date"
+            />
+            {(statsFrom || statsTo) && (
+              <button
+                onClick={() => { setStatsFrom(''); setStatsTo(''); }}
+                className="text-gray-400 hover:text-gray-600 text-xs ml-1"
+                title="Clear date filter"
+              >✕</button>
+            )}
+          </div>
+          {(statsFrom || statsTo) && (
+            <span className="text-xs text-blue-600 font-medium">
+              {statsFrom && statsTo && statsFrom === statsTo
+                ? `Showing: ${statsFrom}`
+                : statsFrom && statsTo
+                  ? `${statsFrom} → ${statsTo}`
+                  : statsFrom
+                    ? `From ${statsFrom}`
+                    : `Up to ${statsTo}`}
+            </span>
+          )}
+          <button onClick={loadStats} className="btn-secondary px-3 py-1.5 ml-auto">
+            <ArrowPathIcon className={`w-4 h-4 ${statsLoading ? 'animate-spin' : ''}`} />
+          </button>
+        </div>
+      </div>
+
       {/* ── Summary Cards ── */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         <StatCard label="Active Users"     value={totals.users}     icon={<UsersIcon className="w-5 h-5 text-purple-600" />}      color="bg-purple-100" />
@@ -164,10 +223,14 @@ export const AdminDashboardPage: React.FC = () => {
       {/* ── Per-User Statistics ── */}
       <div className="card overflow-hidden">
         <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
-          <h2 className="font-semibold text-gray-900">Per-User Statistics</h2>
-          <button onClick={loadStats} className="btn-secondary px-3 py-1.5">
-            <ArrowPathIcon className={`w-4 h-4 ${statsLoading ? 'animate-spin' : ''}`} />
-          </button>
+          <div>
+            <h2 className="font-semibold text-gray-900">Per-User Statistics</h2>
+            {(statsFrom || statsTo) && (
+              <p className="text-xs text-blue-600 mt-0.5">
+                Filtered: {statsFrom || '…'} → {statsTo || '…'}
+              </p>
+            )}
+          </div>
         </div>
 
         {statsLoading ? (

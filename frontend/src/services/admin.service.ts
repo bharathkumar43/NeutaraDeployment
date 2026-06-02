@@ -1,6 +1,11 @@
 import api from './api';
 import { ApiResponse, UserStat, AdminAuditEntry, PaginationMeta } from '../types';
 
+export interface StatsFilters {
+  from_date?: string;
+  to_date?: string;
+}
+
 export interface AuditFilters {
   action?: string;
   user_id?: string;
@@ -12,8 +17,11 @@ export interface AuditFilters {
 }
 
 export const adminService = {
-  async getUserStats(): Promise<UserStat[]> {
-    const res = await api.get<ApiResponse<UserStat[]>>('/admin/user-stats');
+  async getUserStats(filters: StatsFilters = {}): Promise<UserStat[]> {
+    const params = new URLSearchParams();
+    Object.entries(filters).forEach(([k, v]) => { if (v) params.append(k, v); });
+    const qs = params.toString();
+    const res = await api.get<ApiResponse<UserStat[]>>(`/admin/user-stats${qs ? `?${qs}` : ''}`);
     return res.data.data;
   },
 

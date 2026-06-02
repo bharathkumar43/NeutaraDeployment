@@ -2,8 +2,21 @@ import { Request, Response } from 'express';
 import { query } from '../database/connection';
 import logger from '../utils/logger';
 
-export const getUserStats = async (_req: Request, res: Response): Promise<void> => {
+export const getUserStats = async (req: Request, res: Response): Promise<void> => {
+  const { from_date, to_date } = req.query;
   try {
+    const params: unknown[] = [];
+    let drDateCondition = '';
+
+    if (from_date) {
+      params.push(from_date);
+      drDateCondition += ` AND dr.created_at >= $${params.length}::date`;
+    }
+    if (to_date) {
+      params.push(to_date);
+      drDateCondition += ` AND dr.created_at < ($${params.length}::date + interval '1 day')`;
+    }
+
     const result = await query(`
       SELECT
         u.id,
@@ -21,12 +34,12 @@ export const getUserStats = async (_req: Request, res: Response): Promise<void> 
         COUNT(DISTINCT dr.id) FILTER (WHERE dr.status = 'draft')                                            AS drafts,
         COUNT(DISTINCT qa.deployment_id) FILTER (WHERE qa.approval_status = 'sent_back')                    AS sent_back
       FROM users u
-      LEFT JOIN deployment_requests dr  ON dr.raised_by      = u.id
+      LEFT JOIN deployment_requests dr  ON dr.raised_by = u.id${drDateCondition}
       LEFT JOIN deployment_qa_approvals qa ON qa.deployment_id = dr.id
       WHERE u.is_active = true
       GROUP BY u.id, u.name, u.email, u.role, u.team
       ORDER BY COUNT(DISTINCT dr.id) DESC, u.name ASC
-    `);
+    `, params);
     res.json({ success: true, data: result.rows });
   } catch (err) {
     logger.error('Admin user stats error', err);
