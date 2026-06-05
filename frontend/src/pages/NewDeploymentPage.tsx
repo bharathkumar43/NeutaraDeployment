@@ -96,8 +96,14 @@ export const NewDeploymentPage: React.FC = () => {
   const isSingleEnv         = watchedEnvs.length === 1;
   const isMultiEnv          = watchedEnvs.length > 1;
 
+  const ALL_PRODUCT_MAP: Record<string, string> = {
+    'Content-all': 'Content',
+    'Email-all':   'Email',
+    'Message-all': 'Message',
+  };
   const productTypes  = [...new Set(jobs.map(j => j.project_name).filter(Boolean))] as string[];
-  const filteredJobs  = watchedProduct ? jobs.filter(j => j.project_name === watchedProduct) : [];
+  const baseProduct   = watchedProduct ? (ALL_PRODUCT_MAP[watchedProduct] ?? watchedProduct) : null;
+  const filteredJobs  = baseProduct ? jobs.filter(j => j.project_name === baseProduct) : [];
   const allJobIds     = filteredJobs.map(j => j.job_id);
 
   const toggleJob = (jobId: string, current: string[], onChange: (v: string[]) => void) => {
@@ -430,9 +436,6 @@ export const NewDeploymentPage: React.FC = () => {
               >
                 <option value="">Select product...</option>
                 {productTypes.map(p => <option key={p} value={p}>{p}</option>)}
-                <option value="Content-all">Content-all</option>
-                <option value="Message-all">Message-all</option>
-                <option value="Email-all">Email-all</option>
                 <option value="Manage">Manage</option>
               </select>
               {errMsg(errors.product_type?.message)}

@@ -19,7 +19,6 @@ interface StartFormData { artifact_version: string; }
 interface CompleteFormData {
   deployment_status: 'success' | 'failed';
   deployment_notes: string;
-  completion_comments: string;
 }
 interface ReviewFormData { comments: string; }
 
@@ -100,7 +99,6 @@ export const InfraDeploymentPage: React.FC = () => {
       const formData = new FormData();
       formData.append('deployment_status', data.deployment_status);
       formData.append('deployment_notes', data.deployment_notes);
-      formData.append('completion_comments', data.completion_comments);
       if (uploadFile) formData.append('screenshot', uploadFile);
       await infraService.completeDeployment(selectedDep.id, formData);
       const msg = data.deployment_status === 'success'
@@ -349,19 +347,6 @@ export const InfraDeploymentPage: React.FC = () => {
               />
               {completeForm.formState.errors.deployment_notes && (
                 <p className="form-error">{completeForm.formState.errors.deployment_notes.message}</p>
-              )}
-            </div>
-
-            <div>
-              <label className="form-label">Completion Comments <span className="text-red-500">*</span></label>
-              <textarea
-                {...completeForm.register('completion_comments', { required: 'Comments are required' })}
-                className="form-textarea"
-                rows={3}
-                placeholder="Deployment outcome details, any issues encountered, post-deployment checks..."
-              />
-              {completeForm.formState.errors.completion_comments && (
-                <p className="form-error">{completeForm.formState.errors.completion_comments.message}</p>
               )}
             </div>
 

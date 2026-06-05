@@ -226,7 +226,6 @@ INSERT INTO jobs (id, job_id, job_name, project_name) VALUES
   (uuid_generate_v4(), 'Channel Closure & Sharing Jobs',   'Channel Closure & Sharing Jobs',   'Message'),
   (uuid_generate_v4(), 'Monitoring & Recovery Jobs',       'Monitoring & Recovery Jobs',       'Message'),
   (uuid_generate_v4(), 'Status Update Jobs',               'Status Update Jobs',               'Message'),
-  (uuid_generate_v4(), 'Reporting Jobs',                   'Reporting Jobs',                   'Message'),
   (uuid_generate_v4(), 'API Jobs',                         'API Jobs',                         'Message'),
   -- Email
   (uuid_generate_v4(), 'Email Processing Jobs',            'Email Processing Jobs',            'Email'),
@@ -243,7 +242,11 @@ INSERT INTO jobs (id, job_id, job_name, project_name) VALUES
   (uuid_generate_v4(), 'API Services',                     'API Services',                     'Email'),
   (uuid_generate_v4(), 'General API Services',             'General API Services',             'Email'),
   (uuid_generate_v4(), 'Email Migration API Services',     'Email Migration API Services',     'Email'),
-  (uuid_generate_v4(), 'UI Jobs',                          'UI Jobs',                          'Email')
+  (uuid_generate_v4(), 'UI Jobs',                          'UI Jobs',                          'Email'),
+  -- Reporting job per product type
+  (uuid_generate_v4(), 'Content-Reporting',                'Reporting',                         'Content'),
+  (uuid_generate_v4(), 'Email-Reporting',                  'Reporting',                         'Email'),
+  (uuid_generate_v4(), 'Message-Reporting',                'Reporting',                         'Message')
 ON CONFLICT (job_id) DO NOTHING;
 
 INSERT INTO branches (id, branch_name, project_name) VALUES

@@ -52,7 +52,7 @@ async function migrate() {
     // ── 4. Remove old placeholder jobs and seed real product jobs ─────────
     await client.query(`
       DELETE FROM jobs
-      WHERE job_id IN ('JOB-001','JOB-002','JOB-003','JOB-004','JOB-005')
+      WHERE job_id IN ('JOB-001','JOB-002','JOB-003','JOB-004','JOB-005','Reporting Jobs')
     `);
     const jobRows = [
       // Content
@@ -77,7 +77,6 @@ async function migrate() {
       ['Channel Closure & Sharing Jobs',  'Channel Closure & Sharing Jobs',  'Message'],
       ['Monitoring & Recovery Jobs',      'Monitoring & Recovery Jobs',      'Message'],
       ['Status Update Jobs',              'Status Update Jobs',              'Message'],
-      ['Reporting Jobs',                  'Reporting Jobs',                  'Message'],
       ['API Jobs',                        'API Jobs',                        'Message'],
       // Email
       ['Email Processing Jobs',           'Email Processing Jobs',           'Email'],
@@ -95,6 +94,10 @@ async function migrate() {
       ['General API Services',            'General API Services',            'Email'],
       ['Email Migration API Services',    'Email Migration API Services',    'Email'],
       ['UI Jobs',                         'UI Jobs',                         'Email'],
+      // Reporting job per product type
+      ['Content-Reporting',               'Reporting',                       'Content'],
+      ['Email-Reporting',                 'Reporting',                       'Email'],
+      ['Message-Reporting',               'Reporting',                       'Message'],
     ];
     for (const [jobId, jobName, projectName] of jobRows) {
       await client.query(
