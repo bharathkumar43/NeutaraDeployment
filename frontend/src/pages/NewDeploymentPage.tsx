@@ -312,15 +312,17 @@ export const NewDeploymentPage: React.FC = () => {
 
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-1">Ticket / JIRA Link <span className="text-red-500">*</span></label>
-              <input
+              <textarea
                 {...register('ticket_link')}
+                rows={2}
                 className={inputCls(errors.ticket_link)}
-                placeholder="e.g. https://jira.company.com/browse/PROJ-123"
+                placeholder="e.g. https://jira.company.com/browse/PROJ-123, PROJ-456"
                 onChange={(e) => {
                   setValue('ticket_link', e.target.value);
                   clearErrors('ticket_link');
                 }}
               />
+              <p className="text-xs text-gray-400 mt-0.5">Separate multiple tickets with commas, spaces, or new lines.</p>
               {errMsg(errors.ticket_link?.message)}
             </div>
 

@@ -185,9 +185,13 @@ export const QAApprovalPage: React.FC = () => {
                     </div>
 
                     {dep.ticket_link && (
-                      <a href={dep.ticket_link} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 mt-2">
-                        <LinkIcon className="w-3.5 h-3.5" /> View Ticket
-                      </a>
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {dep.ticket_link.split(/[\s,]+/).map((t: string) => t.trim()).filter(Boolean).map((ticket: string, i: number, arr: string[]) => (
+                          <a key={i} href={ticket} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800">
+                            <LinkIcon className="w-3.5 h-3.5" /> {arr.length > 1 ? `Ticket ${i + 1}` : 'View Ticket'}
+                          </a>
+                        ))}
+                      </div>
                     )}
                   </div>
                 </div>

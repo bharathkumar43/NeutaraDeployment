@@ -219,9 +219,13 @@ export const DeploymentDetailPage: React.FC = () => {
               <DetailRow label="Last Updated" value={formatRelative(deployment.updated_at)} />
               {deployment.ticket_link && (
                 <DetailRow label="Ticket Link" value={
-                  <a href={deployment.ticket_link} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline flex items-center gap-1 text-sm">
-                    <LinkIcon className="w-3.5 h-3.5" />{deployment.ticket_link}
-                  </a>
+                  <div className="flex flex-col gap-1">
+                    {deployment.ticket_link.split(/[\s,]+/).map((t: string) => t.trim()).filter(Boolean).map((ticket: string, i: number) => (
+                      <a key={i} href={ticket} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline flex items-center gap-1 text-sm">
+                        <LinkIcon className="w-3.5 h-3.5" />{ticket}
+                      </a>
+                    ))}
+                  </div>
                 } />
               )}
               <DetailRow
@@ -284,7 +288,17 @@ export const DeploymentDetailPage: React.FC = () => {
                     </div>
                     <span className="text-xs text-gray-500">{formatDateTime(qa.approved_at)}</span>
                   </div>
-                  {qa.qa_ticket_link && <p className="text-xs text-gray-600 mb-2">Ticket: <a href={qa.qa_ticket_link} className="text-blue-600 hover:underline">{qa.qa_ticket_link}</a></p>}
+                  {qa.qa_ticket_link && (
+                    <p className="text-xs text-gray-600 mb-2">
+                      Ticket:{' '}
+                      {qa.qa_ticket_link.split(/[\s,]+/).map((t: string) => t.trim()).filter(Boolean).map((ticket: string, i: number, arr: string[]) => (
+                        <React.Fragment key={i}>
+                          <a href={ticket} className="text-blue-600 hover:underline">{ticket}</a>
+                          {i < arr.length - 1 && ', '}
+                        </React.Fragment>
+                      ))}
+                    </p>
+                  )}
                   {qa.qa_description && <p className="text-sm text-gray-700 mb-2">{qa.qa_description}</p>}
                   <div className="bg-white/60 rounded p-3">
                     <p className="text-xs font-medium text-gray-500 mb-1">Comments</p>
