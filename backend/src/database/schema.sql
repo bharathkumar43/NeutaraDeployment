@@ -219,6 +219,7 @@ INSERT INTO jobs (id, job_id, job_name, project_name) VALUES
   (uuid_generate_v4(), 'DataSize',          'DataSize',          'Content'),
   (uuid_generate_v4(), 'sharedLink',        'sharedLink',        'Content'),
   (uuid_generate_v4(), 'hyperLinkUpdate',   'hyperLinkUpdate',   'Content'),
+  (uuid_generate_v4(), 'Content-UI Job',    'UI Job',            'Content'),
   -- Message
   (uuid_generate_v4(), 'Channel Management Jobs',          'Channel Management Jobs',          'Message'),
   (uuid_generate_v4(), 'Data Picking Jobs',                'Data Picking Jobs',                'Message'),
@@ -227,6 +228,7 @@ INSERT INTO jobs (id, job_id, job_name, project_name) VALUES
   (uuid_generate_v4(), 'Monitoring & Recovery Jobs',       'Monitoring & Recovery Jobs',       'Message'),
   (uuid_generate_v4(), 'Status Update Jobs',               'Status Update Jobs',               'Message'),
   (uuid_generate_v4(), 'API Jobs',                         'API Jobs',                         'Message'),
+  (uuid_generate_v4(), 'Message-UI Job',                   'UI Job',                           'Message'),
   -- Email
   (uuid_generate_v4(), 'Email Processing Jobs',            'Email Processing Jobs',            'Email'),
   (uuid_generate_v4(), 'Email Picking',                    'Email Picking',                    'Email'),
@@ -243,6 +245,7 @@ INSERT INTO jobs (id, job_id, job_name, project_name) VALUES
   (uuid_generate_v4(), 'General API Services',             'General API Services',             'Email'),
   (uuid_generate_v4(), 'Email Migration API Services',     'Email Migration API Services',     'Email'),
   (uuid_generate_v4(), 'UI Jobs',                          'UI Jobs',                          'Email'),
+  (uuid_generate_v4(), 'Email-UI Job',                     'UI Job',                           'Email'),
   -- Reporting job per product type
   (uuid_generate_v4(), 'Content-Reporting',                'Reporting',                         'Content'),
   (uuid_generate_v4(), 'Email-Reporting',                  'Reporting',                         'Email'),

@@ -70,6 +70,7 @@ async function migrate() {
       ['DataSize',                        'DataSize',                        'Content'],
       ['sharedLink',                      'sharedLink',                      'Content'],
       ['hyperLinkUpdate',                 'hyperLinkUpdate',                 'Content'],
+      ['Content-UI Job',                  'UI Job',                          'Content'],
       // Message
       ['Channel Management Jobs',         'Channel Management Jobs',         'Message'],
       ['Data Picking Jobs',               'Data Picking Jobs',               'Message'],
@@ -78,6 +79,7 @@ async function migrate() {
       ['Monitoring & Recovery Jobs',      'Monitoring & Recovery Jobs',      'Message'],
       ['Status Update Jobs',              'Status Update Jobs',              'Message'],
       ['API Jobs',                        'API Jobs',                        'Message'],
+      ['Message-UI Job',                  'UI Job',                          'Message'],
       // Email
       ['Email Processing Jobs',           'Email Processing Jobs',           'Email'],
       ['Email Picking',                   'Email Picking',                   'Email'],
@@ -94,6 +96,7 @@ async function migrate() {
       ['General API Services',            'General API Services',            'Email'],
       ['Email Migration API Services',    'Email Migration API Services',    'Email'],
       ['UI Jobs',                         'UI Jobs',                         'Email'],
+      ['Email-UI Job',                    'UI Job',                          'Email'],
       // Reporting job per product type
       ['Content-Reporting',               'Reporting',                       'Content'],
       ['Email-Reporting',                 'Reporting',                       'Email'],
