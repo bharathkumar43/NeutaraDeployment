@@ -208,7 +208,15 @@ export const DeploymentDetailPage: React.FC = () => {
 
               <DetailRow label="Project" value={<span className="font-medium">{deployment.project_name}</span>} />
               <DetailRow label="Branch" value={<code className="bg-gray-100 text-gray-700 px-2 py-0.5 rounded text-xs">{deployment.branch_name}</code>} />
-              <DetailRow label="Job ID" value={deployment.job_id || <span className="text-gray-400">Not specified</span>} />
+              <DetailRow label="Job ID" value={
+                deployment.job_id
+                  ? <div className="flex flex-wrap gap-1">
+                      {deployment.job_id.split(',').map((j: string) => j.trim()).filter(Boolean).map((job: string) => (
+                        <span key={job} className="inline-block bg-gray-100 text-gray-700 text-xs px-2 py-0.5 rounded-full border border-gray-200">{job}</span>
+                      ))}
+                    </div>
+                  : <span className="text-gray-400">Not specified</span>
+              } />
               <DetailRow label="Raised By" value={
                 <div>
                   <span className="font-medium">{deployment.raised_by_name}</span>

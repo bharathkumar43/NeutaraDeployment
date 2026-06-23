@@ -191,7 +191,11 @@ export const InfraDeploymentPage: React.FC = () => {
                   {dep.job_id && (
                     <div>
                       <span className="text-gray-400 uppercase font-medium block mb-0.5">Job ID</span>
-                      <span className="text-gray-700">{dep.job_id}</span>
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {dep.job_id.split(',').map((j: string) => j.trim()).filter(Boolean).map((job: string) => (
+                          <span key={job} className="inline-block bg-gray-100 text-gray-700 text-xs px-2 py-0.5 rounded-full border border-gray-200">{job}</span>
+                        ))}
+                      </div>
                     </div>
                   )}
                   <div>
