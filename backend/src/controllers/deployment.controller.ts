@@ -40,7 +40,7 @@ export const createDeployment = async (req: Request, res: Response): Promise<voi
   try {
     const submittedAt = finalStatus === 'pending_qa_approval' ? new Date() : null;
     const numResult   = await query(
-      `SELECT 'DPR' || LPAD((COUNT(*) + 1)::text, 4, '0') AS num FROM deployment_requests`
+      `SELECT 'DPR' || LPAD((COALESCE(MAX(CAST(SUBSTRING(request_number FROM 4) AS INTEGER)), 0) + 1)::text, 4, '0') AS num FROM deployment_requests`
     );
     const requestNumber = numResult.rows[0].num as string;
 
@@ -319,7 +319,7 @@ export const getDashboardStats = async (req: Request, res: Response): Promise<vo
 export const getNextRequestNumber = async (_req: Request, res: Response): Promise<void> => {
   try {
     const result = await query(
-      `SELECT 'DPR' || LPAD((COUNT(*) + 1)::text, 4, '0') AS next_number FROM deployment_requests`
+      `SELECT 'DPR' || LPAD((COALESCE(MAX(CAST(SUBSTRING(request_number FROM 4) AS INTEGER)), 0) + 1)::text, 4, '0') AS next_number FROM deployment_requests`
     );
     res.json({ success: true, data: { next_number: result.rows[0].next_number } });
   } catch (err) {
