@@ -152,7 +152,14 @@ export const completeDeployment = async (req: Request, res: Response): Promise<v
       savedNotes = deployment_notes || 'Deployment completed';
     }
 
-    const newStatus = deployment_status === 'success' ? 'pending_dev_acknowledgment' : 'deployment_failed';
+    const depMeta = dep.extra_meta
+      ? (typeof dep.extra_meta === 'string' ? JSON.parse(dep.extra_meta as string) : dep.extra_meta)
+      : {};
+    const isInfraRaised = depMeta.raised_by_infra === true;
+
+    const newStatus = deployment_status === 'success'
+      ? (isInfraRaised ? 'successfully_completed' : 'pending_dev_acknowledgment')
+      : 'deployment_failed';
     await query(`UPDATE deployment_requests SET status = $1 WHERE id = $2`, [newStatus, id]);
 
     await createAuditLog({
@@ -164,9 +171,13 @@ export const completeDeployment = async (req: Request, res: Response): Promise<v
 
     await createNotification({
       userId: dep.raised_by as string, deploymentId: id,
-      title:   deployment_status === 'success' ? 'Deployment Successful — Action Required' : 'Deployment Failed',
+      title: deployment_status === 'success'
+        ? (isInfraRaised ? 'Deployment Completed Successfully' : 'Deployment Successful — Action Required')
+        : 'Deployment Failed',
       message: deployment_status === 'success'
-        ? `"${dep.deployment_title}" deployed successfully. Please acknowledge.`
+        ? (isInfraRaised
+            ? `"${dep.deployment_title}" has been deployed successfully.`
+            : `"${dep.deployment_title}" deployed successfully. Please acknowledge.`)
         : `"${dep.deployment_title}" deployment failed. ${completion_comments}`,
       type: deployment_status === 'success' ? 'success' : 'error',
     });
@@ -174,7 +185,7 @@ export const completeDeployment = async (req: Request, res: Response): Promise<v
     const deploymentDL   = process.env.EMAIL_DEPLOYMENT_DL   || '';
     const ackNotifyDL    = process.env.EMAIL_ACK_NOTIFY_DL   || '';
 
-    if (deployment_status === 'success') {
+    if (deployment_status === 'success' && !isInfraRaised) {
       sendDevAcknowledgmentEmail({
         requestNumber:    String(dep.request_number  || ''),
         deploymentTitle:  dep.deployment_title as string,
@@ -186,7 +197,7 @@ export const completeDeployment = async (req: Request, res: Response): Promise<v
         dlEmail:          deploymentDL,
         additionalDlEmail: ackNotifyDL,
       }).catch((e) => logger.error('Acknowledgment email error', e));
-    } else {
+    } else if (deployment_status !== 'success') {
       sendDeploymentFailedEmail({
         requestNumber:   String(dep.request_number  || ''),
         deploymentTitle: dep.deployment_title as string,
@@ -240,7 +251,15 @@ export const infraReview = async (req: Request, res: Response): Promise<void> =>
     const infraUserResult = await query(`SELECT name FROM users WHERE id = $1`, [infraUserId]);
     const infraUserName   = String(infraUserResult.rows[0]?.name || 'Infra Team');
 
-    const newStatus = action === 'sent_back' ? 'pending_qa_approval' : 'rejected_by_infra';
+    const depMeta = dep.extra_meta
+      ? (typeof dep.extra_meta === 'string' ? JSON.parse(dep.extra_meta as string) : dep.extra_meta)
+      : {};
+    const isInfraRaised = depMeta.raised_by_infra === true;
+
+    // For infra-raised requests, sent_back returns to draft (no QA to send back to).
+    const newStatus = action === 'sent_back'
+      ? (isInfraRaised ? 'draft' : 'pending_qa_approval')
+      : 'rejected_by_infra';
     await query(`UPDATE deployment_requests SET status = $1 WHERE id = $2`, [newStatus, id]);
 
     // Store review info in extra_meta so QA and Dev can see it in their views
@@ -266,21 +285,31 @@ export const infraReview = async (req: Request, res: Response): Promise<void> =>
     });
 
     if (action === 'sent_back') {
-      await notifyRoleUsers('qa', {
-        deploymentId: id,
-        title:   'Deployment Sent Back by Infra — Re-review Required',
-        message: `"${dep.deployment_title}" was sent back by the Infra team: ${comments}`,
-        type:    'warning',
-      });
-      sendInfraSentBackEmail({
-        requestNumber:   String(dep.request_number  || ''),
-        deploymentTitle: dep.deployment_title as string,
-        environment:     dep.environment      as string,
-        priority:        dep.priority         as string,
-        raisedByName:    String(dep.raised_by_name  || ''),
-        infraUserName,
-        comments,
-      }).catch((e) => logger.error('Infra sent-back email error', e));
+      if (isInfraRaised) {
+        await createNotification({
+          userId:       dep.raised_by as string,
+          deploymentId: id,
+          title:   'Deployment Sent Back — Revision Required',
+          message: `"${dep.deployment_title}" was sent back for revision: ${comments}`,
+          type:    'warning',
+        });
+      } else {
+        await notifyRoleUsers('qa', {
+          deploymentId: id,
+          title:   'Deployment Sent Back by Infra — Re-review Required',
+          message: `"${dep.deployment_title}" was sent back by the Infra team: ${comments}`,
+          type:    'warning',
+        });
+        sendInfraSentBackEmail({
+          requestNumber:   String(dep.request_number  || ''),
+          deploymentTitle: dep.deployment_title as string,
+          environment:     dep.environment      as string,
+          priority:        dep.priority         as string,
+          raisedByName:    String(dep.raised_by_name  || ''),
+          infraUserName,
+          comments,
+        }).catch((e) => logger.error('Infra sent-back email error', e));
+      }
     } else {
       await createNotification({
         userId:       dep.raised_by as string,
@@ -302,7 +331,9 @@ export const infraReview = async (req: Request, res: Response): Promise<void> =>
 
     res.json({
       success: true,
-      message: action === 'sent_back' ? 'Deployment sent back to QA for re-review' : 'Deployment rejected',
+      message: action === 'sent_back'
+        ? (isInfraRaised ? 'Deployment sent back for revision' : 'Deployment sent back to QA for re-review')
+        : 'Deployment rejected',
       data: { status: newStatus },
     });
   } catch (err) {

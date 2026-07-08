@@ -39,11 +39,11 @@ const App: React.FC = () => {
 
           <Route path="/deployments" element={<DeploymentListPage />} />
           <Route path="/deployments/new" element={
-            <ProtectedRoute roles={['dev', 'admin']}><NewDeploymentPage /></ProtectedRoute>
+            <ProtectedRoute roles={['dev', 'admin', 'infra']}><NewDeploymentPage /></ProtectedRoute>
           } />
           <Route path="/deployments/:id" element={<DeploymentDetailPage />} />
           <Route path="/deployments/:id/edit" element={
-            <ProtectedRoute roles={['dev', 'admin']}><NewDeploymentPage /></ProtectedRoute>
+            <ProtectedRoute roles={['dev', 'admin', 'infra']}><NewDeploymentPage /></ProtectedRoute>
           } />
 
           <Route path="/qa" element={

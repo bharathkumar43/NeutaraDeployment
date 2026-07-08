@@ -27,7 +27,8 @@ export const createDeployment = async (req: Request, res: Response): Promise<voi
     deployment_scope, single_project_name, multi_project_names,
   } = req.body;
   const raised_by   = req.user!.userId;
-  const finalStatus = status === 'draft' ? 'draft' : 'pending_qa_approval';
+  const isInfra     = req.user!.role === 'infra';
+  const finalStatus = status === 'draft' ? 'draft' : (isInfra ? 'pending_infra_deployment' : 'pending_qa_approval');
   const newId       = uuidv4();
 
   const extraMeta = JSON.stringify({
@@ -35,6 +36,7 @@ export const createDeployment = async (req: Request, res: Response): Promise<voi
     pull_request_link, pr_approved_by, feature_flags, config_changes,
     dependencies, requested_by_name, team,
     deployment_scope, single_project_name, multi_project_names,
+    raised_by_infra: isInfra,
   });
 
   try {
@@ -59,9 +61,14 @@ export const createDeployment = async (req: Request, res: Response): Promise<voi
     const result     = await query(`${DEPLOYMENT_SELECT} WHERE dr.id = $1`, [newId]);
     const deployment = result.rows[0];
 
+    let auditAction: string;
+    if (finalStatus === 'draft') auditAction = 'DRAFT_CREATED';
+    else if (isInfra) auditAction = 'SUBMITTED_FOR_INFRA';
+    else auditAction = 'SUBMITTED_FOR_QA';
+
     await createAuditLog({
       deploymentId: newId,
-      action:       finalStatus === 'draft' ? 'DRAFT_CREATED' : 'SUBMITTED_FOR_QA',
+      action:       auditAction,
       performedBy:  raised_by,
       newStatus:    finalStatus,
       comment:      `Deployment request created with status: ${finalStatus}`,
@@ -93,6 +100,13 @@ export const createDeployment = async (req: Request, res: Response): Promise<voi
         devEmail:        req.user!.email,
         description,
       }).catch((e) => logger.error('Dev submission confirmation email error', e));
+    } else if (finalStatus === 'pending_infra_deployment') {
+      await notifyRoleUsers('infra', {
+        deploymentId: newId,
+        title:   'New Infra-Raised Deployment Request',
+        message: `"${deployment_title}" is ready for deployment. Priority: ${priority.toUpperCase()}`,
+        type:    'info',
+      });
     }
 
     res.status(201).json({ success: true, data: deployment });
@@ -115,11 +129,13 @@ export const updateDraft = async (req: Request, res: Response): Promise<void> =>
     requested_by_name, team,
     deployment_scope, single_project_name, multi_project_names,
   } = req.body;
+  const isInfra = req.user!.role === 'infra';
   const extraMeta = JSON.stringify({
     repository, service_name, base_branch, commit_sha, env_name,
     pull_request_link, pr_approved_by, feature_flags, config_changes,
     dependencies, requested_by_name, team,
     deployment_scope, single_project_name, multi_project_names,
+    raised_by_infra: isInfra,
     // Clear any stale infra review fields on resubmission
     infra_review_action:   null,
     infra_review_comments: null,
@@ -138,14 +154,15 @@ export const updateDraft = async (req: Request, res: Response): Promise<void> =>
       res.status(400).json({ success: false, message: 'Cannot edit deployment in current status' }); return;
     }
 
-    const finalStatus = status === 'pending_qa_approval' ? 'pending_qa_approval' : 'draft';
+    const isSubmission = status !== 'draft';
+    const finalStatus = isSubmission ? (isInfra ? 'pending_infra_deployment' : 'pending_qa_approval') : 'draft';
     await query(
       `UPDATE deployment_requests
        SET deployment_title = $1, project_name = $2, job_id = $3, branch_name = $4, environment = $5,
            ticket_link = $6, description = $7, priority = $8, status = $9,
            risk_level = $10, downtime_required = $11, db_migration = $12,
            requested_deploy_date = $13, extra_meta = $14,
-           submitted_at = CASE WHEN $15 = 'pending_qa_approval' THEN NOW() ELSE submitted_at END
+           submitted_at = CASE WHEN $15 IN ('pending_qa_approval','pending_infra_deployment') THEN NOW() ELSE submitted_at END
        WHERE id = $16`,
       [deployment_title, project_name, job_id || null, branch_name, environment,
        ticket_link || null, description, priority, finalStatus,
@@ -156,9 +173,14 @@ export const updateDraft = async (req: Request, res: Response): Promise<void> =>
 
     const result = await query(`${DEPLOYMENT_SELECT} WHERE dr.id = $1`, [id]);
 
+    let auditAction: string;
+    if (finalStatus === 'pending_infra_deployment') auditAction = 'SUBMITTED_FOR_INFRA';
+    else if (finalStatus === 'pending_qa_approval') auditAction = 'RESUBMITTED_FOR_QA';
+    else auditAction = 'DRAFT_UPDATED';
+
     await createAuditLog({
       deploymentId: id,
-      action:       finalStatus === 'pending_qa_approval' ? 'RESUBMITTED_FOR_QA' : 'DRAFT_UPDATED',
+      action:       auditAction,
       performedBy:  userId,
       oldStatus:    dep.status as string,
       newStatus:    finalStatus,
@@ -191,6 +213,13 @@ export const updateDraft = async (req: Request, res: Response): Promise<void> =>
         devEmail:        req.user!.email,
         description,
       }).catch((e) => logger.error('Dev resubmit confirmation email error', e));
+    } else if (finalStatus === 'pending_infra_deployment') {
+      await notifyRoleUsers('infra', {
+        deploymentId: id,
+        title:   'Infra-Raised Deployment Request Updated',
+        message: `"${deployment_title}" is ready for deployment.`,
+        type:    'info',
+      });
     }
 
     res.json({ success: true, data: result.rows[0] });
@@ -360,15 +389,22 @@ export const deleteDeployment = async (req: Request, res: Response): Promise<voi
     }
     const dep = existing.rows[0];
 
-    // Admins can delete anything. Developers can only delete their own requests
-    // that haven't been touched by QA yet (draft or pending_qa_approval).
+    // Admins can delete anything. Developers/infra can only delete their own unstarted requests.
     if (role !== 'admin') {
       if (dep.raised_by !== userId) {
         res.status(403).json({ success: false, message: 'You can only delete your own deployment requests' });
         return;
       }
-      if (!['draft', 'pending_qa_approval'].includes(dep.status as string)) {
-        res.status(400).json({ success: false, message: 'Cannot delete a request after QA has reviewed it' });
+      const deletableStatuses = role === 'infra'
+        ? ['draft', 'pending_infra_deployment']
+        : ['draft', 'pending_qa_approval'];
+      if (!deletableStatuses.includes(dep.status as string)) {
+        res.status(400).json({
+          success: false,
+          message: role === 'infra'
+            ? 'Cannot delete a request after deployment has started'
+            : 'Cannot delete a request after QA has reviewed it',
+        });
         return;
       }
     }

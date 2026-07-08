@@ -51,6 +51,7 @@ export const NewDeploymentPage: React.FC = () => {
   const { id }     = useParams();
   const isEdit     = !!id;
   const { user }   = useAuthStore();
+  const isInfra    = user?.role === 'infra';
 
   const [branches, setBranches]         = useState<Branch[]>([]);
   const [jobs, setJobs]                 = useState<Job[]>([]);
@@ -112,9 +113,10 @@ export const NewDeploymentPage: React.FC = () => {
     clearErrors('job_ids');
   };
   const watchedSingleName = watch('single_project_name');
-  const submitBlocked =
+  const submitBlocked = !isInfra && (
     (watchedScope === 'single'   && !watchedSingleName?.trim()) ||
-    (watchedScope === 'multiple' && (!emailSent || !watchedProjectNames?.trim()));
+    (watchedScope === 'multiple' && (!emailSent || !watchedProjectNames?.trim()))
+  );
 
   useEffect(() => {
     Promise.all([
@@ -166,27 +168,30 @@ export const NewDeploymentPage: React.FC = () => {
     if (data.environments.length === 0) {
       setError('environments', { message: 'Select at least one environment' }); return null;
     }
-    if (data.deployment_scope === 'single' && !data.single_project_name?.trim()) {
-      setError('single_project_name', { message: 'Project name / server URL is required' }); return null;
-    }
-    if (data.deployment_scope === 'multiple' && !data.multi_project_names?.trim()) {
-      setError('multi_project_names', { message: 'Project names / server URLs are required' }); return null;
-    }
-    if (isSingleEnv) {
-      let ok = true;
-      if (!data.ticket_link?.trim()) { setError('ticket_link', { message: 'Required for single environment' }); ok = false; }
-      if (!data.description?.trim()) { setError('description', { message: 'Required for single environment' }); ok = false; }
-      if (!ok) return null;
-    } else if (!data.ticket_link?.trim() && !data.description?.trim()) {
-      setError('ticket_link', { message: 'Provide at least one: Ticket Link or Description' });
-      setError('description', { message: 'Provide at least one: Ticket Link or Description' });
-      return null;
+    if (!isInfra) {
+      if (data.deployment_scope === 'single' && !data.single_project_name?.trim()) {
+        setError('single_project_name', { message: 'Project name / server URL is required' }); return null;
+      }
+      if (data.deployment_scope === 'multiple' && !data.multi_project_names?.trim()) {
+        setError('multi_project_names', { message: 'Project names / server URLs are required' }); return null;
+      }
+      if (isSingleEnv) {
+        let ok = true;
+        if (!data.ticket_link?.trim()) { setError('ticket_link', { message: 'Required for single environment' }); ok = false; }
+        if (!data.description?.trim()) { setError('description', { message: 'Required for single environment' }); ok = false; }
+        if (!ok) return null;
+      } else if (!data.ticket_link?.trim() && !data.description?.trim()) {
+        setError('ticket_link', { message: 'Provide at least one: Ticket Link or Description' });
+        setError('description', { message: 'Provide at least one: Ticket Link or Description' });
+        return null;
+      }
     }
     return {
       ...data,
       project_name: data.product_type,
       job_id:       data.job_ids.join(','),
       environment:  data.environments.join(', '),
+      description:  data.description?.trim() || data.deployment_title,
       status,
     } as any;
   };
@@ -220,13 +225,19 @@ export const NewDeploymentPage: React.FC = () => {
   });
 
   const onSubmitToQA = handleSubmit(async (data) => {
-    const payload = buildPayload(data, 'pending_qa_approval');
+    const submitStatus = isInfra ? 'pending_infra_deployment' : 'pending_qa_approval';
+    const payload = buildPayload(data, submitStatus);
     if (!payload) return;
     setSubmitting(true);
     try {
-      if (isEdit) { await deploymentService.update(id!, payload); toast.success('Resubmitted to QA!'); }
-      else { await deploymentService.create(payload); toast.success('Submitted to QA for approval!'); }
-      navigate(['qa', 'admin'].includes(user?.role || '') ? '/qa' : '/deployments');
+      if (isEdit) {
+        await deploymentService.update(id!, payload);
+        toast.success(isInfra ? 'Submitted for deployment!' : 'Resubmitted to QA!');
+      } else {
+        await deploymentService.create(payload);
+        toast.success(isInfra ? 'Submitted for deployment!' : 'Submitted to QA for approval!');
+      }
+      navigate(isInfra ? '/infra' : (['qa', 'admin'].includes(user?.role || '') ? '/qa' : '/deployments'));
     } catch (err: any) {
       const detail = err?.response?.data?.detail || err?.response?.data?.message || err?.message || 'Unknown error';
       toast.error(`Submission failed: ${detail}`);
@@ -248,7 +259,11 @@ export const NewDeploymentPage: React.FC = () => {
         </div>
         <div>
           <h1 className="text-xl font-semibold text-gray-900">{isEdit ? 'Edit Deployment Request' : 'New Deployment Request'}</h1>
-          <p className="text-sm text-gray-500">Fill in the details below and submit for QA approval or save as draft.</p>
+          <p className="text-sm text-gray-500">
+            {isInfra
+              ? 'Fill in the details below and submit directly for deployment or save as draft.'
+              : 'Fill in the details below and submit for QA approval or save as draft.'}
+          </p>
         </div>
       </div>
 
@@ -287,11 +302,44 @@ export const NewDeploymentPage: React.FC = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Team <span className="text-red-500">*</span></label>
-              <select {...register('team', { required: 'Required' })} className={selectCls(errors.team)}>
-                <option value="">Select team...</option>
-                {['Backend Team','Frontend Team','DevOps Team','QA Team'].map(t => <option key={t} value={t}>{t}</option>)}
-              </select>
-              {errMsg(errors.team?.message)}
+              <Controller
+                name="team"
+                control={control}
+                rules={{ validate: v => (Array.isArray(v) && v.length > 0) || 'Select at least one team' }}
+                render={({ field }) => isInfra ? (
+                  <div className="flex flex-wrap gap-x-5 gap-y-2 pt-1">
+                    {['Backend', 'UI', 'Reporting'].map(t => {
+                      const checked = Array.isArray(field.value) && field.value.includes(t);
+                      return (
+                        <label key={t} className="flex items-center gap-2 cursor-pointer select-none">
+                          <input
+                            type="checkbox"
+                            className="rounded border-gray-400 text-blue-600 focus:ring-blue-500 w-4 h-4"
+                            checked={checked}
+                            onChange={() => {
+                              const current = Array.isArray(field.value) ? field.value : [];
+                              field.onChange(checked ? current.filter(v => v !== t) : [...current, t]);
+                            }}
+                          />
+                          <span className="text-sm text-gray-700">{t}</span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <select
+                    value={Array.isArray(field.value) ? (field.value[0] || '') : (field.value || '')}
+                    onChange={(e) => field.onChange(e.target.value ? [e.target.value] : [])}
+                    className={selectCls(errors.team)}
+                  >
+                    <option value="">Select team...</option>
+                    {['Backend Team', 'Frontend Team', 'DevOps Team', 'QA Team'].map(t => (
+                      <option key={t} value={t}>{t}</option>
+                    ))}
+                  </select>
+                )}
+              />
+              {errors.team && <p className="text-xs text-red-500 mt-1">{errors.team.message}</p>}
             </div>
 
             <div>
@@ -310,21 +358,23 @@ export const NewDeploymentPage: React.FC = () => {
               {errMsg(errors.requested_deploy_date?.message)}
             </div>
 
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Ticket / JIRA Link <span className="text-red-500">*</span></label>
-              <textarea
-                {...register('ticket_link')}
-                rows={2}
-                className={inputCls(errors.ticket_link)}
-                placeholder="e.g. https://jira.company.com/browse/PROJ-123, PROJ-456"
-                onChange={(e) => {
-                  setValue('ticket_link', e.target.value);
-                  clearErrors('ticket_link');
-                }}
-              />
-              <p className="text-xs text-gray-400 mt-0.5">Separate multiple tickets with commas, spaces, or new lines.</p>
-              {errMsg(errors.ticket_link?.message)}
-            </div>
+            {!isInfra && (
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Ticket / JIRA Link <span className="text-red-500">*</span></label>
+                <textarea
+                  {...register('ticket_link')}
+                  rows={2}
+                  className={inputCls(errors.ticket_link)}
+                  placeholder="e.g. https://jira.company.com/browse/PROJ-123, PROJ-456"
+                  onChange={(e) => {
+                    setValue('ticket_link', e.target.value);
+                    clearErrors('ticket_link');
+                  }}
+                />
+                <p className="text-xs text-gray-400 mt-0.5">Separate multiple tickets with commas, spaces, or new lines.</p>
+                {errMsg(errors.ticket_link?.message)}
+              </div>
+            )}
 
           </div>
         </div>
@@ -334,11 +384,13 @@ export const NewDeploymentPage: React.FC = () => {
           <SectionHeader num="2" title="CODE & BRANCH INFO" />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Repository <span className="text-red-500">*</span></label>
-              <input {...register('repository', { required: 'Required' })} className={inputCls(errors.repository)} placeholder="e.g. git@github.com:org/repo.git" />
-              {errMsg(errors.repository?.message)}
-            </div>
+            {!isInfra && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Repository <span className="text-red-500">*</span></label>
+                <input {...register('repository', { required: 'Required' })} className={inputCls(errors.repository)} placeholder="e.g. git@github.com:org/repo.git" />
+                {errMsg(errors.repository?.message)}
+              </div>
+            )}
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Branch Name <span className="text-red-500">*</span></label>
@@ -352,42 +404,52 @@ export const NewDeploymentPage: React.FC = () => {
               {errMsg(errors.branch_name?.message)}
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Base / Target Branch <span className="text-red-500">*</span></label>
-              <input {...register('base_branch', { required: 'Required' })} className={inputCls(errors.base_branch)} placeholder="main" />
-              {errMsg(errors.base_branch?.message)}
-            </div>
+            {!isInfra && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Base / Target Branch <span className="text-red-500">*</span></label>
+                <input {...register('base_branch', { required: 'Required' })} className={inputCls(errors.base_branch)} placeholder="main" />
+                {errMsg(errors.base_branch?.message)}
+              </div>
+            )}
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Pull Request Link</label>
-              <input {...register('pull_request_link')} className={inputCls()} placeholder="e.g. https://github.com/org/repo/pull/123" />
-            </div>
+            {!isInfra && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Pull Request Link</label>
+                <input {...register('pull_request_link')} className={inputCls()} placeholder="e.g. https://github.com/org/repo/pull/123" />
+              </div>
+            )}
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">PR Approved By</label>
-              <input {...register('pr_approved_by')} className={inputCls()} placeholder="e.g. Jane Smith" />
-            </div>
+            {!isInfra && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">PR Approved By</label>
+                <input {...register('pr_approved_by')} className={inputCls()} placeholder="e.g. Jane Smith" />
+              </div>
+            )}
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Risk Level <span className="text-red-500">*</span></label>
-              <select {...register('risk_level', { required: 'Required' })} className={selectCls()}>
-                <option value="low">🟢 Low</option>
-                <option value="medium">🟡 Medium</option>
-                <option value="high">🟠 High</option>
-                <option value="critical">🔴 Critical</option>
-              </select>
-            </div>
+            {!isInfra && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Risk Level <span className="text-red-500">*</span></label>
+                <select {...register('risk_level', { required: 'Required' })} className={selectCls()}>
+                  <option value="low">🟢 Low</option>
+                  <option value="medium">🟡 Medium</option>
+                  <option value="high">🟠 High</option>
+                  <option value="critical">🔴 Critical</option>
+                </select>
+              </div>
+            )}
 
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Change Summary <span className="text-red-500">*</span></label>
-              <textarea
-                {...register('description', { required: 'Required' })}
-                className={`${inputCls(errors.description)} resize-none`}
-                rows={3}
-                placeholder="Describe the changes in this deployment..."
-              />
-              {errMsg(errors.description?.message)}
-            </div>
+            {!isInfra && (
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Change Summary <span className="text-red-500">*</span></label>
+                <textarea
+                  {...register('description', { required: 'Required' })}
+                  className={`${inputCls(errors.description)} resize-none`}
+                  rows={3}
+                  placeholder="Describe the changes in this deployment..."
+                />
+                {errMsg(errors.description?.message)}
+              </div>
+            )}
 
           </div>
         </div>
@@ -526,19 +588,24 @@ export const NewDeploymentPage: React.FC = () => {
               )} />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Feature Flags</label>
-              <input {...register('feature_flags')} className={inputCls()} placeholder="Select or type feature flags..." />
-            </div>
+            {!isInfra && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Feature Flags</label>
+                <input {...register('feature_flags')} className={inputCls()} placeholder="Select or type feature flags..." />
+              </div>
+            )}
 
-            <div className="md:col-span-3">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Dependencies / Order</label>
-              <textarea {...register('dependencies')} className={`${inputCls()} resize-none`} rows={2}
-                placeholder="List any deployment dependencies or order of operations..." />
-            </div>
+            {!isInfra && (
+              <div className="md:col-span-3">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Dependencies / Order</label>
+                <textarea {...register('dependencies')} className={`${inputCls()} resize-none`} rows={2}
+                  placeholder="List any deployment dependencies or order of operations..." />
+              </div>
+            )}
 
             {/* ── Deployment Scope ── */}
-            <div className="md:col-span-3">
+            {!isInfra && (
+              <div className="md:col-span-3">
               <div className="border border-gray-200 rounded-lg p-4 bg-gray-50 space-y-4">
                 <div className="flex items-center gap-2">
                   <BuildingOffice2Icon className="w-4 h-4 text-gray-500" />
@@ -635,6 +702,7 @@ export const NewDeploymentPage: React.FC = () => {
                 )}
               </div>
             </div>
+            )}
 
           </div>
         </div>
@@ -645,8 +713,17 @@ export const NewDeploymentPage: React.FC = () => {
           <div>
             <p className="text-sm font-semibold text-blue-900">Deployment Workflow</p>
             <p className="text-xs text-blue-700 mt-0.5">
-              <strong>Save Draft</strong> — stores without submitting. &nbsp;|&nbsp;
-              <strong>Submit to QA</strong> — sends for QA review immediately. Once approved by QA, Infra team will deploy and you'll be notified for acknowledgment.
+              {isInfra ? (
+                <>
+                  <strong>Save Draft</strong> — stores without submitting. &nbsp;|&nbsp;
+                  <strong>Submit for Deployment</strong> — moves the request directly to the Infra queue for immediate deployment (no QA approval required).
+                </>
+              ) : (
+                <>
+                  <strong>Save Draft</strong> — stores without submitting. &nbsp;|&nbsp;
+                  <strong>Submit to QA</strong> — sends for QA review immediately. Once approved by QA, Infra team will deploy and you'll be notified for acknowledgment.
+                </>
+              )}
             </p>
           </div>
         </div>
@@ -671,7 +748,7 @@ export const NewDeploymentPage: React.FC = () => {
               className="inline-flex items-center gap-2 px-5 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {submitting ? <ButtonSpinner /> : <PaperAirplaneIcon className="w-4 h-4" />}
-              Submit to QA
+              {isInfra ? 'Submit for Deployment' : 'Submit to QA'}
             </button>
           </div>
         </div>

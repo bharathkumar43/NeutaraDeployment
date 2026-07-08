@@ -18,8 +18,8 @@ router.post('/send-scope-email', sendDeploymentScopeEmail);
 
 router.get('/', getDeployments);
 router.get('/:id', getDeploymentById);
-router.post('/', authorize('dev', 'admin'), createDeployment);
-router.put('/:id', authorize('dev', 'admin'), updateDraft);
-router.delete('/:id', authorize('dev', 'admin'), deleteDeployment);
+router.post('/', authorize('dev', 'admin', 'infra'), createDeployment);
+router.put('/:id', authorize('dev', 'admin', 'infra'), updateDraft);
+router.delete('/:id', authorize('dev', 'admin', 'infra'), deleteDeployment);
 
 export default router;

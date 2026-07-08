@@ -19,7 +19,7 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   { label: 'Dashboard',      path: '/dashboard',     icon: <HomeIcon className="w-5 h-5" /> },
   { label: 'Deployments',    path: '/deployments',   icon: <RocketLaunchIcon className="w-5 h-5" />, end: true },
-  { label: 'New Request',    path: '/deployments/new', icon: <ClipboardDocumentCheckIcon className="w-5 h-5" />, roles: ['dev', 'admin'] },
+  { label: 'New Request',    path: '/deployments/new', icon: <ClipboardDocumentCheckIcon className="w-5 h-5" />, roles: ['dev', 'admin', 'infra'] },
   { label: 'QA Approvals',   path: '/qa',            icon: <CheckBadgeIcon className="w-5 h-5" />, roles: ['qa', 'admin'] },
   { label: 'Infra Queue',    path: '/infra',         icon: <ServerStackIcon className="w-5 h-5" />, roles: ['infra', 'admin'] },
   { label: 'Acknowledgments',path: '/acknowledgments',icon: <ClipboardDocumentCheckIcon className="w-5 h-5" />, roles: ['dev', 'admin'] },
