@@ -33,10 +33,15 @@ router.post('/route', authenticate, authorize(['dev', 'admin']), controllerFn);
 | 404  | Resource not found |
 | 500  | Unexpected server error |
 
-## Deployment Request Statuses (in order)
+## Deployment Request Statuses
+The actual `status` CHECK constraint on `deployment_requests` has 12 values, not a simple linear chain — see `.claude/memory/domain-knowledge.md` for the full state machine and which controller function drives each transition:
 ```
-draft → pending_qa_approval → qa_approved / qa_rejected → deployed → acknowledged
+draft, pending_qa_approval, qa_approved, rejected_by_qa,
+pending_infra_deployment, deployment_in_progress, deployment_completed,
+deployment_failed, pending_dev_acknowledgment,
+successfully_completed, issue_raised, rejected_by_infra
 ```
+`qa_approved` and `deployment_completed` exist in the CHECK constraint but no controller currently sets a row to those exact literal values — QA approval jumps straight to `pending_infra_deployment`. Don't assume every enum value is reachable in practice; verify against the controller before relying on one.
 
 ## Request Number Format
 - Format: `DPRxxxx` (4-digit zero-padded, e.g. DPR0001)

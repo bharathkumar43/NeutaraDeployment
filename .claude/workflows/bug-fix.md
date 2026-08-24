@@ -1,6 +1,6 @@
 # Bug Fix Workflow
 
-Use when fixing a reported bug in NeutaraDeployment.
+Use when fixing a reported bug in NeutaraDeployment. This workflow's Step 2 is where gstack's `/investigate` can substitute for or supplement `@researcher` if the bug is unclear enough to need gstack's broader investigation approach.
 
 ---
 
@@ -12,7 +12,7 @@ Identify exactly:
 - Is it consistent or intermittent?
 
 ## Step 2 — Trace
-Invoke `@research` to find the root cause. Trace from symptom to source:
+Invoke `@researcher` to find the root cause. Trace from symptom to source:
 - Frontend error → which API call failed?
 - API error → which controller and which line?
 - DB error → which query? Is it a constraint, a null, a type mismatch?
@@ -29,13 +29,14 @@ Make the minimal change that addresses the root cause.
 - Does it break any other functionality in the same controller or component?
 
 ## Step 5 — Review
-Run `/project:review` on the diff. Even small bug fixes can introduce security regressions.
+Run `/project:team-review` (project-specific checklist) and gstack's `/review` (general bugs/logic errors) on the diff. Even small bug fixes can introduce security regressions.
 
-## Step 6 — Commit
+## Step 6 — Commit and ship
 ```bash
 git add <specific files — never git add .>
 git commit -m "fix(<scope>): <what was broken and how it's fixed>"
-git push origin main
 ```
+Use gstack's `/ship` to open the PR (reads `.claude/rules/pr-standard.md` for format).
 
-Then on the server: `git pull origin main && sudo docker compose up -d --build`
+## Step 7 — Deploy
+Once merged, use `/project:deploy` (this project's actual Docker Compose deploy steps) or gstack's `/land-and-deploy` if configured for this host.

@@ -50,6 +50,19 @@ export const HistoryPage: React.FC = () => {
 
   const hasActiveFilters = status || environment || priority || searchInput || fromDate || toDate;
 
+  const getMeta = (dep: DeploymentRequest) => {
+    const raw = (dep as any).extra_meta;
+    if (!raw) return {};
+    return typeof raw === 'string' ? JSON.parse(raw) : raw;
+  };
+
+  const getProjectServerUrl = (dep: DeploymentRequest): string => {
+    const meta = getMeta(dep);
+    return meta.deployment_scope === 'multiple'
+      ? meta.multi_project_names || ''
+      : meta.single_project_name || '';
+  };
+
   return (
     <div className="space-y-5 animate-fade-in">
       <div className="card p-4">
@@ -138,6 +151,7 @@ export const HistoryPage: React.FC = () => {
                 <thead>
                   <tr className="border-b border-gray-100">
                     <th className="table-header">Req #</th>
+                    <th className="table-header">Project / Server URL</th>
                     <th className="table-header">Deployment</th>
                     <th className="table-header">Env</th>
                     <th className="table-header">Branch</th>
@@ -154,6 +168,11 @@ export const HistoryPage: React.FC = () => {
                       <td className="table-cell">
                         {dep.request_number
                           ? <span className="text-xs font-bold text-blue-600 tracking-widest bg-blue-50 px-2 py-0.5 rounded whitespace-nowrap">{dep.request_number}</span>
+                          : <span className="text-xs text-gray-400">—</span>}
+                      </td>
+                      <td className="table-cell">
+                        {getProjectServerUrl(dep)
+                          ? <p className="text-xs text-gray-600 max-w-[180px] truncate" title={getProjectServerUrl(dep)}>{getProjectServerUrl(dep)}</p>
                           : <span className="text-xs text-gray-400">—</span>}
                       </td>
                       <td className="table-cell">

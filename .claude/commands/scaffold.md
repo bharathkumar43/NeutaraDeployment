@@ -1,4 +1,4 @@
-Scaffold a new feature module for NeutaraDeployment. Use `deployment` as the reference pattern.
+Scaffold a new feature module for NeutaraDeployment. Use `deployment` as the reference pattern. If the module needs a schema change or a new role, invoke `@architect` first — this command scaffolds files, it doesn't make architecture decisions.
 
 Given the feature name in $ARGUMENTS, create these files:
 

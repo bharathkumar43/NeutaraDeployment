@@ -4,7 +4,7 @@ description: Triggered when writing tests, adding test coverage, or when the use
 
 # Testing Patterns Skill
 
-For NeutaraDeployment, use these patterns as starting points.
+For NeutaraDeployment, use these patterns as starting points. Note: no test runner is installed yet in either `backend/` or `frontend/` (see `.claude/workflows/testing.md` Step 0) — these are the patterns to use *once* the tooling is added, not proof it already exists.
 
 ## Backend Controller Test (Jest + Supertest)
 ```typescript
@@ -39,10 +39,13 @@ import { MemoryRouter } from 'react-router-dom';
 ```
 
 ## Deployment Workflow Status Transitions
-Always test the full happy path and the rejection path:
+Test against the real 12-state machine (`.claude/memory/domain-knowledge.md`), not a simplified chain:
 ```
-draft → pending_qa_approval → qa_approved → deployed → acknowledged
-draft → pending_qa_approval → qa_rejected
+draft → pending_qa_approval → pending_infra_deployment → pending_dev_acknowledgment → successfully_completed
+pending_infra_deployment → successfully_completed   (infra-raised, skips QA and dev ack)
+pending_qa_approval → rejected_by_qa
+pending_infra_deployment → rejected_by_infra
+deployment_in_progress → deployment_failed
 ```
 
 ## What NOT to test

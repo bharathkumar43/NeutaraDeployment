@@ -1,4 +1,6 @@
-Guide through deploying NeutaraDeployment to the server. Run these steps in order:
+Guide through deploying NeutaraDeployment to the server. This wraps this project's actual deploy mechanism (manual Docker Compose rebuild on the target host, no CI/CD pipeline exists) — gstack's `/land-and-deploy` doesn't know these specifics, so use this command for the real deploy, and `/land-and-deploy` only if it's been configured with this project's target host.
+
+Run these steps in order:
 
 1. Verify TypeScript compiles with no errors:
    ```bash

@@ -4,6 +4,8 @@ description: Triggered when reviewing code changes, checking a diff, auditing a 
 
 # Code Review Skill
 
+This teaches NeutaraDeployment's own conventions — it does not replace gstack's `/review`, which covers general bugs and logic errors gstack knows nothing about being specific to this repo. Run both. This skill is what makes `/project:team-review` and the `@code-reviewer` agent consistent regardless of which one triggers.
+
 When reviewing code for NeutaraDeployment, always check these in order:
 
 ## 1. Security (highest priority)
@@ -26,6 +28,8 @@ When reviewing code for NeutaraDeployment, always check these in order:
 - `COUNT(*)` for request number generation → must be `MAX()`.
 - Direct `req.body` passed to queries → must destructure first.
 - Missing role check → always verify `req.user.role` server-side.
+- `job_id` is a comma-separated string, not an array or join table — new code reading it must split/trim before use.
+- A deployment-status transition written anywhere other than the four lifecycle controllers, without a matching `createAuditLog()` call, breaks the audit trail (`.claude/memory/domain-knowledge.md`).
 
 ## Output Format
 Numbered list: **[SEVERITY]** `file:line` — description — one-line fix.

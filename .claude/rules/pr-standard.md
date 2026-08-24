@@ -1,5 +1,7 @@
 # Pull Request Format
 
+This is the project's PR content standard — it defines *what* a NeutaraDeployment PR must say. To actually open the PR, use gstack's `/ship` (which reads this file); use `/project:team-review` for the pre-merge diff review pass.
+
 ## Title
 `<type>(<scope>): <short description>` — max 72 characters.
 
@@ -26,6 +28,7 @@ Examples:
 - [ ] Tested locally with `docker compose up -d --build`
 - [ ] No `console.log` left in committed code
 - [ ] Commit messages follow the `type(scope): description` format
+- [ ] `CLAUDE.local.md` is NOT in the diff (it's gitignored)
 
 ## Branch Naming
 `<type>/<short-description>` — e.g., `fix/duplicate-request-number`, `feat/bulk-qa-approval`

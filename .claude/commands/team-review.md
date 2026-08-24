@@ -1,4 +1,4 @@
-Review the current git diff for bugs, security issues, and code quality problems specific to NeutaraDeployment.
+Review the current git diff for bugs, security issues, and code quality problems specific to NeutaraDeployment. This is the project's own checklist — run gstack's `/review` too for general bugs and logic errors; this command only checks NeutaraDeployment-specific conventions.
 
 Check for:
 1. Missing `authenticate` or `authorize` middleware on any new Express routes
