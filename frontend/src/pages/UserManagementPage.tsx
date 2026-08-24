@@ -124,7 +124,7 @@ export const UserManagementPage: React.FC = () => {
                       <span className="font-medium text-gray-900">{u.name}</span>
                     </div>
                   </td>
-                  <td className="table-cell text-gray-600">{u.email}</td>
+                  <td className="table-cell text-gray-600" data-hj-suppress>{u.email}</td>
                   <td className="table-cell">
                     <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${ROLE_BADGES[u.role] || 'bg-gray-100 text-gray-600'}`}>
                       {u.role}
@@ -203,6 +203,7 @@ export const UserManagementPage: React.FC = () => {
               className="form-input"
               placeholder="john@cloudfuze.com"
               type="email"
+              data-hj-suppress
             />
             {addForm.formState.errors.email && <p className="form-error">{addForm.formState.errors.email.message}</p>}
           </div>

@@ -107,6 +107,7 @@ export const LoginPage: React.FC = () => {
                     autoComplete="email"
                     className="form-input"
                     placeholder="admin@neutara.com"
+                    data-hj-suppress
                   />
                   {errors.email && <p className="form-error">{errors.email.message}</p>}
                 </div>
@@ -114,12 +115,16 @@ export const LoginPage: React.FC = () => {
                 <div>
                   <label className="form-label">Password</label>
                   <div className="relative">
+                    {/* Hotjar auto-masks type="password", but the reveal toggle below flips this to
+                        type="text" — which would put the plaintext password in the recording.
+                        data-hj-suppress covers both states. */}
                     <input
                       {...register('password', { required: 'Password is required' })}
                       type={showPassword ? 'text' : 'password'}
                       autoComplete="current-password"
                       className="form-input pr-10"
                       placeholder="••••••••"
+                      data-hj-suppress
                     />
                     <button
                       type="button"
