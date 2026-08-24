@@ -6,6 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Neutara Deployment Management</title>
     <meta name="description" content="Enterprise Deployment Management System" />
+
+    <!-- Runtime config, loaded before the bundle so window.__APP_CONFIG__ exists when app code
+         first reads it. Editable on the server after a build — see public/runtime-config.js. -->
+    <script src="/runtime-config.js"></script>
   </head>
   <body>
     <div id="root"></div>

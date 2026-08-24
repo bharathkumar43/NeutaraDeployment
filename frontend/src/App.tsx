@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthStore } from './store/authStore';
+import { identifyHotjarUser } from './analytics/hotjar';
 import { AppLayout } from './components/common/AppLayout';
 
 // Pages
@@ -25,7 +26,15 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode; roles?: string[] }> 
 };
 
 const App: React.FC = () => {
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, user } = useAuthStore();
+
+  // Attribute the recording once the signed-in user is actually known — after login or after the
+  // persisted auth store rehydrates, not merely on mount. Runs for every role, including a `viewer`
+  // that ProtectedRoute bounces off most pages: those sessions are the interesting ones, since they
+  // mean somebody was granted access that never reached them.
+  useEffect(() => {
+    if (user?.email) identifyHotjarUser(user);
+  }, [user]);
 
   return (
     <>

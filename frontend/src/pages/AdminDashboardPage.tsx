@@ -260,7 +260,7 @@ export const AdminDashboardPage: React.FC = () => {
                     <td className="table-cell">
                       <div>
                         <p className="font-medium text-gray-900 text-sm">{u.name}</p>
-                        <p className="text-xs text-gray-400">{u.email}</p>
+                        <p className="text-xs text-gray-400" data-hj-suppress>{u.email}</p>
                       </div>
                     </td>
                     <td className="table-cell text-gray-600 text-sm">{u.team || <span className="text-gray-300">—</span>}</td>

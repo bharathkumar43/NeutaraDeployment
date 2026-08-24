@@ -69,6 +69,9 @@ services:
       args:
         VITE_AZURE_CLIENT_ID: ${VITE_AZURE_CLIENT_ID:-}
         VITE_AZURE_TENANT_ID: ${VITE_AZURE_TENANT_ID:-}
+        # Build arg, never `environment:` — Vite reads this at `npm run build`, so a value passed to
+        # the running container is ignored. Blank disables Hotjar entirely.
+        VITE_HOTJAR_SITE_ID: ${HOTJAR_SITE_ID:-}
     restart: unless-stopped
     ports:
       - "3201:80"
