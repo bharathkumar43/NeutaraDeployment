@@ -2,7 +2,7 @@ import { Router } from 'express';
 import {
   createDeployment, updateDraft, getDeployments, getDeploymentById,
   getDashboardStats, getJobsList, getBranchesList, sendDeploymentScopeEmail,
-  getNextRequestNumber, deleteDeployment
+  getNextRequestNumber, deleteDeployment, getHistoryPeople,
 } from '../controllers/deployment.controller';
 import { authenticate, authorize } from '../middleware/auth';
 
@@ -14,6 +14,7 @@ router.get('/stats/dashboard', getDashboardStats);
 router.get('/meta/jobs', getJobsList);
 router.get('/meta/branches', getBranchesList);
 router.get('/meta/next-number', getNextRequestNumber);
+router.get('/meta/history-people', getHistoryPeople);
 router.post('/send-scope-email', sendDeploymentScopeEmail);
 
 router.get('/', getDeployments);

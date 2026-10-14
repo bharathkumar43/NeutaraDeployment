@@ -13,6 +13,18 @@ export interface DeploymentFilters {
   limit?: number;
   from_date?: string;
   to_date?: string;
+  qa_approved_by?: string;
+  deployed_by?: string;
+}
+
+export interface PersonOption {
+  id: string;
+  name: string;
+}
+
+export interface HistoryPeople {
+  qa_approvers: PersonOption[];
+  infra_deployers: PersonOption[];
 }
 
 export interface DeploymentListResponse {
@@ -61,6 +73,11 @@ export const deploymentService = {
   async getNextNumber(): Promise<string> {
     const res = await api.get<ApiResponse<{ next_number: string }>>('/deployments/meta/next-number');
     return res.data.data.next_number;
+  },
+
+  async getHistoryPeople(): Promise<HistoryPeople> {
+    const res = await api.get<ApiResponse<HistoryPeople>>('/deployments/meta/history-people');
+    return res.data.data;
   },
 
   async sendScopeEmail(deployment_title: string, team: string): Promise<void> {

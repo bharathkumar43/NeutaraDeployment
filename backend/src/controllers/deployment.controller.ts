@@ -11,12 +11,20 @@ const DEPLOYMENT_SELECT = `
     u.name  AS raised_by_name,
     u.email AS raised_by_email,
     u.role  AS raised_by_role,
-    u.team  AS raised_by_team
+    u.team  AS raised_by_team,
+    (SELECT qu.name FROM deployment_qa_approvals qa JOIN users qu ON qa.qa_user_id = qu.id
+      WHERE qa.deployment_id = dr.id AND qa.approval_status = 'approved'
+      ORDER BY qa.created_at DESC LIMIT 1) AS qa_approved_by_name,
+    (SELECT iu.name FROM deployment_infra_logs il JOIN users iu ON il.infra_user_id = iu.id
+      WHERE il.deployment_id = dr.id
+      ORDER BY il.created_at DESC LIMIT 1) AS deployed_by_name
   FROM deployment_requests dr
   LEFT JOIN users u ON dr.raised_by = u.id
 `;
 
-export const createDeployment = async (req: Request, res: Response): Promise<void> => {
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+export const createDeployment =async (req: Request, res: Response): Promise<void> => {
   const {
     deployment_title, project_name, job_id, branch_name, environment,
     ticket_link, description, priority, status,
@@ -230,12 +238,21 @@ export const updateDraft = async (req: Request, res: Response): Promise<void> =>
 };
 
 export const getDeployments = async (req: Request, res: Response): Promise<void> => {
-  const { status, environment, priority, search, page = '1', limit = '20', from_date, to_date } = req.query;
+  const {
+    status, environment, priority, search, page = '1', limit = '20', from_date, to_date,
+    qa_approved_by, deployed_by,
+  } = req.query;
   const userId   = req.user!.userId;
   const role     = req.user!.role;
   const pageNum  = Math.max(1, parseInt(page as string) || 1);
   const limitNum = Math.min(100, Math.max(1, parseInt(limit as string) || 20));
   const offset   = (pageNum - 1) * limitNum;
+
+  const isValidUserId = (v: unknown): boolean => v === undefined || (typeof v === 'string' && UUID_RE.test(v));
+  if (!isValidUserId(qa_approved_by) || !isValidUserId(deployed_by)) {
+    res.status(400).json({ success: false, message: 'qa_approved_by and deployed_by must be valid user IDs' });
+    return;
+  }
 
   try {
     const conditions: string[] = [];
@@ -256,6 +273,16 @@ export const getDeployments = async (req: Request, res: Response): Promise<void>
     if (to_date) {
       params.push(to_date);
       conditions.push(`dr.created_at < ($${params.length}::date + interval '1 day')`);
+    }
+    if (qa_approved_by) {
+      params.push(qa_approved_by);
+      conditions.push(`EXISTS (SELECT 1 FROM deployment_qa_approvals qa
+        WHERE qa.deployment_id = dr.id AND qa.approval_status = 'approved' AND qa.qa_user_id = $${params.length})`);
+    }
+    if (deployed_by) {
+      params.push(deployed_by);
+      conditions.push(`EXISTS (SELECT 1 FROM deployment_infra_logs il
+        WHERE il.deployment_id = dr.id AND il.infra_user_id = $${params.length})`);
     }
 
     const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
@@ -356,7 +383,22 @@ export const getNextRequestNumber = async (_req: Request, res: Response): Promis
   }
 };
 
-export const getJobsList = async (_req: Request, res: Response): Promise<void> => {
+export const getHistoryPeople = async (_req: Request, res: Response): Promise<void> => {
+  try {
+    const [qaResult, infraResult] = await Promise.all([
+      query(`SELECT DISTINCT u.id, u.name FROM deployment_qa_approvals qa JOIN users u ON qa.qa_user_id = u.id
+             WHERE qa.approval_status = 'approved' ORDER BY u.name ASC`),
+      query(`SELECT DISTINCT u.id, u.name FROM deployment_infra_logs il JOIN users u ON il.infra_user_id = u.id
+             ORDER BY u.name ASC`),
+    ]);
+    res.json({ success: true, data: { qa_approvers: qaResult.rows, infra_deployers: infraResult.rows } });
+  } catch (err) {
+    logger.error('Get history people error', err);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
+
+export const getJobsList =async (_req: Request, res: Response): Promise<void> => {
   try {
     const result = await query(`SELECT id, job_id, job_name, project_name FROM jobs WHERE is_active = true ORDER BY job_name ASC`);
     res.json({ success: true, data: result.rows });

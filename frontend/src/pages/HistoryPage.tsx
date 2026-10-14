@@ -4,7 +4,7 @@ import {
   MagnifyingGlassIcon, ArrowPathIcon, ChevronLeftIcon,
   ChevronRightIcon, CalendarDaysIcon,
 } from '@heroicons/react/24/outline';
-import { deploymentService } from '../services/deployment.service';
+import { deploymentService, HistoryPeople } from '../services/deployment.service';
 import { DeploymentRequest } from '../types';
 import { StatusBadge, PriorityBadge, EnvBadge } from '../components/common/StatusBadge';
 import { PageLoader } from '../components/common/LoadingSpinner';
@@ -24,6 +24,9 @@ export const HistoryPage: React.FC = () => {
   const [priority, setPriority] = useState('');
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
+  const [qaApprovedBy, setQaApprovedBy] = useState('');
+  const [deployedBy, setDeployedBy] = useState('');
+  const [people, setPeople] = useState<HistoryPeople>({ qa_approvers: [], infra_deployers: [] });
   const LIMIT = 20;
 
   const load = useCallback(async () => {
@@ -33,13 +36,22 @@ export const HistoryPage: React.FC = () => {
         status, environment, priority, search, page, limit: LIMIT,
         from_date: fromDate || undefined,
         to_date: toDate || undefined,
+        qa_approved_by: qaApprovedBy || undefined,
+        deployed_by: deployedBy || undefined,
       });
       setDeployments(result.data);
       setTotal(result.pagination?.total || 0);
     } finally { setLoading(false); }
-  }, [status, environment, priority, search, page, fromDate, toDate]);
+  }, [status, environment, priority, search, page, fromDate, toDate, qaApprovedBy, deployedBy]);
 
   useEffect(() => { load(); }, [load]);
+
+  useEffect(() => {
+    deploymentService.getHistoryPeople().then(setPeople).catch(() => undefined);
+  }, []);
+
+  const qaApproverName = people.qa_approvers.find((p) => p.id === qaApprovedBy)?.name;
+  const deployerName = people.infra_deployers.find((p) => p.id === deployedBy)?.name;
 
   useEffect(() => {
     const timer = setTimeout(() => { setSearch(searchInput); setPage(1); }, 400);
@@ -48,7 +60,8 @@ export const HistoryPage: React.FC = () => {
 
   const totalPages = Math.ceil(total / LIMIT);
 
-  const hasActiveFilters = status || environment || priority || searchInput || fromDate || toDate;
+  const hasActiveFilters =
+    status || environment || priority || searchInput || fromDate || toDate || qaApprovedBy || deployedBy;
 
   const getMeta = (dep: DeploymentRequest) => {
     const raw = (dep as any).extra_meta;
@@ -85,6 +98,14 @@ export const HistoryPage: React.FC = () => {
           <select value={priority} onChange={(e) => { setPriority(e.target.value); setPage(1); }} className="form-select w-32">
             <option value="">All Priorities</option>
             {['critical','high','medium','low'].map((p) => <option key={p} value={p} className="capitalize">{p.charAt(0).toUpperCase()+p.slice(1)}</option>)}
+          </select>
+          <select value={qaApprovedBy} onChange={(e) => { setQaApprovedBy(e.target.value); setPage(1); }} className="form-select w-44" title="QA approved by">
+            <option value="">All QA Approvers</option>
+            {people.qa_approvers.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+          </select>
+          <select value={deployedBy} onChange={(e) => { setDeployedBy(e.target.value); setPage(1); }} className="form-select w-44" title="Deployed by (Infra)">
+            <option value="">All Infra Deployers</option>
+            {people.infra_deployers.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
           </select>
 
           {/* Date range */}
@@ -132,6 +153,8 @@ export const HistoryPage: React.FC = () => {
             {priority && <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">Priority: {priority}</span>}
             {fromDate && <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">From: {fromDate}</span>}
             {toDate && <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">To: {toDate}</span>}
+            {qaApprovedBy && <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">QA Approved By: {qaApproverName || '…'}</span>}
+            {deployedBy && <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">Deployed By: {deployerName || '…'}</span>}
           </div>
         )}
       </div>
@@ -158,6 +181,8 @@ export const HistoryPage: React.FC = () => {
                     <th className="table-header">Priority</th>
                     <th className="table-header">Status</th>
                     <th className="table-header">Raised By</th>
+                    <th className="table-header">QA Approved By</th>
+                    <th className="table-header">Deployed By</th>
                     <th className="table-header">Created</th>
                     <th className="table-header">Updated</th>
                   </tr>
@@ -184,6 +209,8 @@ export const HistoryPage: React.FC = () => {
                       <td className="table-cell"><PriorityBadge priority={dep.priority} /></td>
                       <td className="table-cell"><StatusBadge status={dep.status} /></td>
                       <td className="table-cell text-gray-600 text-xs">{dep.raised_by_name}</td>
+                      <td className="table-cell text-gray-600 text-xs">{dep.qa_approved_by_name || <span className="text-gray-400">—</span>}</td>
+                      <td className="table-cell text-gray-600 text-xs">{dep.deployed_by_name || <span className="text-gray-400">—</span>}</td>
                       <td className="table-cell text-gray-400 text-xs whitespace-nowrap">{formatDateTime(dep.created_at)}</td>
                       <td className="table-cell text-gray-400 text-xs whitespace-nowrap">{formatRelative(dep.updated_at)}</td>
                     </tr>

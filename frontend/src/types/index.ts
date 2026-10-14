@@ -38,6 +38,8 @@ export interface DeploymentRequest {
   raised_by_name?: string;
   raised_by_email?: string;
   raised_by_team?: string;
+  qa_approved_by_name?: string | null;
+  deployed_by_name?: string | null;
   status: DeploymentStatus;
   submitted_at?: string;
   created_at: string;
