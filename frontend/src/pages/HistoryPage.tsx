@@ -99,8 +99,8 @@ export const HistoryPage: React.FC = () => {
             <option value="">All Priorities</option>
             {['critical','high','medium','low'].map((p) => <option key={p} value={p} className="capitalize">{p.charAt(0).toUpperCase()+p.slice(1)}</option>)}
           </select>
-          <select value={qaApprovedBy} onChange={(e) => { setQaApprovedBy(e.target.value); setPage(1); }} className="form-select w-44" title="QA approved by">
-            <option value="">All QA Approvers</option>
+          <select value={qaApprovedBy} onChange={(e) => { setQaApprovedBy(e.target.value); setPage(1); }} className="form-select w-44" title="QA reviewed by (approved, rejected or sent back)">
+            <option value="">All QA Reviewers</option>
             {people.qa_approvers.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
           </select>
           <select value={deployedBy} onChange={(e) => { setDeployedBy(e.target.value); setPage(1); }} className="form-select w-44" title="Deployed by (Infra)">
@@ -153,7 +153,7 @@ export const HistoryPage: React.FC = () => {
             {priority && <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">Priority: {priority}</span>}
             {fromDate && <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">From: {fromDate}</span>}
             {toDate && <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">To: {toDate}</span>}
-            {qaApprovedBy && <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">QA Approved By: {qaApproverName || '…'}</span>}
+            {qaApprovedBy && <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">QA Reviewed By: {qaApproverName || '…'}</span>}
             {deployedBy && <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">Deployed By: {deployerName || '…'}</span>}
           </div>
         )}
@@ -181,7 +181,7 @@ export const HistoryPage: React.FC = () => {
                     <th className="table-header">Priority</th>
                     <th className="table-header">Status</th>
                     <th className="table-header">Raised By</th>
-                    <th className="table-header">QA Approved By</th>
+                    <th className="table-header">QA Reviewed By</th>
                     <th className="table-header">Deployed By</th>
                     <th className="table-header">Created</th>
                     <th className="table-header">Updated</th>

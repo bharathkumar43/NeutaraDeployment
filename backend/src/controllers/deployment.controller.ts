@@ -13,7 +13,7 @@ const DEPLOYMENT_SELECT = `
     u.role  AS raised_by_role,
     u.team  AS raised_by_team,
     (SELECT qu.name FROM deployment_qa_approvals qa JOIN users qu ON qa.qa_user_id = qu.id
-      WHERE qa.deployment_id = dr.id AND qa.approval_status = 'approved'
+      WHERE qa.deployment_id = dr.id
       ORDER BY qa.created_at DESC LIMIT 1) AS qa_approved_by_name,
     (SELECT iu.name FROM deployment_infra_logs il JOIN users iu ON il.infra_user_id = iu.id
       WHERE il.deployment_id = dr.id
@@ -277,7 +277,7 @@ export const getDeployments = async (req: Request, res: Response): Promise<void>
     if (qa_approved_by) {
       params.push(qa_approved_by);
       conditions.push(`EXISTS (SELECT 1 FROM deployment_qa_approvals qa
-        WHERE qa.deployment_id = dr.id AND qa.approval_status = 'approved' AND qa.qa_user_id = $${params.length})`);
+        WHERE qa.deployment_id = dr.id AND qa.qa_user_id = $${params.length})`);
     }
     if (deployed_by) {
       params.push(deployed_by);
@@ -387,7 +387,7 @@ export const getHistoryPeople = async (_req: Request, res: Response): Promise<vo
   try {
     const [qaResult, infraResult] = await Promise.all([
       query(`SELECT DISTINCT u.id, u.name FROM deployment_qa_approvals qa JOIN users u ON qa.qa_user_id = u.id
-             WHERE qa.approval_status = 'approved' ORDER BY u.name ASC`),
+             ORDER BY u.name ASC`),
       query(`SELECT DISTINCT u.id, u.name FROM deployment_infra_logs il JOIN users u ON il.infra_user_id = u.id
              ORDER BY u.name ASC`),
     ]);
