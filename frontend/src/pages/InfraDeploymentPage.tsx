@@ -21,6 +21,14 @@ interface CompleteFormData {
   deployment_notes: string;
 }
 interface ReviewFormData { comments: string; }
+type RejectTarget = 'qa' | 'dev';
+
+// QA target reuses the backend's 'sent_back' path (→ pending_qa_approval, QA notified);
+// Dev target uses 'rejected' (→ rejected_by_infra, raiser notified).
+const REJECT_TARGET_ACTION: Record<RejectTarget, 'sent_back' | 'rejected'> = {
+  qa:  'sent_back',
+  dev: 'rejected',
+};
 
 export const InfraDeploymentPage: React.FC = () => {
   const navigate = useNavigate();
@@ -29,7 +37,7 @@ export const InfraDeploymentPage: React.FC = () => {
   const [envFilter, setEnvFilter] = useState('');
   const [selectedDep, setSelectedDep] = useState<DeploymentRequest | null>(null);
   const [modalType, setModalType] = useState<'start' | 'complete' | 'review' | null>(null);
-  const [reviewAction, setReviewAction] = useState<'sent_back' | 'rejected' | null>(null);
+  const [rejectTarget, setRejectTarget] = useState<RejectTarget>('qa');
   const [submitting, setSubmitting] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [uploadFile, setUploadFile] = useState<File | null>(null);
@@ -56,10 +64,11 @@ export const InfraDeploymentPage: React.FC = () => {
     setSelectedDep(dep); setModalType('complete'); completeForm.reset({ deployment_status: 'success' });
     setPreviewUrl(null); setUploadFile(null);
   };
-  const openReview = (dep: DeploymentRequest, action: 'sent_back' | 'rejected') => {
-    setSelectedDep(dep); setReviewAction(action); setModalType('review'); reviewForm.reset();
+  const openReview = (dep: DeploymentRequest) => {
+    // Infra-raised requests never went through QA, so they can only go back to the raiser.
+    setSelectedDep(dep); setRejectTarget(isInfraRaised(dep) ? 'dev' : 'qa'); setModalType('review'); reviewForm.reset();
   };
-  const closeModal = () => { setSelectedDep(null); setModalType(null); setReviewAction(null); setPreviewUrl(null); setUploadFile(null); };
+  const closeModal = () => { setSelectedDep(null); setModalType(null); setPreviewUrl(null); setUploadFile(null); };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -70,12 +79,16 @@ export const InfraDeploymentPage: React.FC = () => {
     reader.readAsDataURL(file);
   };
 
+  const getMeta = (dep: DeploymentRequest) => (dep as any).extra_meta
+    ? (typeof (dep as any).extra_meta === 'string'
+        ? JSON.parse((dep as any).extra_meta)
+        : (dep as any).extra_meta)
+    : {};
+
+  const isInfraRaised = (dep: DeploymentRequest): boolean => getMeta(dep).raised_by_infra === true;
+
   const getProjectServerUrl = (dep: DeploymentRequest): string => {
-    const meta = (dep as any).extra_meta
-      ? (typeof (dep as any).extra_meta === 'string'
-          ? JSON.parse((dep as any).extra_meta)
-          : (dep as any).extra_meta)
-      : {};
+    const meta = getMeta(dep);
     return meta.deployment_scope === 'multiple'
       ? meta.multi_project_names || ''
       : meta.single_project_name || '';
@@ -110,13 +123,13 @@ export const InfraDeploymentPage: React.FC = () => {
   });
 
   const onReviewSubmit = reviewForm.handleSubmit(async (data) => {
-    if (!selectedDep || !reviewAction) return;
+    if (!selectedDep) return;
     setSubmitting(true);
     try {
-      await infraService.reviewDeployment(selectedDep.id, reviewAction, data.comments);
-      const msg = reviewAction === 'sent_back'
-        ? '↩️ Deployment sent back to QA for re-review.'
-        : '🚫 Deployment rejected.';
+      await infraService.reviewDeployment(selectedDep.id, REJECT_TARGET_ACTION[rejectTarget], data.comments);
+      const msg = rejectTarget === 'qa'
+        ? '🚫 Deployment rejected and sent to QA for re-review.'
+        : `🚫 Deployment rejected and sent back to ${selectedDep.raised_by_name || 'the requester'}.`;
       toast.success(msg);
       closeModal(); load();
     } catch (err: any) {
@@ -221,10 +234,7 @@ export const InfraDeploymentPage: React.FC = () => {
                       <button onClick={() => openStart(dep)} className="btn-primary text-xs py-1.5 px-3 flex-1 justify-center">
                         <PlayIcon className="w-3.5 h-3.5" /> Start Deployment
                       </button>
-                      <button onClick={() => openReview(dep, 'sent_back')} className="btn-warning text-xs py-1.5 px-3 justify-center">
-                        <ArrowUturnLeftIcon className="w-3.5 h-3.5" /> Send Back
-                      </button>
-                      <button onClick={() => openReview(dep, 'rejected')} className="btn-danger text-xs py-1.5 px-3 justify-center">
+                      <button onClick={() => openReview(dep)} className="btn-danger text-xs py-1.5 px-3 justify-center">
                         <NoSymbolIcon className="w-3.5 h-3.5" /> Reject
                       </button>
                     </>
@@ -391,39 +401,67 @@ export const InfraDeploymentPage: React.FC = () => {
           </div>
         )}
       </Modal>
-      {/* Review Modal (Send Back / Reject) */}
+      {/* Reject Modal (target: QA or raising Dev) */}
       <Modal
         isOpen={modalType === 'review'}
         onClose={closeModal}
-        title={reviewAction === 'sent_back' ? 'Send Back to QA' : 'Reject Deployment'}
+        title="Reject Deployment"
         size="md"
         footer={
           <div className="flex justify-end gap-3">
             <button onClick={closeModal} className="btn-secondary">Cancel</button>
-            <button
-              onClick={onReviewSubmit}
-              className={reviewAction === 'sent_back' ? 'btn-warning' : 'btn-danger'}
-              disabled={submitting}
-            >
-              {submitting ? <ButtonSpinner /> : reviewAction === 'sent_back' ? <ArrowUturnLeftIcon className="w-4 h-4" /> : <NoSymbolIcon className="w-4 h-4" />}
-              {reviewAction === 'sent_back' ? 'Send Back to QA' : 'Reject Deployment'}
+            <button onClick={onReviewSubmit} className="btn-danger" disabled={submitting}>
+              {submitting ? <ButtonSpinner /> : <NoSymbolIcon className="w-4 h-4" />}
+              {rejectTarget === 'qa' ? 'Reject & Send to QA' : 'Reject & Send to Dev'}
             </button>
           </div>
         }
       >
         {selectedDep && (
           <div className="space-y-4">
-            <div className={`rounded-lg p-4 border ${reviewAction === 'sent_back' ? 'bg-yellow-50 border-yellow-200' : 'bg-red-50 border-red-200'}`}>
+            <div className="rounded-lg p-4 border bg-red-50 border-red-200">
               <p className="text-sm font-semibold text-gray-900">{selectedDep.deployment_title}</p>
               <div className="flex gap-2 mt-1">
                 <EnvBadge env={selectedDep.environment} />
                 <PriorityBadge priority={selectedDep.priority} />
               </div>
-              <p className="text-xs mt-2 text-gray-600">
-                {reviewAction === 'sent_back'
-                  ? 'This deployment will be sent back to the QA team for re-review.'
-                  : 'This deployment will be rejected. The developer will be notified.'}
-              </p>
+            </div>
+            <div>
+              <label className="form-label">Send rejected request to <span className="text-red-500">*</span></label>
+              <div className="grid grid-cols-2 gap-3">
+                {(['qa', 'dev'] as const).map((target) => {
+                  const isDisabled = target === 'qa' && isInfraRaised(selectedDep);
+                  const isSelected = rejectTarget === target;
+                  return (
+                    <label
+                      key={target}
+                      className={`flex items-start gap-3 p-3 rounded-lg border-2 transition-all
+                        ${isDisabled ? 'opacity-50 cursor-not-allowed border-gray-200'
+                          : isSelected ? 'border-red-500 bg-red-50 cursor-pointer'
+                          : 'border-gray-200 hover:border-gray-300 cursor-pointer'}`}
+                    >
+                      <input
+                        type="radio"
+                        name="reject_target"
+                        value={target}
+                        checked={isSelected}
+                        disabled={isDisabled}
+                        onChange={() => setRejectTarget(target)}
+                        className="sr-only"
+                      />
+                      <ArrowUturnLeftIcon className={`w-5 h-5 mt-0.5 ${isSelected ? 'text-red-600' : 'text-gray-400'}`} />
+                      <div>
+                        <p className="text-sm font-semibold">{target === 'qa' ? 'QA Team' : 'Requester (Dev)'}</p>
+                        <p className="text-xs text-gray-500">
+                          {target === 'qa'
+                            ? (isDisabled ? 'Not available: raised by Infra, no QA step' : 'QA re-reviews and re-approves')
+                            : `${selectedDep.raised_by_name || 'Requester'} fixes and resubmits`}
+                        </p>
+                      </div>
+                    </label>
+                  );
+                })}
+              </div>
             </div>
             <div>
               <label className="form-label">Comments <span className="text-red-500">*</span></label>
@@ -431,9 +469,9 @@ export const InfraDeploymentPage: React.FC = () => {
                 {...reviewForm.register('comments', { required: 'Comments are required', minLength: { value: 5, message: 'Please provide more detail' } })}
                 className="form-textarea"
                 rows={4}
-                placeholder={reviewAction === 'sent_back'
-                  ? 'Describe what changes QA needs to review before re-approving...'
-                  : 'Explain the reason for rejection...'}
+                placeholder={rejectTarget === 'qa'
+                  ? 'Describe what QA needs to re-check before re-approving...'
+                  : 'Explain what the developer needs to fix before resubmitting...'}
               />
               {reviewForm.formState.errors.comments && (
                 <p className="form-error">{reviewForm.formState.errors.comments.message}</p>
