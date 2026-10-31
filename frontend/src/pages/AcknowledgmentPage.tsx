@@ -12,7 +12,7 @@ import { EnvBadge, PriorityBadge } from '../components/common/StatusBadge';
 import { Modal } from '../components/common/Modal';
 import { PageLoader, ButtonSpinner } from '../components/common/LoadingSpinner';
 import { EmptyState } from '../components/common/EmptyState';
-import { formatDateTime, formatRelative } from '../utils/format';
+import { formatDateTime, formatRelative, formatBranch } from '../utils/format';
 
 interface AckFormData {
   acknowledgment_comment: string;
@@ -104,7 +104,7 @@ export const AcknowledgmentPage: React.FC = () => {
                     </div>
                     <div>
                       <p className="text-gray-400 uppercase font-medium mb-1">Branch</p>
-                      <code className="bg-gray-100 px-1.5 py-0.5 rounded text-gray-700">{dep.branch_name}</code>
+                      <code className="bg-gray-100 px-1.5 py-0.5 rounded text-gray-700">{formatBranch(dep)}</code>
                     </div>
                     <div>
                       <p className="text-gray-400 uppercase font-medium mb-1">Deployed By</p>
@@ -185,7 +185,7 @@ export const AcknowledgmentPage: React.FC = () => {
                 <EnvBadge env={selectedDep.environment} />
                 <PriorityBadge priority={selectedDep.priority} />
               </div>
-              <p className="text-xs text-gray-500 mt-2">{selectedDep.project_name} · <code className="bg-gray-200 px-1 rounded">{selectedDep.branch_name}</code></p>
+              <p className="text-xs text-gray-500 mt-2">{selectedDep.project_name} · <code className="bg-gray-200 px-1 rounded">{formatBranch(selectedDep)}</code></p>
             </div>
 
             {actionType === 'acknowledged' ? (

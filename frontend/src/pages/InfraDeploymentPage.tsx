@@ -13,7 +13,7 @@ import { PriorityBadge, EnvBadge } from '../components/common/StatusBadge';
 import { Modal } from '../components/common/Modal';
 import { PageLoader, ButtonSpinner } from '../components/common/LoadingSpinner';
 import { EmptyState } from '../components/common/EmptyState';
-import { formatRelative } from '../utils/format';
+import { formatRelative, formatBranch } from '../utils/format';
 
 interface StartFormData { artifact_version: string; }
 interface CompleteFormData {
@@ -195,7 +195,7 @@ export const InfraDeploymentPage: React.FC = () => {
                 <div className="grid grid-cols-2 gap-3 mb-4 text-xs">
                   <div>
                     <span className="text-gray-400 uppercase font-medium block mb-0.5">Branch</span>
-                    <code className="bg-gray-100 px-1.5 py-0.5 rounded text-gray-700">{dep.branch_name}</code>
+                    <code className="bg-gray-100 px-1.5 py-0.5 rounded text-gray-700">{formatBranch(dep)}</code>
                   </div>
                   <div>
                     <span className="text-gray-400 uppercase font-medium block mb-0.5">Requested by</span>
@@ -273,7 +273,7 @@ export const InfraDeploymentPage: React.FC = () => {
               <p className="text-sm font-semibold text-gray-900">{selectedDep.deployment_title}</p>
               <div className="flex gap-2 mt-1">
                 <EnvBadge env={selectedDep.environment} />
-                <code className="text-xs bg-gray-200 px-1.5 py-0.5 rounded">{selectedDep.branch_name}</code>
+                <code className="text-xs bg-gray-200 px-1.5 py-0.5 rounded">{formatBranch(selectedDep)}</code>
               </div>
             </div>
             <div>
@@ -327,7 +327,7 @@ export const InfraDeploymentPage: React.FC = () => {
               <div className="flex gap-2 flex-wrap">
                 <EnvBadge env={selectedDep.environment} />
                 <PriorityBadge priority={selectedDep.priority} />
-                <code className="text-xs bg-gray-200 px-1.5 py-0.5 rounded">{selectedDep.branch_name}</code>
+                <code className="text-xs bg-gray-200 px-1.5 py-0.5 rounded">{formatBranch(selectedDep)}</code>
               </div>
             </div>
 

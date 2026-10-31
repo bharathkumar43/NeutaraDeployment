@@ -10,7 +10,7 @@ import { StatusBadge, PriorityBadge, EnvBadge } from '../components/common/Statu
 import { PageLoader } from '../components/common/LoadingSpinner';
 import { EmptyState } from '../components/common/EmptyState';
 import { useAuthStore } from '../store/authStore';
-import { formatRelative } from '../utils/format';
+import { formatRelative, formatBranch } from '../utils/format';
 
 const STATUS_OPTIONS = [
   { value: '', label: 'All Statuses' },
@@ -200,7 +200,7 @@ export const DeploymentListPage: React.FC = () => {
                       <td className="table-cell text-gray-600 max-w-[140px] truncate">{dep.project_name}</td>
                       <td className="table-cell"><EnvBadge env={dep.environment} /></td>
                       <td className="table-cell">
-                        <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded text-gray-700">{dep.branch_name}</code>
+                        <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded text-gray-700">{formatBranch(dep)}</code>
                       </td>
                       <td className="table-cell"><PriorityBadge priority={dep.priority} /></td>
                       <td className="table-cell"><StatusBadge status={dep.status} /></td>

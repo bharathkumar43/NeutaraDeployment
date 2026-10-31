@@ -79,7 +79,7 @@ export const NewDeploymentPage: React.FC = () => {
     formState: { errors }, reset, setValue, setError, clearErrors,
   } = useForm<FormData>({
     defaultValues: {
-      priority: 'medium', risk_level: 'low', base_branch: 'main',
+      priority: 'medium', risk_level: 'low', base_branch: '',
       downtime_required: false, environments: [],
       product_type: '', job_ids: [],
       deployment_scope: 'single', single_project_name: '', multi_project_names: '',
@@ -94,6 +94,7 @@ export const NewDeploymentPage: React.FC = () => {
   const watchedJobIds       = watch('job_ids') || [];
   const watchedScope        = watch('deployment_scope');
   const watchedProjectNames = watch('multi_project_names');
+  const isCustomBranch      = watch('branch_name') === 'custom';
   const isSingleEnv         = watchedEnvs.length === 1;
   const isMultiEnv          = watchedEnvs.length > 1;
 
@@ -192,6 +193,8 @@ export const NewDeploymentPage: React.FC = () => {
       job_id:       data.job_ids.join(','),
       environment:  data.environments.join(', '),
       description:  data.description?.trim() || data.deployment_title,
+      // Base/target branch only applies to a custom branch; drop stale input if the user switched away.
+      base_branch:  data.branch_name === 'custom' ? data.base_branch?.trim() : '',
       status,
     } as any;
   };
@@ -399,15 +402,25 @@ export const NewDeploymentPage: React.FC = () => {
                 <option value="develop">Develop</option>
                 <option value="main">Main</option>
                 <option value="CF-Content-Trunk-Master">CF-Content-Trunk-Master</option>
+                <option value="Msg release 2.0 for UI">Msg release 2.0 for UI</option>
+                <option value="Msg release 1.1 for backend">Msg release 1.1 for backend</option>
+                <option value="Email release 1.0 for UI">Email release 1.0 for UI</option>
+                <option value="Mail migration release 1.0 for backend">Mail migration release 1.0 for backend</option>
                 <option value="custom">Custom branch</option>
               </select>
               {errMsg(errors.branch_name?.message)}
             </div>
 
-            {!isInfra && (
+            {isCustomBranch && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Base / Target Branch <span className="text-red-500">*</span></label>
-                <input {...register('base_branch', { required: 'Required' })} className={inputCls(errors.base_branch)} placeholder="main" />
+                <input
+                  {...register('base_branch', {
+                    validate: (v, values) => values.branch_name !== 'custom' || !!v?.trim() || 'Required',
+                  })}
+                  className={inputCls(errors.base_branch)}
+                  placeholder="e.g. feature/my-branch"
+                />
                 {errMsg(errors.base_branch?.message)}
               </div>
             )}

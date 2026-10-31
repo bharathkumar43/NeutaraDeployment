@@ -9,7 +9,7 @@ import { DeploymentRequest } from '../types';
 import { StatusBadge, PriorityBadge, EnvBadge } from '../components/common/StatusBadge';
 import { PageLoader } from '../components/common/LoadingSpinner';
 import { EmptyState } from '../components/common/EmptyState';
-import { formatDateTime, formatRelative } from '../utils/format';
+import { formatDateTime, formatRelative, formatBranch } from '../utils/format';
 
 export const HistoryPage: React.FC = () => {
   const navigate = useNavigate();
@@ -205,7 +205,7 @@ export const HistoryPage: React.FC = () => {
                         <p className="text-xs text-gray-400 mt-0.5">{dep.project_name}</p>
                       </td>
                       <td className="table-cell"><EnvBadge env={dep.environment} /></td>
-                      <td className="table-cell"><code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">{dep.branch_name}</code></td>
+                      <td className="table-cell"><code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">{formatBranch(dep)}</code></td>
                       <td className="table-cell"><PriorityBadge priority={dep.priority} /></td>
                       <td className="table-cell"><StatusBadge status={dep.status} /></td>
                       <td className="table-cell text-gray-600 text-xs">{dep.raised_by_name}</td>

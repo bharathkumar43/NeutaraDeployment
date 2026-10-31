@@ -13,7 +13,7 @@ import { StatusBadge, PriorityBadge, EnvBadge } from '../components/common/Statu
 import { Modal } from '../components/common/Modal';
 import { PageLoader, ButtonSpinner } from '../components/common/LoadingSpinner';
 import { EmptyState } from '../components/common/EmptyState';
-import { formatDateTime, formatRelative } from '../utils/format';
+import { formatDateTime, formatRelative, formatBranch } from '../utils/format';
 
 interface QAFormData {
   qa_ticket_link: string;
@@ -148,7 +148,7 @@ export const QAApprovalPage: React.FC = () => {
                       </div>
                       <div>
                         <p className="text-xs text-gray-400 uppercase font-medium">Branch</p>
-                        <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded text-gray-700 mt-0.5 block w-fit">{dep.branch_name}</code>
+                        <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded text-gray-700 mt-0.5 block w-fit">{formatBranch(dep)}</code>
                       </div>
                       <div>
                         <p className="text-xs text-gray-400 uppercase font-medium">Raised By</p>
@@ -261,7 +261,7 @@ export const QAApprovalPage: React.FC = () => {
                 <EnvBadge env={selectedDep.environment} />
                 <PriorityBadge priority={selectedDep.priority} />
               </div>
-              <p className="text-xs text-gray-500 mt-2">{selectedDep.project_name} · Branch: <code className="bg-gray-200 px-1 rounded">{selectedDep.branch_name}</code></p>
+              <p className="text-xs text-gray-500 mt-2">{selectedDep.project_name} · Branch: <code className="bg-gray-200 px-1 rounded">{formatBranch(selectedDep)}</code></p>
               {getProjectServerUrl(selectedDep) && (
                 <div className="mt-2 pt-2 border-t border-gray-200">
                   <p className="text-xs text-gray-400 uppercase font-medium">Project Name / Server URL</p>

@@ -15,7 +15,7 @@ import { AuditTimeline } from '../components/common/AuditTimeline';
 import { PageLoader, ButtonSpinner } from '../components/common/LoadingSpinner';
 import { Modal } from '../components/common/Modal';
 import { useAuthStore } from '../store/authStore';
-import { formatDateTime, formatRelative } from '../utils/format';
+import { formatDateTime, formatRelative, formatBranch } from '../utils/format';
 
 interface QAFormData {
   qa_ticket_link: string;
@@ -207,7 +207,7 @@ export const DeploymentDetailPage: React.FC = () => {
               )}
 
               <DetailRow label="Project" value={<span className="font-medium">{deployment.project_name}</span>} />
-              <DetailRow label="Branch" value={<code className="bg-gray-100 text-gray-700 px-2 py-0.5 rounded text-xs">{deployment.branch_name}</code>} />
+              <DetailRow label="Branch" value={<code className="bg-gray-100 text-gray-700 px-2 py-0.5 rounded text-xs">{formatBranch(deployment)}</code>} />
               <DetailRow label="Job ID" value={
                 deployment.job_id
                   ? <div className="flex flex-wrap gap-1">
@@ -397,7 +397,7 @@ export const DeploymentDetailPage: React.FC = () => {
                 <EnvBadge env={deployment.environment} />
                 <PriorityBadge priority={deployment.priority} />
               </div>
-              <p className="text-xs text-gray-500 mt-2">{deployment.project_name} · Branch: <code className="bg-gray-200 px-1 rounded">{deployment.branch_name}</code></p>
+              <p className="text-xs text-gray-500 mt-2">{deployment.project_name} · Branch: <code className="bg-gray-200 px-1 rounded">{formatBranch(deployment)}</code></p>
             </div>
 
             {qaAction === 'approved' && deployment.priority === 'critical' && (
